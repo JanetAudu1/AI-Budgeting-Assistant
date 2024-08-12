@@ -4,7 +4,7 @@ from data_validation import UserData
 import pandas as pd
 
 # Load the API key from the environment variable
-openai.api_key = "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"
+openai.api_key=os.getenv("OPENAI_API_KEY")
 
 if not openai.api_key:
     raise ValueError("OpenAI API key is not set. Please set the OPENAI_API_KEY environment variable.")
