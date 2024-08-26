@@ -1,2 +1,2 @@
 # AI-Budgeting-Assistant
-A budget analyzer using AI to make budgeting reocmmendations
+A budget analyzer using AI to make budgeting recommendations
