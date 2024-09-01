@@ -10,5 +10,5 @@ class UserData(BaseModel):
     goals: List[str]
     timeline_months: int
     bank_statement: str
-    priorities: List[str]  # New field to capture user's priorities
+    priorities: List[str]
 
