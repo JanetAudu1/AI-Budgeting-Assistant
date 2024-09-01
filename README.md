@@ -1,4 +1,5 @@
 # AI-Budgeting-Assistant
+
 A budget analyzer using AI to make budgeting reocmmendations
 
 How to start the app: 
@@ -34,4 +35,5 @@ Date       | Description          | Amount (USD)  | Balance (USD)
 08/30/2024 | Movie Night           | -10.00        | 827.76
 ---------------------------------
 Closing Balance: 827.76
+
 
