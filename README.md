@@ -1,6 +1,18 @@
 # AI-Budgeting-Assistant
 A budget analyzer using AI to make budgeting reocmmendations
 
+How to start the app: 
+Open two terminal tabs 
+cd to frontEnd in one tab 
+cd to backEnd in one tab 
+
+in the backEnd tab run "uvicorn api:app --reload" 
+in the frontEnd tab run "streamlit run app.py" 
+
+Note that for fastapi, we have hardcoded port 8000, which is also the port form which streamlit is being ran. So if you want to try multiple runs of the app, ensure to check for the process id and kill the process being ran on port 8000 before retrying.
+To find the process id:  run lsof -i :8000
+To kill the process: run kill -9 <processID>
+
 Sample bank statement: 
 
 Date: August 2024
