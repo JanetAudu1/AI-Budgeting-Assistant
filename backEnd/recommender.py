@@ -3,8 +3,8 @@ import quandl
 from typing import List, Dict
 from data_validation import UserData
 
-# Set your Quandl API key
-quandl.ApiConfig.api_key = 'YOUR_QUANDL_API_KEY'
+# Set Quandl API key
+quandl.ApiConfig.api_key = 'QUANDL_API_KEY'
 
 def categorize_expenses(description: str) -> str:
     categories = {
