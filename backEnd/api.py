@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends
-from recommender import get_financial_advice
+from recommender import generate_advice
 from data_validation import UserData
 from config import get_sources
 import logging
@@ -15,12 +15,14 @@ def get_advice(user_data: UserData):
         logger.info(f"Received request for user: {user_data.name}")
 
         sources = get_sources()
-        advice = get_financial_advice(user_data, sources)
+        logger.info(f"Fetching financial advice for {user_data.name} using sources: {sources}")
+
+        advice = generate_advice(user_data, sources)
 
         return {"advice": advice}
 
     except HTTPException as e:
-        logger.error(f"Error processing request: {str(e)}")
+        logger.error(f"HTTP error processing request: {str(e)}")
         raise
 
     except Exception as e:
