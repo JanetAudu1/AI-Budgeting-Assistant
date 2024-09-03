@@ -1,7 +1,3 @@
-Here's a comprehensive and engaging `README.md` for your Personalized Budgeting Assistant project:
-
----
-
 # 💰 Personalized Budgeting Assistant
 
 Welcome to the **Personalized Budgeting Assistant**! This tool is designed to help you take control of your finances by offering personalized financial advice based on your unique financial data. Whether you're looking to save more, invest wisely, or pay off debt, this assistant will guide you in the right direction with simple, friendly advice.
@@ -62,49 +58,29 @@ Use the app to continuously monitor your spending, savings, and progress toward 
    ```bash
    streamlit run frontEnd/app.py
    ```
+ 
 
-## 🧱 Project Structure
+Note that for fastapi, we have hardcoded port 8000, which is also the port form which streamlit is being ran. So if you want to try multiple runs of the app, ensure to check for the process id and kill the process being ran on port 8000 before retrying.
+To find the process id:  run lsof -i :8000
+To kill the process: run kill -9 <processID>
 
-Here's a breakdown of the project structure:
 
-```plaintext
-personalized-budgeting-assistant/
-├── frontEnd/
-│   ├── app.py               # Main entry point for the Streamlit app
-│   ├── layout.py            # Manages the layout and content of different pages
-│   ├── input_handlers.py    # Handles user inputs and session management
-│   ├── charts.py            # Generates charts and visualizations
-│   ├── advice.py            # Generates and displays personalized financial advice
-│
-├── backEnd/
-│   ├── recommender.py       # Core logic for parsing bank statements and generating advice
-│   ├── data_validation.py   # Validates and structures user data
-│
-├── config/
-│   └── settings.py          # Configuration settings (optional)
-│
-├── requirements.txt         # Python dependencies
-└── README.md                # Project documentation
-```
 
-## 🧠 How It Works
+Bank Statement - August 2024
+Date	Description	Amount (USD)	Balance (USD)
+08/01/2024	Opening Balance		1200.00
+08/03/2024	Coffee Shop	-8.50	1191.50
+08/05/2024	Textbook Purchase	-75.00	1116.50
+08/08/2024	Part-Time Job Income	+300.00	1416.50
+08/12/2024	Grocery Store	-45.75	1370.75
+08/15/2024	Rent Payment	-600.00	770.75
+08/18/2024	Phone Bill	-30.00	740.75
+08/20/2024	Online Subscription	-12.99	727.76
+08/22/2024	Public Transportation	-25.00	702.76
+08/25/2024	Freelance Income	+150.00	852.76
+08/27/2024	Fast Food	-15.00	837.76
+08/30/2024	Movie Night	-10.00	827.76
+08/31/2024	Closing Balance		827.76
 
-### Financial Analysis
-- **Bank Statement Parsing**: The app parses your bank statement to categorize income and expenses.
-- **Savings Rate Calculation**: Automatically calculates your savings rate based on income and expenses.
-- **Personalized Advice**: Uses AI to generate friendly, personalized advice that includes specific calculations and recommendations for saving, investing, and debt repayment.
 
-### Advice Tone
-The advice is designed to be friendly, simple, and personalized. It refers to you in first-person language and provides specific math-based advice to help you make informed decisions.
 
-## 🤝 Contributing
-
-Contributions are welcome! If you have ideas for new features, improvements, or bug fixes, feel free to fork the repository and submit a pull request.
-
-## 📝 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-By following this `README.md`, users should be able to easily understand the purpose and functionality of your Personalized Budgeting Assistant, get started quickly, and contribute if they wish.
