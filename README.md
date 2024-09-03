@@ -1,8 +1,8 @@
-# 💰 Personalized Budgeting Assistant
+# Personalized Budgeting Assistant
 
 Welcome to the **Personalized Budgeting Assistant**! This tool is designed to help you take control of your finances by offering personalized financial advice based on your unique financial data. Whether you're looking to save more, invest wisely, or pay off debt, this assistant will guide you in the right direction with simple, friendly advice.
 
-## 🚀 Features
+## Features
 
 - **Expense Tracking**: Visualize where your money is going with intuitive charts that break down your expenses by category.
 - **Personalized Advice**: Receive friendly, easy-to-understand financial advice tailored to your current situation and goals.
@@ -10,7 +10,7 @@ Welcome to the **Personalized Budgeting Assistant**! This tool is designed to he
 - **Investment Recommendations**: Get advice on how to start or optimize your investments based on your savings and financial goals.
 - **Debt Management**: Learn how to prioritize and pay down high-interest debt to free up more of your income for savings and investments.
 
-## 🛠️ How It Works
+## How It Works
 
 ### 1. Input Your Financial Data
 Enter details about your income, savings, expenses, goals, and priorities. You can also paste your bank statement directly into the app for automatic parsing.
@@ -30,9 +30,11 @@ Use the app to continuously monitor your spending, savings, and progress toward 
 
 - **Python 3.7+**
 - **Streamlit**: For running the web application.
+- **FastAPI**: For running the backend API.
 - **Matplotlib**: For generating visualizations.
 - **Pandas**: For data handling and manipulation.
 - **OpenAI API Key**: Required for generating AI-based financial advice.
+- **Quandl API Key**: Required for pulling financial and economic data.
 
 ### Setup
 
@@ -47,40 +49,75 @@ Use the app to continuously monitor your spending, savings, and progress toward 
    pip install -r requirements.txt
    ```
 
-3. **Set Up OpenAI API Key**:
-   Export your OpenAI API key as an environment variable:
+3. **Set Up API Keys**:
+   Export your API keys as environment variables:
    ```bash
    export OPENAI_API_KEY='your-openai-api-key'
+   export QUANDL_API_KEY='your-quandl-api-key'
    ```
 
-4. **Run the Application**:
-   Start the Streamlit app by executing:
+### Running the Application
+
+#### Start the Backend Server
+
+1. **Navigate to the Backend Directory**:
    ```bash
-   streamlit run frontEnd/app.py
+   cd backEnd
    ```
- 
 
-Note that for fastapi, we have hardcoded port 8000, which is also the port form which streamlit is being ran. So if you want to try multiple runs of the app, ensure to check for the process id and kill the process being ran on port 8000 before retrying.
-To find the process id:  run lsof -i :8000
-To kill the process: run kill -9 <processID>
+2. **Run the FastAPI server**:
+   ```bash
+   uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+   ```
 
+#### Start the Frontend
 
+1. **Navigate to the Frontend Directory**:
+   ```bash
+   cd frontEnd
+   ```
+
+2. **Run the Streamlit app**:
+   ```bash
+   streamlit run app.py
+   ```
+
+### Important Notes
+
+- **Port Conflicts**: Note that both the FastAPI backend and Streamlit frontend default to using port 8000. To avoid conflicts:
+  - Run FastAPI on a different port (e.g., 8001) by changing the `uvicorn` command:
+    ```bash
+    uvicorn api:app --host 0.0.0.0 --port 8001 --reload
+    ```
+  - Update the frontend `app.py` to use the correct backend URL if you change the port.
+
+- **Multiple Runs**: If you want to run multiple instances, ensure that the ports are not conflicting. Use the following commands to manage ports:
+  - Find the process using a port:
+    ```bash
+    lsof -i :8000
+    ```
+  - Kill the process using the port:
+    ```bash
+    kill -9 <processID>
+    ```
+
+## Example Bank Statement
 
 Bank Statement - August 2024
-Date	Description	Amount (USD)	Balance (USD)
-08/01/2024	Opening Balance		1200.00
-08/03/2024	Coffee Shop	-8.50	1191.50
-08/05/2024	Textbook Purchase	-75.00	1116.50
-08/08/2024	Part-Time Job Income	+300.00	1416.50
-08/12/2024	Grocery Store	-45.75	1370.75
-08/15/2024	Rent Payment	-600.00	770.75
-08/18/2024	Phone Bill	-30.00	740.75
-08/20/2024	Online Subscription	-12.99	727.76
-08/22/2024	Public Transportation	-25.00	702.76
-08/25/2024	Freelance Income	+150.00	852.76
-08/27/2024	Fast Food	-15.00	837.76
-08/30/2024	Movie Night	-10.00	827.76
-08/31/2024	Closing Balance		827.76
 
-
-
+```plaintext
+Date        | Description          | Amount (USD)  | Balance (USD)
+08/01/2024  | Opening Balance       |               | 1200.00
+08/03/2024  | Coffee Shop           | -8.50         | 1191.50
+08/05/2024  | Textbook Purchase     | -75.00        | 1116.50
+08/08/2024  | Part-Time Job Income  | +300.00       | 1416.50
+08/12/2024  | Grocery Store         | -45.75        | 1370.75
+08/15/2024  | Rent Payment          | -600.00       | 770.75
+08/18/2024  | Phone Bill            | -30.00        | 740.75
+08/20/2024  | Online Subscription   | -12.99        | 727.76
+08/22/2024  | Public Transportation | -25.00        | 702.76
+08/25/2024  | Freelance Income      | +150.00       | 852.76
+08/27/2024  | Fast Food             | -15.00        | 837.76
+08/30/2024  | Movie Night           | -10.00        | 827.76
+08/31/2024  | Closing Balance       |               | 827.76
+```
