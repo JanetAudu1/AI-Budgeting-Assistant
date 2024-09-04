@@ -33,8 +33,8 @@ Use the app to continuously monitor your spending, savings, and progress toward 
 - **FastAPI**: For running the backend API.
 - **Matplotlib**: For generating visualizations.
 - **Pandas**: For data handling and manipulation.
-- **OpenAI API Key**: Required for generating AI-based financial advice.
-- **Quandl API Key**: Required for pulling financial and economic data.
+- **OpenAI API Key**: Required for generating AI-based financial advice. Register for an Open AI account and get a key and save in your env variable as described below
+- **Quandl API Key**: Required for pulling financial and economic data. Register for a Quandl account and get an api key and save in your env variable as described below
 
 ### Setup
 
