@@ -11,5 +11,5 @@ class UserData(BaseModel):
     timeline_months: int
     bank_statement: str
     priorities: List[str]
-    savings_goal=savings_goal
+    savings_goal: float  
 
