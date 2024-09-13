@@ -67,7 +67,7 @@ def generate_advice(user_data: UserData) -> str:
             "savings_goal": user_data.savings_goal
         }
 
-        # Construct GPT prompt
+        # Construct GPT prompt for chat completion
         gpt_prompt = f"""
         You are a friendly and knowledgeable financial advisor. Here’s the financial situation of {user_context['name']}:
         - Total Income: ${user_context['income']:.2f}
@@ -78,16 +78,19 @@ def generate_advice(user_data: UserData) -> str:
         Provide personalized and friendly financial advice on how to achieve these goals, including tips on optimizing expenses and reaching the savings goal of ${user_context['savings_goal']:.2f}.
         """
 
-        # Call GPT to generate advice
-        response = openai.Completion.create(
-            engine="gpt-4",
-            prompt=gpt_prompt,
+        # Call OpenAI's Chat API for generating advice
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a financial assistant."},
+                {"role": "user", "content": gpt_prompt}
+            ],
             max_tokens=300,
             temperature=0.7
         )
 
         # Extract the generated advice
-        advice = response.choices[0].text.strip()
+        advice = response['choices'][0]['message']['content'].strip()
 
         return advice
 
