@@ -26,7 +26,7 @@ def generate_advice_ui(inputs):
         savings_goal=savings_goal 
     )
     
-    # Generate financial advice without sources
+    # Generate financial advice using the GPT-enhanced recommender system
     advice = generate_advice(user_data)
 
     # Replace newline characters with HTML line breaks before inserting into the f-string
@@ -37,6 +37,6 @@ def generate_advice_ui(inputs):
 
     # Position the sources at the bottom right corner
     st.markdown(
-        f"<div style='text-align: right; color: grey; font-size: 0.8em;'>Sources: Investopedia, NerdWallet, Financial Times, Bloomberg, The Wall Street Journal</div>", 
+        f"<div style='text-align: right; color: grey; font-size: 0.8em;'>Sources: Generated with GPT-4</div>", 
         unsafe_allow_html=True
     )
