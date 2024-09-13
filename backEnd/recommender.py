@@ -52,12 +52,14 @@ def generate_advice(user_data: UserData) -> (str, Dict[str, float]):
 
         # Parse categorized expenses from the bank statement
         categorized_expenses = parse_bank_statement(user_data.bank_statement)
-        total_expenses = sum(categorized_expenses.values())  # Total expenses from categorized expenses
+        
+        # Calculate the total expenses from categorized expenses
+        total_expenses = sum(categorized_expenses.values())
         
         # Calculate the savings rate based on user-provided income
         savings_rate = calculate_savings_rate(total_income, total_expenses)
 
-        # Create user context for GPT
+        # Create user context for GPT advice
         user_context = {
             "name": user_data.name,
             "income": total_income,
@@ -81,7 +83,6 @@ def generate_advice(user_data: UserData) -> (str, Dict[str, float]):
         Their priorities are {', '.join(user_context['priorities'])}. Provide them with personalized, friendly financial advice, including strategies for achieving their savings goal of ${user_context['savings_goal']:.2f}.
         """
 
-        # Call GPT for advice generation
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
@@ -92,10 +93,9 @@ def generate_advice(user_data: UserData) -> (str, Dict[str, float]):
             temperature=0.7
         )
 
-        # Extract the generated advice from GPT
         advice = response['choices'][0]['message']['content'].strip()
 
-        # Return the advice and the financial data for charting
+        # Prepare financial data for charting
         financial_data = {
             "total_income": total_income,
             "total_expenses": total_expenses,
