@@ -1,4 +1,5 @@
 import openai
+import matplotlib.pyplot as plt
 from typing import List, Dict
 from data_validation import UserData
 
@@ -107,3 +108,38 @@ def generate_advice(user_data: UserData) -> (str, Dict[str, float]):
 
     except Exception as e:
         raise Exception(f"Error generating financial advice: {str(e)}")
+
+# Plotting functions
+
+def plot_income_vs_expenses(income: float, expenses: float):
+    labels = ['Saved', 'Spent']
+    sizes = [income - expenses, expenses]
+    colors = ['#4CAF50', '#FF5722']
+    
+    fig, ax = plt.subplots()
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, colors=colors)
+    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    return fig
+
+def plot_categorized_expenses(expenses: Dict[str, float]):
+    labels = list(expenses.keys())
+    values = list(expenses.values())
+    
+    fig, ax = plt.subplots()
+    ax.bar(labels, values, color=['#2196F3', '#FFC107', '#FF5722', '#9C27B0'])
+    ax.set_ylabel('Amount ($)')
+    ax.set_title('Categorized Expenses')
+
+    return fig
+
+def plot_savings_goal_progress(income: float, expenses: float, savings_goal: float):
+    saved = income - expenses
+    progress = min(saved / savings_goal, 1.0)
+
+    fig, ax = plt.subplots()
+    ax.barh(['Savings Goal Progress'], [progress], color='#4CAF50')
+    ax.set_xlim([0, 1])
+    ax.set_xlabel('Progress (%)')
+
+    return fig
