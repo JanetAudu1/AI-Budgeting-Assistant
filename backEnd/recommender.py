@@ -1,10 +1,6 @@
 import os
-import quandl
 from typing import List, Dict
 from data_validation import UserData
-
-# Set Quandl API key
-quandl.ApiConfig.api_key = 'QUANDL_API_KEY'
 
 def categorize_expenses(description: str) -> str:
     categories = {
@@ -55,57 +51,46 @@ def calculate_savings_rate(total_income: float, total_expenses: float) -> float:
     savings_rate = (total_income - total_expenses) / total_income * 100
     return savings_rate
 
-def get_gdp_data():
-    """Fetches the latest U.S. GDP data from Quandl."""
+def generate_personalized_advice(user_data: UserData, sources: str) -> str:
     try:
-        gdp_data = quandl.get("FRED/GDP")
-        latest_gdp = gdp_data.tail(1).values[0][0]
-        return latest_gdp
-    except Exception as e:
-        return None
-
-def generate_advice(user_data: UserData, sources: str) -> str:
-    try:
-        # Fetch economic data from Quandl
-        latest_gdp = get_gdp_data()
-        
         # Unpack bank statement data
         total_income, total_expenses, categorized_expenses = parse_bank_statement(user_data.bank_statement)
 
         # Calculate savings rate
         savings_rate = calculate_savings_rate(total_income, total_expenses)
 
-        # Customize advice based on priorities
+        # Begin crafting advice
         advice = []
-        advice.append(f"Hi {user_data.name}, based on your financial data and the latest economic trends, here's what we suggest:")
+        advice.append(f"Hi {user_data.name}, here’s a snapshot of your current financial situation based on your recent bank statement:")
 
-        # Incorporate GDP data into the advice
-        if latest_gdp:
-            advice.append(f"- **Economic Outlook**: The latest U.S. GDP is {latest_gdp:.2f} trillion USD. This reflects the current economic growth, which could impact your investment strategies.")
+        # Income and Expense Overview
+        advice.append(f"- **Total Income**: You've earned ${total_income:.2f} this month.")
+        advice.append(f"- **Total Expenses**: You've spent ${total_expenses:.2f}, broken down as follows:")
+        for category, amount in categorized_expenses.items():
+            percentage = (amount / total_expenses) * 100 if total_expenses else 0
+            advice.append(f"  - {category.capitalize()}: ${amount:.2f} ({percentage:.2f}% of total expenses)")
 
-        # Savings Advice
+        # Savings Rate
+        advice.append(f"- **Savings Rate**: You're saving {savings_rate:.2f}% of your income.")
+        
+        # Savings Goal Calculation
         if "savings" in user_data.priorities:
-            advice.append(f"- **Savings**: You're currently saving {savings_rate:.2f}% of your income. To reach your goal of saving ${user_data.savings_goal}, consider cutting back on discretionary expenses by ${0.1 * total_income:.2f} per month.")
+            amount_needed = user_data.savings_goal - (total_income - total_expenses)
+            monthly_savings_goal = amount_needed / 12  # Assuming an annual goal
+            advice.append(f"- **Savings Goal**: You need to save ${monthly_savings_goal:.2f} per month to reach your goal of saving ${user_data.savings_goal:.2f} in the next year.")
         
         # Investment Advice
         if "investments" in user_data.priorities:
-            investment_amount = 0.2 * user_data.current_savings
-            advice.append(f"- **Investments**: Consider investing ${investment_amount:.2f} of your savings into low-risk index funds, which could grow to ${investment_amount * 1.5:.2f} over the next 5 years based on average returns.")
+            recommended_investment = 0.2 * (total_income - total_expenses)
+            advice.append(f"- **Investment Suggestion**: Based on your current savings, you could invest ${recommended_investment:.2f} this month into low-risk options like index funds.")
 
-        # Debt Repayment Advice
+        # Debt Repayment Suggestion
         if "debt repayment" in user_data.priorities:
-            debt_repayment = 0.3 * user_data.current_income
-            advice.append(f"- **Debt Repayment**: Prioritize paying down high-interest debt. If you allocate ${debt_repayment:.2f} per month, you could save ${debt_repayment * 0.15:.2f} in interest over the next year.")
+            debt_repayment_amount = 0.3 * total_income
+            advice.append(f"- **Debt Repayment**: To reduce high-interest debt, allocate ${debt_repayment_amount:.2f} per month. Over a year, this could save you around ${debt_repayment_amount * 0.15:.2f} in interest.")
 
-        # Location-Based Adjustments
-        advice.append(f"Since you're living in {user_data.address}, where the cost of living index is X, it’s important to budget accordingly. Make sure your budget reflects these higher costs.")
+        advice.append(f"\nKeep up the good work! Making these small adjustments can help you meet your financial goals faster. Feel free to revisit your priorities each month to see how you're progressing.")
 
-        # Add more personalized advice based on additional priorities
-        if "retirement" in user_data.priorities:
-            advice.append(f"- **Retirement**: Based on your age ({user_data.age}), it's a great time to start or continue contributing to your retirement savings. Consider contributing to a 401(k) or IRA if you haven't already.")
-
-        advice.append(f"\nKeep these strategies in mind as you work towards your financial goals. Every small step adds up!")
-        
         return "\n".join(advice)
 
     except Exception as e:
