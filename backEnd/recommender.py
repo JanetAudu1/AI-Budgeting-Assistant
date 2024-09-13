@@ -72,27 +72,29 @@ def generate_advice(user_data: UserData, sources: str) -> str:
 
         # Savings Rate
         advice.append(f"- **Savings Rate**: You're saving {savings_rate:.2f}% of your income.")
-        
-        # Savings Goal Calculation
+
+        # More personalized insights based on user priorities
         if "savings" in user_data.priorities:
             amount_needed = user_data.savings_goal - (total_income - total_expenses)
-            monthly_savings_goal = amount_needed / 12  # Assuming an annual goal
-            advice.append(f"- **Savings Goal**: You need to save ${monthly_savings_goal:.2f} per month to reach your goal of saving ${user_data.savings_goal:.2f} in the next year.")
+            months_to_goal = amount_needed / (total_income - total_expenses) if total_income - total_expenses > 0 else 0
+            advice.append(f"- **Savings Goal**: To meet your goal of ${user_data.savings_goal:.2f}, you need to save an additional ${amount_needed:.2f} over the next {months_to_goal:.2f} months.")
         
-        # Investment Advice
         if "investments" in user_data.priorities:
             recommended_investment = 0.2 * (total_income - total_expenses)
-            advice.append(f"- **Investment Suggestion**: Based on your current savings, you could invest ${recommended_investment:.2f} this month into low-risk options like index funds.")
+            advice.append(f"- **Investment Suggestion**: Based on your current savings, consider investing ${recommended_investment:.2f} this month into low-risk index funds for long-term growth.")
 
-        # Debt Repayment Suggestion
         if "debt repayment" in user_data.priorities:
             debt_repayment_amount = 0.3 * total_income
-            advice.append(f"- **Debt Repayment**: To reduce high-interest debt, allocate ${debt_repayment_amount:.2f} per month. Over a year, this could save you around ${debt_repayment_amount * 0.15:.2f} in interest.")
+            advice.append(f"- **Debt Repayment**: Allocate ${debt_repayment_amount:.2f} per month towards high-interest debt. Over a year, this could save you ${debt_repayment_amount * 0.15:.2f} in interest.")
 
-        advice.append(f"\nKeep up the good work! Making these small adjustments can help you meet your financial goals faster. Feel free to revisit your priorities each month to see how you're progressing.")
+        # Tips for optimizing expenses
+        if "optimize expenses" in user_data.priorities:
+            discretionary_percentage = (categorized_expenses['discretionary'] / total_income) * 100
+            advice.append(f"- **Discretionary Spending**: You're spending {discretionary_percentage:.2f}% of your income on non-essential expenses. Consider reducing this by 10% to save an additional ${categorized_expenses['discretionary'] * 0.10:.2f} per month.")
+
+        advice.append(f"\nKeep up the good work! Making these small adjustments can help you meet your financial goals faster. Revisit your priorities next month to track your progress.")
 
         return "\n".join(advice)
 
     except Exception as e:
         raise Exception(f"Error generating financial advice: {str(e)}")
-
