@@ -51,7 +51,7 @@ def calculate_savings_rate(total_income: float, total_expenses: float) -> float:
     savings_rate = (total_income - total_expenses) / total_income * 100
     return savings_rate
 
-def generate_personalized_advice(user_data: UserData, sources: str) -> str:
+def generate_advice(user_data: UserData, sources: str) -> str:
     try:
         # Unpack bank statement data
         total_income, total_expenses, categorized_expenses = parse_bank_statement(user_data.bank_statement)
