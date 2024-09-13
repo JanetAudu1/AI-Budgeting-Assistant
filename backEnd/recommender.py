@@ -1,4 +1,4 @@
-import os
+import openai
 from typing import List, Dict
 from data_validation import UserData
 
@@ -28,12 +28,10 @@ def parse_bank_statement(bank_statement: str) -> (float, float, Dict[str, float]
                 description = parts[1]
                 amount_str = parts[2]
                 
-                # Check if the amount_str is not empty
                 if amount_str:
                     try:
                         amount = float(amount_str.replace('+', '').replace('-', '').replace(',', ''))
                     except ValueError:
-                        # Skip lines where the amount cannot be converted to float
                         continue
 
                     category = categorize_expenses(description)
@@ -51,50 +49,47 @@ def calculate_savings_rate(total_income: float, total_expenses: float) -> float:
     savings_rate = (total_income - total_expenses) / total_income * 100
     return savings_rate
 
-def generate_advice(user_data: UserData, sources: str) -> str:
+def generate_advice(user_data: UserData) -> str:
     try:
-        # Unpack bank statement data
+        # Parse bank statement and calculate metrics
         total_income, total_expenses, categorized_expenses = parse_bank_statement(user_data.bank_statement)
-
-        # Calculate savings rate
         savings_rate = calculate_savings_rate(total_income, total_expenses)
 
-        # Begin crafting advice
-        advice = []
-        advice.append(f"Hi {user_data.name}, here’s a snapshot of your current financial situation based on your recent bank statement:")
+        # User data to provide to GPT for context
+        user_context = {
+            "name": user_data.name,
+            "income": total_income,
+            "expenses": total_expenses,
+            "savings_rate": savings_rate,
+            "goals": user_data.goals,
+            "timeline": user_data.timeline_months,
+            "priorities": user_data.priorities,
+            "savings_goal": user_data.savings_goal
+        }
 
-        # Income and Expense Overview
-        advice.append(f"- **Total Income**: You've earned ${total_income:.2f} this month.")
-        advice.append(f"- **Total Expenses**: You've spent ${total_expenses:.2f}, broken down as follows:")
-        for category, amount in categorized_expenses.items():
-            percentage = (amount / total_expenses) * 100 if total_expenses else 0
-            advice.append(f"  - {category.capitalize()}: ${amount:.2f} ({percentage:.2f}% of total expenses)")
+        # Construct GPT prompt
+        gpt_prompt = f"""
+        You are a friendly and knowledgeable financial advisor. Here’s the financial situation of {user_context['name']}:
+        - Total Income: ${user_context['income']:.2f}
+        - Total Expenses: ${user_context['expenses']:.2f}
+        - Savings Rate: {user_context['savings_rate']:.2f}%
+        {user_context['name']} has the following financial goals: {', '.join(user_context['goals'])}. 
+        The timeline to achieve these goals is {user_context['timeline']} months. 
+        Provide personalized and friendly financial advice on how to achieve these goals, including tips on optimizing expenses and reaching the savings goal of ${user_context['savings_goal']:.2f}.
+        """
 
-        # Savings Rate
-        advice.append(f"- **Savings Rate**: You're saving {savings_rate:.2f}% of your income.")
+        # Call GPT to generate advice
+        response = openai.Completion.create(
+            engine="gpt-4",
+            prompt=gpt_prompt,
+            max_tokens=300,
+            temperature=0.7
+        )
 
-        # More personalized insights based on user priorities
-        if "savings" in user_data.priorities:
-            amount_needed = user_data.savings_goal - (total_income - total_expenses)
-            months_to_goal = amount_needed / (total_income - total_expenses) if total_income - total_expenses > 0 else 0
-            advice.append(f"- **Savings Goal**: To meet your goal of ${user_data.savings_goal:.2f}, you need to save an additional ${amount_needed:.2f} over the next {months_to_goal:.2f} months.")
-        
-        if "investments" in user_data.priorities:
-            recommended_investment = 0.2 * (total_income - total_expenses)
-            advice.append(f"- **Investment Suggestion**: Based on your current savings, consider investing ${recommended_investment:.2f} this month into low-risk index funds for long-term growth.")
+        # Extract the generated advice
+        advice = response.choices[0].text.strip()
 
-        if "debt repayment" in user_data.priorities:
-            debt_repayment_amount = 0.3 * total_income
-            advice.append(f"- **Debt Repayment**: Allocate ${debt_repayment_amount:.2f} per month towards high-interest debt. Over a year, this could save you ${debt_repayment_amount * 0.15:.2f} in interest.")
-
-        # Tips for optimizing expenses
-        if "optimize expenses" in user_data.priorities:
-            discretionary_percentage = (categorized_expenses['discretionary'] / total_income) * 100
-            advice.append(f"- **Discretionary Spending**: You're spending {discretionary_percentage:.2f}% of your income on non-essential expenses. Consider reducing this by 10% to save an additional ${categorized_expenses['discretionary'] * 0.10:.2f} per month.")
-
-        advice.append(f"\nKeep up the good work! Making these small adjustments can help you meet your financial goals faster. Revisit your priorities next month to track your progress.")
-
-        return "\n".join(advice)
+        return advice
 
     except Exception as e:
         raise Exception(f"Error generating financial advice: {str(e)}")
