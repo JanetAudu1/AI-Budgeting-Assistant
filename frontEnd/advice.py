@@ -9,6 +9,9 @@ from recommender import generate_advice
 from data_validation import UserData
 
 def generate_advice_ui(inputs):
+    # Ensure 'savings_goal' is included in the inputs dictionary
+    savings_goal = inputs.get('savings_goal', 0.0)  # Default to 0.0 if not provided
+
     # Create the UserData object
     user_data = UserData(
         name=inputs['name'],
@@ -19,11 +22,12 @@ def generate_advice_ui(inputs):
         goals=[goal.strip() for goal in inputs['goals'].split(',')],
         timeline_months=inputs['timeline_months'],
         bank_statement=inputs['bank_statement'],
-        priorities=[priority.strip() for priority in inputs['priorities'].split(',')]
+        priorities=[priority.strip() for priority in inputs['priorities'].split(',')],
+        savings_goal=savings_goal 
     )
     
-    # Generate financial advice
-    advice = generate_advice(user_data, sources="Investopedia, NerdWallet, Financial Times, Bloomberg, The Wall Street Journal")
+    # Generate financial advice without sources
+    advice = generate_advice(user_data)
 
     # Replace newline characters with HTML line breaks before inserting into the f-string
     formatted_advice = advice.replace('\n', '<br>')
@@ -36,4 +40,3 @@ def generate_advice_ui(inputs):
         f"<div style='text-align: right; color: grey; font-size: 0.8em;'>Sources: Investopedia, NerdWallet, Financial Times, Bloomberg, The Wall Street Journal</div>", 
         unsafe_allow_html=True
     )
-
