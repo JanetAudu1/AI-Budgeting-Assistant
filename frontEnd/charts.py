@@ -6,22 +6,40 @@ from data_validation import UserData
 
 # Chart generation functions
 def generate_expense_chart(categorized_expenses):
-    if not categorized_expenses:
+    # Debugging step: Display raw data for inspection
+    st.write("Categorized Expenses Data:", categorized_expenses)
+
+    # Check if there are any expenses to display
+    if not categorized_expenses or all(value == 0 for value in categorized_expenses.values()):
         st.markdown("No expense data available.")
         return
 
-    st.markdown("### 📊 Breakdown of Monthly Expenses")
+    # Convert expenses data into labels and values for charting
     expense_labels = list(categorized_expenses.keys())
     expense_values = list(categorized_expenses.values())
 
-    if expense_values:
-        fig, ax = plt.subplots()
-        ax.barh(expense_labels, expense_values, color='#2C6E49')
-        ax.set_xlabel('Amount (USD)')
-        ax.set_title('Expenses by Category')
-        st.pyplot(fig)
+    # Check for non-numerical or None values and remove them
+    cleaned_labels = []
+    cleaned_values = []
+    for label, value in zip(expense_labels, expense_values):
+        if isinstance(value, (int, float)) and value > 0:  # Only keep positive numbers
+            cleaned_labels.append(label)
+            cleaned_values.append(value)
+
+    # Ensure we have data to display after cleaning
+    if not cleaned_values:
+        st.markdown("No valid expense data available.")
+        return
+
+    # Generate the horizontal bar chart
+    fig, ax = plt.subplots()
+    ax.barh(cleaned_labels, cleaned_values, color='#2C6E49')
+    ax.set_xlabel('Amount (USD)')
+    ax.set_title('Expenses by Category')
+    st.pyplot(fig)
 
 def generate_income_vs_expenses_chart(total_income, total_expenses):
+    # Check if income or expenses are valid
     if total_income is None or total_expenses is None:
         st.error("Income or expenses data is missing.")
         return
