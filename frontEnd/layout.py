@@ -21,8 +21,8 @@ def display_analysis_page(inputs):
     st.header("🔍 Financial Analysis")
 
     # Generate and display charts
-    generate_expense_chart(inputs['categorized_expenses'])
     generate_income_vs_expenses_chart(inputs['total_income'], inputs['total_expenses'])
+    generate_expense_chart(inputs['categorized_expenses'])
 
     # Generate and display financial advice
     generate_advice_ui(inputs)
