@@ -11,35 +11,56 @@ sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
 # Custom CSS for dark theme and professional styling
 st.markdown("""
     <style>
-    /* Main background and text colors */
+    /* General Background and Text Colors */
     .main {
-        background-color: #1E1E1E;  /* Dark background */
-        color: #ECECEC;  /* Light text color */
+        background-color: #1E1E1E;
+        color: #F0F0F0;
         font-family: 'Roboto', sans-serif;
     }
-    /* Sidebar background and text colors */
-    .css-1lcbmhc.e1fqkh3o2 {
-        background-color: #252525 !important;
+
+    /* Sidebar Styling */
+    .css-1d391kg {  /* This class applies to the sidebar */
+        background-color: #252525;
     }
-    .sidebar .sidebar-content {
-        background-color: #252525 !important;
-        color: #ECECEC !important;
+    .css-1d391kg .stRadio label, .css-1d391kg .stTitle {
+        color: #ECECEC;
     }
-    .sidebar .sidebar-content .stRadio {
-        color: #ECECEC !important;
+    .css-1d391kg .stTitle {
+        font-size: 18px;
+        font-weight: bold;
     }
-    /* Sidebar titles */
-    .css-1d391kg p {
-        color: #ECECEC !important;
+
+    /* Sidebar Button Styling */
+    .css-1d391kg .stButton button {
+        background-color: #3D9970;
+        color: white;
+        border-radius: 10px;
+        border: none;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
     }
-    /* Headings styles */
+    .css-1d391kg .stButton button:hover {
+        background-color: #2C6E49;
+    }
+
+    /* Sidebar input field styles */
+    .css-1d391kg .stTextInput input, .css-1d391kg .stNumberInput input, .css-1d391kg .stTextArea textarea {
+        background-color: #333;
+        color: white;
+        border: 1px solid #3D9970;
+    }
+    .css-1d391kg .stTextInput label, .css-1d391kg .stNumberInput label, .css-1d391kg .stTextArea label {
+        color: #B0B0B0;
+        font-weight: bold;
+    }
+
+    /* Main Content - Headings and Buttons */
     h1, h2, h3, h4, h5, h6 {
-        color: #F0F0F0;  /* Heading color */
+        color: #ECECEC;
         font-weight: 700;
     }
-    /* Buttons */
     .stButton>button {
-        background-color: #3D9970;  /* Button background */
+        background-color: #3D9970;
         color: white;
         border-radius: 10px;
         font-size: 16px;
@@ -49,18 +70,20 @@ st.markdown("""
     .stButton>button:hover {
         background-color: #2C6E49;
     }
-    /* Input fields */
+
+    /* Input Fields */
     .stTextInput>div>input, .stNumberInput>div>input, .stTextArea>div>textarea {
-        background-color: #333 !important;
-        color: white !important;
-        border: 1px solid #3D9970 !important;
+        background-color: #333;
+        color: white;
+        border: 1px solid #3D9970;
     }
     .stTextInput>label, .stNumberInput>label, .stTextArea>label {
         font-size: 16px;
         font-weight: bold;
-        color: #B0B0B0 !important;
+        color: #B0B0B0;
     }
-    /* Markdown (for advice content) */
+
+    /* Text for streamed advice */
     .streamed-advice {
         word-wrap: break-word;
         white-space: normal;
@@ -68,20 +91,19 @@ st.markdown("""
         color: #ECECEC;
         max-width: 800px;
     }
-    /* Links and hover states */
+
+    /* Links and Hover Effects */
     a {
         color: #3D9970;
     }
     a:hover {
         color: #2C6E49;
     }
-    /* Remove Streamlit footer */
+
+    /* Footer and Padding */
     footer {visibility: hidden;}
-    /* Main container padding */
-    .reportview-container .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
+    .reportview-container .main .block-container {padding-top: 2rem; padding-bottom: 2rem;}
+
     </style>
 """, unsafe_allow_html=True)
 
