@@ -1,10 +1,6 @@
-import sys
-from pathlib import Path
+import streamlit as st 
+from recommender import parse_bank_statement
 
-# Add the backEnd directory to the system path
-sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
-
-from recommender import parse_bank_statement 
 def handle_inputs():
     col1, col2 = st.columns(2)
     with col1:
@@ -46,8 +42,13 @@ def handle_inputs():
     st.session_state['debt_repayment_goal'] = debt_repayment_goal
 
     if st.button("Get Budgeting Advice"):
+        # Parse the bank statement to get categorized expenses
         categorized_expenses = parse_bank_statement(bank_statement)
+        
+        # Calculate total expenses
         total_expenses = sum(categorized_expenses.values())
+
+        # total_income is directly from the user input as current_income
         total_income = current_income
 
         inputs = {
@@ -63,9 +64,9 @@ def handle_inputs():
             "savings_goal": savings_goal,
             "current_debt": current_debt,
             "debt_repayment_goal": debt_repayment_goal,
-            "total_income": total_income,
-            "total_expenses": total_expenses,
-            "categorized_expenses": categorized_expenses,
+            "total_income": total_income,  # Use current_income as total_income
+            "total_expenses": total_expenses,  # Total expenses from categorized_expenses
+            "categorized_expenses": categorized_expenses,  # Add this line
         }
 
         return inputs
