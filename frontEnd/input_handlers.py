@@ -1,6 +1,12 @@
+import sys
+from pathlib import Path
+
+# Add the parent directory to sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+from backEnd.data_validation import UserData
 import streamlit as st
 import pandas as pd
-from backEnd.data_validation import UserData
 
 def handle_inputs():
     st.subheader("📝 Enter Your Financial Information")

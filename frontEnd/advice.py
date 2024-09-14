@@ -1,5 +1,11 @@
-from recommender import generate_advice_stream  # Import your streaming function
-from data_validation import UserData
+import sys
+from pathlib import Path
+
+# Add the parent directory to sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+from backEnd.recommender import generate_advice_stream
+from backEnd.data_validation import UserData
 import streamlit as st
 
 # Add custom CSS for text wrapping

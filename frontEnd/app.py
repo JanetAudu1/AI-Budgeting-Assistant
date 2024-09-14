@@ -1,12 +1,12 @@
-import streamlit as st
 import sys
 from pathlib import Path
-from input_handlers import handle_inputs
-from layout import display_home_page, display_analysis_page
-from advice import generate_advice_ui  # Delegate advice display to advice.py
-from data_validation import UserData
 
-sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
+# Add the parent directory to sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+from backEnd.data_validation import UserData
+import streamlit as st
+import pandas as pd
 
 # Custom CSS for styling (Import Roboto from Google Fonts)
 st.markdown("""
