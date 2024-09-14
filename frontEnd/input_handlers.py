@@ -42,8 +42,15 @@ def handle_inputs():
     st.session_state['debt_repayment_goal'] = debt_repayment_goal
 
     if st.button("Get Budgeting Advice"):
-        total_income, total_expenses, categorized_expenses = parse_bank_statement(bank_statement)
-       
+        # Parse the bank statement to get categorized expenses
+        categorized_expenses = parse_bank_statement(bank_statement)
+        
+        # Calculate total expenses
+        total_expenses = sum(categorized_expenses.values())
+
+        # total_income is directly from the user input as current_income
+        total_income = current_income
+
         inputs = {
             "name": name,
             "age": age,
@@ -57,12 +64,11 @@ def handle_inputs():
             "savings_goal": savings_goal,
             "current_debt": current_debt,
             "debt_repayment_goal": debt_repayment_goal,
-            "total_income": total_income,
-            "total_expenses": total_expenses,
+            "total_income": total_income,  # Use current_income as total_income
+            "total_expenses": total_expenses,  # Total expenses from categorized_expenses
             "categorized_expenses": categorized_expenses,  # Add this line
         }
 
         return inputs
 
     return None
-
