@@ -1,6 +1,18 @@
 import openai
+import os
 from typing import List, Dict
 from data_validation import UserData
+
+# Option 1: Set your OpenAI API key directly in the code (not recommended for production)
+# Uncomment the following line and replace with your API key
+# openai.api_key = "your-openai-api-key"
+
+# Option 2: Set your OpenAI API key as an environment variable
+# This is more secure and flexible. You can set the environment variable OPENAI_API_KEY in your OS.
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# If you prefer storing the key in a file, uncomment the following line and provide the file path
+# openai.api_key_path = "/path/to/your/api_key.txt"
 
 def categorize_expenses(description: str) -> str:
     categories = {
