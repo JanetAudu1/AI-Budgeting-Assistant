@@ -17,6 +17,10 @@ def categorize_expenses(description: str) -> str:
     return "discretionary"  # Default to discretionary if no match
 
 def parse_bank_statement(bank_statement: str) -> Dict[str, float]:
+    """
+    Parses the bank statement and categorizes the expenses.
+    Returns a dictionary where keys are categories and values are the total amounts spent.
+    """
     lines = bank_statement.strip().splitlines()
     categorized_expenses = {"rent": 0, "utilities": 0, "groceries": 0, "discretionary": 0}
 
@@ -27,14 +31,16 @@ def parse_bank_statement(bank_statement: str) -> Dict[str, float]:
                 description = parts[1]
                 amount_str = parts[2]
                 
+                # Convert amount_str to a float
                 if amount_str:
                     try:
                         amount = float(amount_str.replace('+', '').replace('-', '').replace(',', ''))
                     except ValueError:
                         continue
 
+                    # Categorize the expenses based on the description
                     category = categorize_expenses(description)
-                    if amount_str.startswith('-'):
+                    if amount_str.startswith('-'):  # Only count the expenses
                         categorized_expenses[category] += amount
 
     return categorized_expenses
@@ -123,6 +129,9 @@ def plot_income_vs_expenses(income: float, expenses: float):
     return fig
 
 def plot_categorized_expenses(expenses: Dict[str, float]):
+    """
+    Plots the categorized expenses as a bar chart.
+    """
     labels = list(expenses.keys())
     values = list(expenses.values())
     
@@ -135,11 +144,4 @@ def plot_categorized_expenses(expenses: Dict[str, float]):
 
 def plot_savings_goal_progress(income: float, expenses: float, savings_goal: float):
     saved = income - expenses
-    progress = min(saved / savings_goal, 1.0)
-
-    fig, ax = plt.subplots()
-    ax.barh(['Savings Goal Progress'], [progress], color='#4CAF50')
-    ax.set_xlim([0, 1])
-    ax.set_xlabel('Progress (%)')
-
-    return fig
+    progress = min(saved / savings_goal,
