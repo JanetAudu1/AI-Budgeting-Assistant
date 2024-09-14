@@ -6,6 +6,10 @@ from data_validation import UserData
 
 # Chart generation functions
 def generate_expense_chart(categorized_expenses):
+    if not categorized_expenses:
+        st.markdown("No expense data available.")
+        return
+
     st.markdown("### 📊 Breakdown of Monthly Expenses")
     expense_labels = list(categorized_expenses.keys())
     expense_values = list(categorized_expenses.values())
@@ -18,6 +22,10 @@ def generate_expense_chart(categorized_expenses):
         st.pyplot(fig)
 
 def generate_income_vs_expenses_chart(total_income, total_expenses):
+    if total_income is None or total_expenses is None:
+        st.error("Income or expenses data is missing.")
+        return
+
     st.markdown("### 💰 Income vs. Expenses")
     bar_data = pd.DataFrame({
         'Category': ['Income', 'Expenses'],
