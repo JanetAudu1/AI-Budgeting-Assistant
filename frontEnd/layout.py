@@ -18,8 +18,6 @@ def display_home_page():
     """)
 
 def display_analysis_page(inputs):
-    st.header("🔍 Financial Analysis")
-
     # Check if required inputs are present before rendering charts
     try:
         categorized_expenses = inputs.get('categorized_expenses')
