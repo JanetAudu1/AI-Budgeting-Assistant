@@ -61,5 +61,5 @@ elif options == "Financial Analysis":
             complete_advice += advice_chunk
             advice_placeholder.markdown(f"<div>{complete_advice}</div>", unsafe_allow_html=True)
 
-        # After streaming completes, update with the final advice
+        # Display completion message without re-displaying the advice
         st.markdown("### ✅ Advice generation complete!")
