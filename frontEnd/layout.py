@@ -26,4 +26,3 @@ def display_analysis_page(inputs):
 
     # Generate and display financial advice
     generate_advice_ui(inputs)
-
