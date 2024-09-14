@@ -1,4 +1,4 @@
-from recommender import generate_advice_stream
+from recommender import generate_advice_stream  # Import your streaming function
 from data_validation import UserData
 import streamlit as st
 
@@ -17,19 +17,19 @@ def generate_advice_ui(inputs):
         savings_goal=inputs['savings_goal']
     )
 
-    # Create a placeholder to stream advice
+    # Create a progress bar and a placeholder for streaming advice
+    progress_bar = st.progress(0)
     advice_placeholder = st.empty()
-
-    # Initialize an empty string to store the complete advice
     complete_advice = ""
 
-    # Stream the advice from the GPT-4 API
-    for chunk in generate_advice_stream(user_data):
-        # Accumulate advice chunks
+    # Stream the advice
+    for i, chunk in enumerate(generate_advice_stream(user_data)):
         complete_advice += chunk
-        # Update the advice_placeholder with the streamed content
-        advice_placeholder.text(complete_advice)
+        advice_placeholder.text(complete_advice)  # Update the advice on the page
 
-    # Return complete advice or financial data as needed (if applicable)
-    # If you still need to return the financial data separately:
-    return complete_advice
+        # Update the progress bar (assuming 10 chunks for demonstration)
+        progress_bar.progress(min((i + 1) * 10, 100))  # Ensure progress maxes out at 100%
+
+    # Once streaming is complete, remove the progress bar and show a completion message
+    progress_bar.empty()
+    st.markdown("### ✅ Advice generation complete!")
