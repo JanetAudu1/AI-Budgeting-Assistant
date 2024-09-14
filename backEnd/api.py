@@ -17,7 +17,7 @@ def get_advice(user_data: UserData):
         sources = get_sources()
         logger.info(f"Fetching financial advice for {user_data.name} using sources: {sources}")
 
-        advice = generate_advice(user_data, sources)
+        advice = generate_advice_stream(user_data, sources)
 
         return {"advice": advice}
 
