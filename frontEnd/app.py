@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 from input_handlers import handle_inputs
 from layout import display_home_page, display_analysis_page
-from recommender import generate_advice_stream
+from advice import generate_advice_ui  # Delegate advice display to advice.py
 from data_validation import UserData
 
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
@@ -34,32 +34,6 @@ elif options == "Financial Analysis":
         # Generate Financial Analysis and Advice
         st.header("🔍 Financial Analysis")
         display_analysis_page(inputs)
-        
-        # Create UserData object
-        user_data = UserData(
-            name=inputs['name'],
-            age=inputs['age'],
-            address=inputs['address'],
-            current_income=inputs['current_income'],
-            current_savings=inputs['current_savings'],
-            goals=[goal.strip() for goal in inputs['goals'].split(',')],
-            timeline_months=inputs['timeline_months'],
-            bank_statement=inputs['bank_statement'],
-            priorities=[priority.strip() for priority in inputs['priorities'].split(',')],
-            savings_goal=inputs['savings_goal']
-        )
 
-        # Placeholder for streaming output
-        advice_placeholder = st.empty()
-        complete_advice = ""
-
-        # Initial placeholder message (that will be replaced by streamed content)
-        advice_placeholder.text("Generating Financial Advice...")
-
-        # Stream the GPT response and update the UI dynamically
-        for advice_chunk in generate_advice_stream(user_data):
-            complete_advice += advice_chunk
-            advice_placeholder.markdown(f"<div>{complete_advice}</div>", unsafe_allow_html=True)
-
-        # Display completion message without re-displaying the advice
-        st.markdown("### ✅ Advice generation complete!")
+        # Delegate to advice.py to generate and stream advice
+        generate_advice_ui(inputs)
