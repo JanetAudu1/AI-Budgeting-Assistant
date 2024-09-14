@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 from input_handlers import handle_inputs
 from layout import display_home_page, display_analysis_page
-from advice import generate_advice_ui  # Delegate advice display to advice.py
+from advice import generate_advice_ui  
 from data_validation import UserData
 
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
@@ -95,7 +95,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Sidebar for navigation
 st.sidebar.title("📊 Navigation")
 options = st.sidebar.radio("Select a Section:", ["Home", "Financial Analysis"])
 
@@ -109,5 +108,4 @@ elif options == "Financial Analysis":
         st.header("🔍 Financial Analysis")
         display_analysis_page(inputs)
 
-        # Delegate to advice.py to generate and stream advice
         generate_advice_ui(inputs)
