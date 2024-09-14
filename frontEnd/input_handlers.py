@@ -1,5 +1,10 @@
-import streamlit as st
-from recommender import parse_bank_statement
+import sys
+from pathlib import Path
+
+# Add the backEnd directory to the system path
+sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
+
+from recommender import parse_bank_statement  # Now this should be imported correctly
 
 def handle_inputs():
     col1, col2 = st.columns(2)
