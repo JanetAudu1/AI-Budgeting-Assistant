@@ -6,8 +6,7 @@ from data_validation import UserData
 
 # Chart generation functions
 def generate_expense_chart(categorized_expenses):
-    # Debugging step: Display raw data for inspection
-    st.write("Categorized Expenses Data:", categorized_expenses)
+    st.write("Categorized Expenses Data:", categorized_expenses)  # Debugging step
 
     # Check if there are any expenses to display
     if not categorized_expenses or all(value == 0 for value in categorized_expenses.values()):
@@ -50,6 +49,48 @@ def generate_income_vs_expenses_chart(total_income, total_expenses):
         'Amount': [total_income, total_expenses]
     })
     st.bar_chart(bar_data.set_index('Category'))
+
+# Bank statement parsing function with debugging steps
+def parse_bank_statement(bank_statement: str) -> Dict[str, float]:
+    """
+    Parses the bank statement and categorizes the expenses.
+    Returns a dictionary where keys are categories and values are the total amounts spent.
+    """
+    st.write("Raw Bank Statement Input:", bank_statement)  # Debugging step
+
+    lines = bank_statement.strip().splitlines()
+    categorized_expenses = {"rent": 0, "utilities": 0, "groceries": 0, "discretionary": 0}
+
+    for line in lines:
+        if '|' in line and 'Date' not in line:  # Ensure line contains valid data
+            parts = [part.strip() for part in line.split('|')]
+            st.write("Parsed Line:", parts)  # Debugging step
+
+            if len(parts) >= 3:
+                description = parts[1]
+                amount_str = parts[2]
+
+                # Convert amount_str to a float and handle both positive and negative amounts
+                if amount_str:
+                    try:
+                        amount = float(amount_str.replace('+', '').replace('-', '').replace(',', ''))
+                        # Add back the negative sign for expenses
+                        if '-' in amount_str:
+                            amount = -amount
+                    except ValueError:
+                        st.write(f"Error parsing amount: {amount_str}")
+                        continue
+
+                    # Categorize the expenses based on the description
+                    category = categorize_expenses(description)
+                    st.write(f"Category: {category}, Amount: {amount}")  # Debugging step
+
+                    # Only count expenses (negative values)
+                    if amount < 0:
+                        categorized_expenses[category] += -amount
+
+    st.write("Final Categorized Expenses:", categorized_expenses)  # Debugging step
+    return categorized_expenses
 
 # Welcome message and navigation setup
 st.sidebar.title("Navigation")
