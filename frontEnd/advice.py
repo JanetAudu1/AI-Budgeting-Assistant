@@ -33,15 +33,15 @@ def generate_advice_ui(inputs):
     progress_bar = st.progress(0)
     advice_placeholder = st.empty()
 
-    # Initially show a "Generating Financial Advice..." message
-    advice_placeholder.markdown("<div class='streamed-advice'>Generating Financial Advice...</div>", unsafe_allow_html=True)
+    # Initial message shown while advice is being generated
+    advice_placeholder.text("Generating Financial Advice...")
 
     complete_advice = ""
 
     # Stream the advice
     for i, chunk in enumerate(generate_advice_stream(user_data)):
         complete_advice += chunk
-        # Update the advice in the placeholder with wrapped text
+        # Update the advice in the placeholder with wrapped text (replacing the "Generating Financial Advice..." message)
         advice_placeholder.markdown(f"<div class='streamed-advice'>{complete_advice}</div>", unsafe_allow_html=True)
 
         # Update the progress bar (assuming 10 chunks for demonstration)
@@ -50,8 +50,9 @@ def generate_advice_ui(inputs):
     # Once streaming is complete, remove the progress bar
     progress_bar.empty()
 
-    # Show the final complete advice in a nicely wrapped format
+    # Ensure only the final complete advice is shown (replace the "Generating Financial Advice..." message)
     advice_placeholder.markdown(f"<div class='streamed-advice'>{complete_advice}</div>", unsafe_allow_html=True)
 
     # Show a completion message
     st.markdown("### ✅ Advice generation complete!")
+
