@@ -1,7 +1,7 @@
 import openai
 import os
 from typing import List, Dict
-from data_validation import UserData  # Change this line back to absolute import
+from backEnd.data_validation import UserData
 
 # Set your OpenAI API key from environment variable
 api_key = os.getenv("OPENAI_API_KEY")

@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 
 # Add the parent directory to sys.path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
 
 from backEnd.data_validation import UserData
 import streamlit as st
