@@ -4,8 +4,7 @@ from pathlib import Path
 # Add the backEnd directory to the system path
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
 
-from recommender import parse_bank_statement  # Now this should be imported correctly
-
+from recommender import parse_bank_statement 
 def handle_inputs():
     col1, col2 = st.columns(2)
     with col1:
