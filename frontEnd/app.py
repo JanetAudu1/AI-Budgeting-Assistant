@@ -28,6 +28,7 @@ options = st.sidebar.radio("Select a Section:", ["Home", "Financial Analysis"])
 
 if options == "Home":
     display_home_page()
+
 elif options == "Financial Analysis":
     inputs = handle_inputs()
     if inputs:
