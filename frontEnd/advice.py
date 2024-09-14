@@ -28,10 +28,10 @@ def generate_advice_ui(inputs: UserData):
         address=inputs.address,
         current_income=inputs.current_income,
         current_savings=inputs.current_savings,
-        goals=[goal.strip() for goal in inputs.goals.split(',')],
+        goals=inputs.goals,  # Assuming goals is already a list
         timeline_months=inputs.timeline_months,
-        bank_statement=inputs.bank_statement,
-        priorities=[priority.strip() for priority in inputs.priorities.split(',')],
+        bank_statement=inputs.bank_statement,  # This is a DataFrame, no need to process it
+        priorities=inputs.priorities,  # Assuming priorities is already a list
         savings_goal=inputs.savings_goal
     )
 
@@ -42,26 +42,14 @@ def generate_advice_ui(inputs: UserData):
     # Initial placeholder message (that will be replaced by streamed content)
     advice_placeholder.text("Generating Financial Advice...")
 
-    # # Generate advice based on user data
-    # advice = generate_financial_advice(
-    #     name=inputs.name,
-    #     age=inputs.age,
-    #     address=inputs.address,
-    #     current_income=inputs.current_income,
-    #     current_savings=inputs.current_savings,
-    #     goals=inputs.goals,
-    #     timeline_months=inputs.timeline_months,
-    #     bank_statement=inputs.bank_statement,
-    #     priorities=inputs.priorities,
-    #     savings_goal=inputs.savings_goal
-    # )
+    try:
+        # Stream the GPT response and update the UI dynamically
+        for advice_chunk in generate_advice_stream(user_data):
+            complete_advice += advice_chunk
+            advice_placeholder.markdown(f"<div class='streamed-advice'>{complete_advice}</div>", unsafe_allow_html=True)
+    except Exception as e:
+        st.error(f"Error generating advice: {str(e)}")
+        st.exception(e)
 
-    # Note: You might want to use this 'advice' variable somewhere if you keep this code
-
-    # Stream the GPT response and update the UI dynamically
-    for advice_chunk in generate_advice_stream(user_data):
-        complete_advice += advice_chunk
-        advice_placeholder.markdown(f"<div class='streamed-advice'>{complete_advice}</div>", unsafe_allow_html=True)
-
-    # Once streaming completes, replace with final advice
-    st.markdown("### ✅ Advice generation complete!")
+    if not complete_advice:
+        st.warning("No advice was generated. Please check your inputs and try again.")

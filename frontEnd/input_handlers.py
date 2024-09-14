@@ -38,10 +38,10 @@ def handle_inputs():
             address=address,
             current_income=current_income,
             current_savings=current_savings,
-            goals=[goal.strip() for goal in goals.split(',')],
+            goals=[goal.strip() for goal in goals.split(',') if goal.strip()],
             timeline_months=timeline_months,
             bank_statement=df,
-            priorities=[priority.strip() for priority in priorities.split(',')],
+            priorities=[priority.strip() for priority in priorities.split(',') if priority.strip()],
             savings_goal=savings_goal
         )
         return user_data
