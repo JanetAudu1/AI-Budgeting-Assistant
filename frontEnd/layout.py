@@ -34,9 +34,3 @@ def display_analysis_page(inputs):
     
     except Exception as e:
         st.error(f"Error displaying analysis: {str(e)}")
-
-    # Generate and display financial advice
-    try:
-        generate_advice_ui(inputs)
-    except Exception as e:
-        st.error(f"Error generating advice: {str(e)}")
