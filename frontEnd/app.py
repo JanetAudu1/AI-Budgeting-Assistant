@@ -3,19 +3,22 @@ import sys
 from pathlib import Path
 from input_handlers import handle_inputs
 from layout import display_home_page, display_analysis_page
-from advice import generate_advice_ui  
+from advice import generate_advice_ui  # Delegate advice display to advice.py
 from data_validation import UserData
 
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
 
-# Custom CSS for further dark theme customization
+# Custom CSS for styling (Import Roboto from Google Fonts)
 st.markdown("""
     <style>
+    /* Import Roboto Font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
     /* General Background and Text Colors for Main Content */
     .main {
         background-color: #1E1E1E;
         color: #ECECEC;
-        font-family: 'Roboto', sans-serif;
+        font-family: 'Roboto', sans-serif;  /* Use Roboto */
     }
 
     /* Sidebar Styling */
@@ -30,12 +33,14 @@ st.markdown("""
         background-color: #333;
         color: white;
         border: 1px solid #3D9970;
+        font-family: 'Roboto', sans-serif;  /* Apply Roboto */
     }
 
     .css-1d391kg .stTextInput label, .css-1d391kg .stNumberInput label, .css-1d391kg .stTextArea label,
     .css-18e3th9 .stTextInput label, .css-18e3th9 .stNumberInput label, .css-18e3th9 .stTextArea label {
         color: #B0B0B0;
         font-weight: bold;
+        font-family: 'Roboto', sans-serif;
     }
 
     /* Buttons */
@@ -46,6 +51,7 @@ st.markdown("""
         font-size: 16px;
         border: none;
         transition: background-color 0.3s ease;
+        font-family: 'Roboto', sans-serif;  /* Apply Roboto */
     }
 
     .stButton>button:hover, .css-1d391kg .stButton>button:hover, .css-18e3th9 .stButton>button:hover {
@@ -56,6 +62,7 @@ st.markdown("""
     h1, h2, h3, h4, h5, h6 {
         color: #ECECEC;
         font-weight: 700;
+        font-family: 'Roboto', sans-serif;  /* Apply Roboto */
     }
 
     /* Input Fields */
@@ -63,6 +70,7 @@ st.markdown("""
         background-color: #333;
         color: white;
         border: 1px solid #3D9970;
+        font-family: 'Roboto', sans-serif;
     }
 
     .stTextInput>label, .stNumberInput>label, .stTextArea>label {
@@ -95,6 +103,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Sidebar for navigation
 st.sidebar.title("📊 Navigation")
 options = st.sidebar.radio("Select a Section:", ["Home", "Financial Analysis"])
 
@@ -108,4 +117,5 @@ elif options == "Financial Analysis":
         st.header("🔍 Financial Analysis")
         display_analysis_page(inputs)
 
+        # Delegate to advice.py to generate and stream advice
         generate_advice_ui(inputs)
