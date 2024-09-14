@@ -1,6 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
+from typing import Dict  # Fix: import Dict from typing
 from recommender import generate_advice
 from data_validation import UserData
 
