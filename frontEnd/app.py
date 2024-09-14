@@ -6,8 +6,10 @@ from layout import display_home_page, display_analysis_page
 from recommender import generate_advice_stream
 from data_validation import UserData
 
-# Add the backEnd directory to the system path
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
+
+from input_handlers import handle_inputs 
+
 
 # Custom CSS for styling
 st.markdown("""
