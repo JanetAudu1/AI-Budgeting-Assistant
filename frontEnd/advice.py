@@ -20,19 +20,19 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-def generate_advice_ui(inputs):
+def generate_advice_ui(inputs: UserData):
     # Create the UserData object
     user_data = UserData(
-        name=inputs['name'],
-        age=inputs['age'],
-        address=inputs['address'],
-        current_income=inputs['current_income'],
-        current_savings=inputs['current_savings'],
-        goals=[goal.strip() for goal in inputs['goals'].split(',')],
-        timeline_months=inputs['timeline_months'],
-        bank_statement=inputs['bank_statement'],
-        priorities=[priority.strip() for priority in inputs['priorities'].split(',')],
-        savings_goal=inputs['savings_goal']
+        name=inputs.name,
+        age=inputs.age,
+        address=inputs.address,
+        current_income=inputs.current_income,
+        current_savings=inputs.current_savings,
+        goals=[goal.strip() for goal in inputs.goals.split(',')],
+        timeline_months=inputs.timeline_months,
+        bank_statement=inputs.bank_statement,
+        priorities=[priority.strip() for priority in inputs.priorities.split(',')],
+        savings_goal=inputs.savings_goal
     )
 
     # Placeholder for streaming output
@@ -41,6 +41,22 @@ def generate_advice_ui(inputs):
 
     # Initial placeholder message (that will be replaced by streamed content)
     advice_placeholder.text("Generating Financial Advice...")
+
+    # # Generate advice based on user data
+    # advice = generate_financial_advice(
+    #     name=inputs.name,
+    #     age=inputs.age,
+    #     address=inputs.address,
+    #     current_income=inputs.current_income,
+    #     current_savings=inputs.current_savings,
+    #     goals=inputs.goals,
+    #     timeline_months=inputs.timeline_months,
+    #     bank_statement=inputs.bank_statement,
+    #     priorities=inputs.priorities,
+    #     savings_goal=inputs.savings_goal
+    # )
+
+    # Note: You might want to use this 'advice' variable somewhere if you keep this code
 
     # Stream the GPT response and update the UI dynamically
     for advice_chunk in generate_advice_stream(user_data):
