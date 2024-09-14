@@ -79,14 +79,15 @@ def generate_advice(user_data: UserData) -> (str, Dict[str, float]):
             "location": user_data.address
         }
 
-        # Construct GPT prompt for advice
+        # Construct GPT prompt for chat completion
         gpt_prompt = f"""
-        You are a financial advisor. Here is the financial information for {user_context['name']}:
-        - Income: ${user_context['income']:.2f}
-        - Expenses: ${user_context['expenses']:.2f}
+        You are a friendly and knowledgeable financial advisor. Here’s the financial situation of {user_context['name']}:
+        - Total Income: ${user_context['income']:.2f}
+        - Total Expenses: ${user_context['expenses']:.2f}
         - Savings Rate: {user_context['savings_rate']:.2f}%
-        They are {user_context['age']} years old and live in {user_context['location']}. Their goals include {', '.join(user_context['goals'])}.
-        Their priorities are {', '.join(user_context['priorities'])}. Provide them with personalized, friendly financial advice, including strategies for achieving their savings goal of ${user_context['savings_goal']:.2f}.
+        {user_context['name']} has the following financial goals: {', '.join(user_context['goals'])}. 
+        The timeline to achieve these goals is {user_context['timeline']} months. 
+        Provide personalized and friendly financial advice on how to achieve these goals, including tips on optimizing expenses and reaching the savings goal of ${user_context['savings_goal']:.2f}.
         """
 
         response = openai.ChatCompletion.create(
@@ -144,4 +145,14 @@ def plot_categorized_expenses(expenses: Dict[str, float]):
 
 def plot_savings_goal_progress(income: float, expenses: float, savings_goal: float):
     saved = income - expenses
-    progress = min(saved / savings_goal,
+    if savings_goal > 0:
+        progress = min(saved / savings_goal, 1.0)  # Ensure progress is capped at 100%
+    else:
+        progress = 0  # If no savings goal, progress is 0
+
+    fig, ax = plt.subplots()
+    ax.barh(['Savings Goal Progress'], [progress], color='#4CAF50')
+    ax.set_xlim([0, 1])  # Set the range from 0 to 1 (0% to 100%)
+    ax.set_xlabel('Progress (%)')
+
+    return fig
