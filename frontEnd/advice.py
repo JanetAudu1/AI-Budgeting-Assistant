@@ -21,7 +21,7 @@ def generate_advice_ui(inputs):
     )
     
     # Generate financial advice
-    advice, financial_data = generate_advice(user_data)
+    advice, financial_data = generate_advice_stream(user_data)
 
     # Replace newline characters with HTML line breaks before inserting into the f-string
     formatted_advice = advice.replace('\n', '<br>')
