@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends
-from recommender import generate_advice
+from recommender import generate_advice_stream 
 from data_validation import UserData
 from config import get_sources
 import logging
