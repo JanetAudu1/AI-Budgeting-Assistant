@@ -1,5 +1,4 @@
 import openai
-import matplotlib.pyplot as plt
 from typing import List, Dict
 from data_validation import UserData
 
@@ -79,17 +78,26 @@ def generate_advice(user_data: UserData) -> (str, Dict[str, float]):
             "location": user_data.address
         }
 
-        # Construct GPT prompt for chat completion
-        gpt_prompt = f"""
-        You are a friendly and knowledgeable financial advisor. Here’s the financial situation of {user_context['name']}:
-        - Total Income: ${user_context['income']:.2f}
-        - Total Expenses: ${user_context['expenses']:.2f}
-        - Savings Rate: {user_context['savings_rate']:.2f}%
-        {user_context['name']} has the following financial goals: {', '.join(user_context['goals'])}. 
-        The timeline to achieve these goals is {user_context['timeline']} months. 
-        Provide personalized and friendly financial advice on how to achieve these goals, including tips on optimizing expenses and reaching the savings goal of ${user_context['savings_goal']:.2f}.
-        """
+        # Construct GPT prompt for chat completion (without the sequential steps)
+        gpt_prompt = (
+            "You are a knowledgeable financial advisor AI Chatbot called 'SmartBudget AI' specializing in personalized financial planning. "
+            "Your expertise lies in thoroughly analyzing the user's financial data, including their income, expenses, savings goals, and priorities, to offer personalized, actionable advice on how to achieve financial success. "
+            "You are tasked with providing the user with financial advice based on the financial details they have provided in the system content. "
+            "Your responses should only focus on financial-related inquiries. Please address the user by name where appropriate. "
+            "Here are the details provided by the user:\n"
+            f"Name: {user_context['name']}\n"
+            f"Income: ${user_context['income']:.2f}\n"
+            f"Expenses: ${user_context['expenses']:.2f}\n"
+            f"Savings Rate: {user_context['savings_rate']:.2f}%\n"
+            f"Goals: {', '.join(user_context['goals'])}\n"
+            f"Timeline to achieve goals: {user_context['timeline']} months\n"
+            f"Savings Goal: ${user_context['savings_goal']:.2f}\n"
+            "It's important to consider the user's age, location, income, expenses, financial goals, and savings priorities while formulating your advice. Ensure your advice is well-reasoned and tailored to the information provided by the user. "
+            "For example, if a user has a goal of saving for retirement and is currently saving 10% of their income, you can suggest ways to optimize expenses and increase their savings rate to achieve this goal faster. "
+            "Please provide well-reasoned and actionable financial advice based on the details provided."
+        )
 
+        # Send the prompt to GPT
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
@@ -102,7 +110,7 @@ def generate_advice(user_data: UserData) -> (str, Dict[str, float]):
 
         advice = response['choices'][0]['message']['content'].strip()
 
-        # Prepare financial data for charting
+        # Prepare financial data for returning
         financial_data = {
             "total_income": total_income,
             "total_expenses": total_expenses,
@@ -115,44 +123,3 @@ def generate_advice(user_data: UserData) -> (str, Dict[str, float]):
 
     except Exception as e:
         raise Exception(f"Error generating financial advice: {str(e)}")
-
-# Plotting functions
-
-def plot_income_vs_expenses(income: float, expenses: float):
-    labels = ['Saved', 'Spent']
-    sizes = [income - expenses, expenses]
-    colors = ['#4CAF50', '#FF5722']
-    
-    fig, ax = plt.subplots()
-    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, colors=colors)
-    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
-    return fig
-
-def plot_categorized_expenses(expenses: Dict[str, float]):
-    """
-    Plots the categorized expenses as a bar chart.
-    """
-    labels = list(expenses.keys())
-    values = list(expenses.values())
-    
-    fig, ax = plt.subplots()
-    ax.bar(labels, values, color=['#2196F3', '#FFC107', '#FF5722', '#9C27B0'])
-    ax.set_ylabel('Amount ($)')
-    ax.set_title('Categorized Expenses')
-
-    return fig
-
-def plot_savings_goal_progress(income: float, expenses: float, savings_goal: float):
-    saved = income - expenses
-    if savings_goal > 0:
-        progress = min(saved / savings_goal, 1.0)  # Ensure progress is capped at 100%
-    else:
-        progress = 0  # If no savings goal, progress is 0
-
-    fig, ax = plt.subplots()
-    ax.barh(['Savings Goal Progress'], [progress], color='#4CAF50')
-    ax.set_xlim([0, 1])  # Set the range from 0 to 1 (0% to 100%)
-    ax.set_xlabel('Progress (%)')
-
-    return fig
