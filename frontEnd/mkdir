@@ -1,0 +1,7 @@
+[theme]
+primaryColor = "#3D9970"  # Accent color for buttons, links, etc.
+backgroundColor = "#1E1E1E"  # Dark background for the whole app
+secondaryBackgroundColor = "#252525"  # Slightly lighter for sidebar or secondary elements
+textColor = "#ECECEC"  # Light text for readability
+font = "Roboto"  # A modern, professional font
+
