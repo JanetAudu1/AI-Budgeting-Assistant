@@ -8,9 +8,6 @@ from data_validation import UserData
 
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
 
-from input_handlers import handle_inputs 
-
-
 # Custom CSS for styling
 st.markdown("""
     <style>
@@ -54,8 +51,15 @@ elif options == "Financial Analysis":
 
         # Placeholder for streaming output
         advice_placeholder = st.empty()
+        complete_advice = ""
+
+        # Initial placeholder message (that will be replaced by streamed content)
+        advice_placeholder.text("Generating Financial Advice...")
 
         # Stream the GPT response and update the UI dynamically
-        st.markdown("## 📋 Generating Financial Advice...")
         for advice_chunk in generate_advice_stream(user_data):
-            advice_placeholder.markdown(advice_chunk, unsafe_allow_html=True)
+            complete_advice += advice_chunk
+            advice_placeholder.markdown(f"<div>{complete_advice}</div>", unsafe_allow_html=True)
+
+        # After streaming completes, update with the final advice
+        st.markdown("### ✅ Advice generation complete!")
