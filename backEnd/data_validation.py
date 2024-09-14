@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import List
 
 class UserData(BaseModel):
     name: str
@@ -11,5 +10,4 @@ class UserData(BaseModel):
     timeline_months: int
     bank_statement: str
     priorities: List[str]
-    savings_goal: float  
-
+    savings_goal: float
