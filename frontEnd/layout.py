@@ -20,9 +20,25 @@ def display_home_page():
 def display_analysis_page(inputs):
     st.header("🔍 Financial Analysis")
 
-    # Generate and display charts
-    generate_income_vs_expenses_chart(inputs['total_income'], inputs['total_expenses'])
-    generate_expense_chart(inputs['categorized_expenses'])
+    # Check if required inputs are present before rendering charts
+    try:
+        categorized_expenses = inputs.get('categorized_expenses')
+        total_income = inputs.get('total_income')
+        total_expenses = inputs.get('total_expenses')
+
+        if categorized_expenses and total_income is not None and total_expenses is not None:
+            # Generate and display charts
+            generate_expense_chart(categorized_expenses)
+            generate_income_vs_expenses_chart(total_income, total_expenses)
+
+        else:
+            st.warning("Some financial data is missing. Please make sure to fill out all fields.")
+    
+    except Exception as e:
+        st.error(f"Error displaying analysis: {str(e)}")
 
     # Generate and display financial advice
-    generate_advice_ui(inputs)
+    try:
+        generate_advice_ui(inputs)
+    except Exception as e:
+        st.error(f"Error generating advice: {str(e)}")
