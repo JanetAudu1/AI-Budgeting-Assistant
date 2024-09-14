@@ -29,30 +29,17 @@ def generate_advice_ui(inputs):
         savings_goal=inputs['savings_goal']
     )
 
-    # Create a progress bar and a placeholder for streaming advice
-    progress_bar = st.progress(0)
+    # Placeholder for streaming output
     advice_placeholder = st.empty()
-
-    # Initial message shown while advice is being generated
-    advice_placeholder.text("Generating Financial Advice...")
-
     complete_advice = ""
 
-    # Stream the advice
-    for i, chunk in enumerate(generate_advice_stream(user_data)):
-        complete_advice += chunk
-        # Update the advice in the placeholder with wrapped text (replacing the "Generating Financial Advice..." message)
+    # Initial placeholder message (that will be replaced by streamed content)
+    advice_placeholder.text("Generating Financial Advice...")
+
+    # Stream the GPT response and update the UI dynamically
+    for advice_chunk in generate_advice_stream(user_data):
+        complete_advice += advice_chunk
         advice_placeholder.markdown(f"<div class='streamed-advice'>{complete_advice}</div>", unsafe_allow_html=True)
 
-        # Update the progress bar (assuming 10 chunks for demonstration)
-        progress_bar.progress(min((i + 1) * 10, 100))  # Ensure progress maxes out at 100%
-
-    # Once streaming is complete, remove the progress bar
-    progress_bar.empty()
-
-    # Ensure only the final complete advice is shown (replace the "Generating Financial Advice..." message)
-    advice_placeholder.markdown(f"<div class='streamed-advice'>{complete_advice}</div>", unsafe_allow_html=True)
-
-    # Show a completion message
+    # Once streaming completes, replace with final advice
     st.markdown("### ✅ Advice generation complete!")
-
