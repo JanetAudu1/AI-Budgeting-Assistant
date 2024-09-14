@@ -1,5 +1,5 @@
 import streamlit as st
-from recommender import generate_advice
+from recommender import generate_advice_stream
 from data_validation import UserData
 
 def generate_advice_ui(inputs):
