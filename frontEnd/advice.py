@@ -31,15 +31,14 @@ def generate_advice_ui(inputs):
 
     # Placeholder for streaming output
     advice_placeholder = st.empty()
-    complete_advice = ""
 
     # Initial placeholder message (that will be replaced by streamed content)
     advice_placeholder.text("Generating Financial Advice...")
 
     # Stream the GPT response and update the UI dynamically
     for advice_chunk in generate_advice_stream(user_data):
-        complete_advice += advice_chunk
-        advice_placeholder.markdown(f"<div class='streamed-advice'>{complete_advice}</div>", unsafe_allow_html=True)
+        # Instead of appending all chunks, just display the new chunk
+        advice_placeholder.markdown(f"<div class='streamed-advice'>{advice_chunk}</div>", unsafe_allow_html=True)
 
     # Once streaming completes, replace with final advice
     st.markdown("### ✅ Advice generation complete!")
