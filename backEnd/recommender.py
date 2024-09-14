@@ -2,6 +2,7 @@ import openai
 import os
 from typing import List, Dict
 from backEnd.data_validation import UserData
+import pandas as pd
 
 # Set your OpenAI API key from environment variable
 api_key = os.getenv("OPENAI_API_KEY")
@@ -73,10 +74,11 @@ def generate_advice_stream(user_data: UserData):
         total_income = user_data.current_income
 
         # Parse categorized expenses from the bank statement
-        categorized_expenses = parse_bank_statement(user_data.bank_statement)
+        bank_statement = user_data.bank_statement
+        categorized_expenses = bank_statement.groupby('Category')['Withdrawals'].sum().to_dict()
 
         # Calculate the total expenses and savings rate
-        total_expenses = sum(categorized_expenses.values())
+        total_expenses = bank_statement['Withdrawals'].sum()
         savings_rate = calculate_savings_rate(total_income, total_expenses)
 
         # Create user context for GPT advice
@@ -90,38 +92,46 @@ def generate_advice_stream(user_data: UserData):
             "priorities": user_data.priorities,
             "savings_goal": user_data.savings_goal,
             "age": user_data.age,
-            "location": user_data.address
+            "location": user_data.address,
+            "categorized_expenses": categorized_expenses
         }
 
         # Construct GPT prompt for chat completion
-        gpt_prompt = (
-            "You are a knowledgeable financial advisor AI Chatbot called 'SmartBudget AI' specializing in personalized financial planning. "
-            "Your task is to provide financial advice based on the following user details:\n"
-            f"Name: {user_context['name']}\n"
-            f"Income: ${user_context['income']:.2f}\n"
-            f"Expenses: ${user_context['expenses']:.2f}\n"
-            f"Savings Rate: {user_context['savings_rate']:.2f}%\n"
-            f"Goals: {', '.join(user_context['goals'])}\n"
-            f"Timeline to achieve goals: {user_context['timeline']} months\n"
-            f"Savings Goal: ${user_context['savings_goal']:.2f}\n"
-            "Provide personalized financial advice to help the user achieve their savings goal and optimize expenses."
-        )
+        gpt_prompt = f"""You are a knowledgeable financial advisor AI Chatbot and you specialized in personalized financial planning. 
+        Your task is to provide detailed financial advice based on the following user details:
 
-        # Stream the GPT-4 response
+        Name: {user_context['name']}
+        Age: {user_context['age']}
+        Location: {user_context['location']}
+        Monthly Income: ${user_context['income']:.2f}
+        Monthly Expenses: ${user_context['expenses']:.2f}
+        Current Savings Rate: {user_context['savings_rate']:.2f}%
+        Financial Goals: {', '.join(user_context['goals'])}
+        Timeline to achieve goals: {user_context['timeline']} months
+        Savings Goal: ${user_context['savings_goal']:.2f}
+        Priorities: {', '.join(user_context['priorities'])}
+
+        Categorized Expenses:
+        {', '.join([f'{category}: ${amount:.2f}' for category, amount in user_context['categorized_expenses'].items()])}
+
+        Please provide comprehensive, personalized financial advice to help the user achieve their savings goal and optimize expenses. Include specific strategies for budgeting, saving, and investing based on their unique situation and goals.
+        """
+
+        # Call OpenAI API to generate advice
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-4",  # or "gpt-3.5-turbo" if you prefer
             messages=[
-                {"role": "system", "content": "You are a friendly and helpful financial advisor."},
+                {"role": "system", "content": "You are a helpful financial advisor."},
                 {"role": "user", "content": gpt_prompt}
             ],
-            stream=True  # Enable streaming
+            stream=True
         )
 
-        # Yield the response chunks to the caller
+        # Stream the response
         for chunk in response:
-            content = chunk['choices'][0]['delta'].get('content', '')
-            if content:
-                yield content
+            if chunk['choices'][0]['finish_reason'] is not None:
+                break
+            yield chunk['choices'][0]['delta'].get('content', '')
 
     except Exception as e:
         yield f"Error generating advice: {str(e)}"
