@@ -7,6 +7,9 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from backEnd.data_validation import UserData
 import streamlit as st
 import pandas as pd
+from layout import display_home_page, display_analysis_page
+from input_handlers import handle_inputs
+from advice import generate_advice_ui  # Assuming this is correct
 
 # Custom CSS for styling (Import Roboto from Google Fonts)
 st.markdown("""
