@@ -11,20 +11,35 @@ sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
 # Custom CSS for dark theme and professional styling
 st.markdown("""
     <style>
-    /* Background and text colors */
+    /* Main background and text colors */
     .main {
-        background-color: #1E1E1E;
-        color: #F0F0F0;
+        background-color: #1E1E1E;  /* Dark background */
+        color: #ECECEC;  /* Light text color */
         font-family: 'Roboto', sans-serif;
+    }
+    /* Sidebar background and text colors */
+    .css-1lcbmhc.e1fqkh3o2 {
+        background-color: #252525 !important;
+    }
+    .sidebar .sidebar-content {
+        background-color: #252525 !important;
+        color: #ECECEC !important;
+    }
+    .sidebar .sidebar-content .stRadio {
+        color: #ECECEC !important;
+    }
+    /* Sidebar titles */
+    .css-1d391kg p {
+        color: #ECECEC !important;
     }
     /* Headings styles */
     h1, h2, h3, h4, h5, h6 {
-        color: #ECECEC;
+        color: #F0F0F0;  /* Heading color */
         font-weight: 700;
     }
     /* Buttons */
     .stButton>button {
-        background-color: #3D9970;
+        background-color: #3D9970;  /* Button background */
         color: white;
         border-radius: 10px;
         font-size: 16px;
@@ -36,22 +51,14 @@ st.markdown("""
     }
     /* Input fields */
     .stTextInput>div>input, .stNumberInput>div>input, .stTextArea>div>textarea {
-        background-color: #333;
-        color: white;
-        border: 1px solid #3D9970;
+        background-color: #333 !important;
+        color: white !important;
+        border: 1px solid #3D9970 !important;
     }
     .stTextInput>label, .stNumberInput>label, .stTextArea>label {
         font-size: 16px;
         font-weight: bold;
-        color: #B0B0B0;
-    }
-    /* Sidebar */
-    .sidebar .sidebar-content {
-        background-color: #252525;
-        color: #B0B0B0;
-    }
-    .sidebar .sidebar-content .stRadio {
-        color: #ECECEC;
+        color: #B0B0B0 !important;
     }
     /* Markdown (for advice content) */
     .streamed-advice {
@@ -68,9 +75,13 @@ st.markdown("""
     a:hover {
         color: #2C6E49;
     }
-    /* Footer visibility */
+    /* Remove Streamlit footer */
     footer {visibility: hidden;}
-    .reportview-container .main .block-container {padding-top: 2rem; padding-bottom: 2rem;}
+    /* Main container padding */
+    .reportview-container .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
     </style>
 """, unsafe_allow_html=True)
 
