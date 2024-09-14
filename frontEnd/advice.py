@@ -1,4 +1,34 @@
 import streamlit as st
+from recommender import generate_advice_stream  # or generate_advice depending on your setup
+from data_validation import UserData
+
+def generate_advice_ui(inputs):
+    # Create the UserData object
+    user_data = UserData(
+        name=inputs['name'],
+        age=inputs['age'],
+        address=inputs['address'],
+        current_income=inputs['current_income'],
+        current_savings=inputs['current_savings'],
+        goals=[goal.strip() for goal in inputs['goals'].split(',')],
+        timeline_months=inputs['timeline_months'],
+        bank_statement=inputs['bank_statement'],
+        priorities=[priority.strip() for priority in inputs['priorities'].split(',')],
+        savings_goal=inputs['savings_goal']
+    )
+    
+    # Generate financial advice (unpack based on how many values the function returns)
+    advice, financial_data, _ = generate_advice_stream(user_data)  # Adjusted to unpack three values
+
+    # Display financial advice
+    st.markdown("## 📋 Financial Advice")
+    st.write(advice)
+
+    # Return financial data for further analysis or charting
+    return financial_data
+
+
+import streamlit as st
 from recommender import generate_advice_stream
 from data_validation import UserData
 
