@@ -1,5 +1,10 @@
-import streamlit as st 
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent.parent / 'backEnd'))
+
 from recommender import parse_bank_statement
+
 
 def handle_inputs():
     col1, col2 = st.columns(2)
