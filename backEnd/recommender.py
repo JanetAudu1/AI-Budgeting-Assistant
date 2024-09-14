@@ -1,10 +1,14 @@
-import openai
 import os
+import openai
 from typing import List, Dict
 from data_validation import UserData
 
 # Set your OpenAI API key from environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
+
+openai.api_key = api_key
 
 def categorize_expenses(description: str) -> str:
     """
