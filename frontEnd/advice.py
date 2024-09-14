@@ -2,6 +2,18 @@ from recommender import generate_advice_stream  # Import your streaming function
 from data_validation import UserData
 import streamlit as st
 
+# Add custom CSS for text wrapping
+st.markdown("""
+    <style>
+    .streamed-advice {
+        word-wrap: break-word;
+        white-space: normal;
+        font-size: 16px;
+        max-width: 800px;  /* Set a max width for better readability */
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 def generate_advice_ui(inputs):
     # Create the UserData object
     user_data = UserData(
@@ -20,16 +32,26 @@ def generate_advice_ui(inputs):
     # Create a progress bar and a placeholder for streaming advice
     progress_bar = st.progress(0)
     advice_placeholder = st.empty()
+
+    # Initially show a "Generating Financial Advice..." message
+    advice_placeholder.markdown("<div class='streamed-advice'>Generating Financial Advice...</div>", unsafe_allow_html=True)
+
     complete_advice = ""
 
     # Stream the advice
     for i, chunk in enumerate(generate_advice_stream(user_data)):
         complete_advice += chunk
-        advice_placeholder.text(complete_advice)  # Update the advice on the page
+        # Update the advice in the placeholder with wrapped text
+        advice_placeholder.markdown(f"<div class='streamed-advice'>{complete_advice}</div>", unsafe_allow_html=True)
 
         # Update the progress bar (assuming 10 chunks for demonstration)
         progress_bar.progress(min((i + 1) * 10, 100))  # Ensure progress maxes out at 100%
 
-    # Once streaming is complete, remove the progress bar and show a completion message
+    # Once streaming is complete, remove the progress bar
     progress_bar.empty()
+
+    # Show the final complete advice in a nicely wrapped format
+    advice_placeholder.markdown(f"<div class='streamed-advice'>{complete_advice}</div>", unsafe_allow_html=True)
+
+    # Show a completion message
     st.markdown("### ✅ Advice generation complete!")
