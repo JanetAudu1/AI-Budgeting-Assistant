@@ -10,6 +10,17 @@ from layout import display_home_page, display_analysis_page
 from input_handlers import handle_inputs
 from advice import generate_advice_ui  # Assuming this is correct
 
+# Custom CSS to use Roboto font
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Roboto', sans-serif;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # Custom CSS for styling (Import Roboto from Google Fonts)
 st.markdown("""
     <style>
