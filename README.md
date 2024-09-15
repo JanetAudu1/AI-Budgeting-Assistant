@@ -1,125 +1,72 @@
-# Personalized Budgeting Assistant
+# AI-Powered Budgeting Assistant
 
-Welcome to the **Personalized Budgeting Assistant**! This tool is designed to help you take control of your finances by offering personalized financial advice based on your unique financial data. Whether you're looking to save more, invest wisely, or pay off debt, this assistant will guide you in the right direction with simple, friendly advice.
+## Overview
+This AI-Powered Budgeting Assistant is a web application that provides personalized financial advice using OpenAI's GPT model. It analyzes user-provided financial data to generate tailored budgeting and savings recommendations.
 
 ## Features
+- User-friendly interface for inputting financial data
+- Bank statement analysis and expense categorization
+- Visual representation of expenses and income
+- AI-generated personalized financial advice
 
-- **Expense Tracking**: Visualize where your money is going with intuitive charts that break down your expenses by category.
-- **Personalized Advice**: Receive friendly, easy-to-understand financial advice tailored to your current situation and goals.
-- **Goal Setting**: Set and track your financial goals, such as saving for a big purchase, paying off debt, or building an emergency fund.
-- **Investment Recommendations**: Get advice on how to start or optimize your investments based on your savings and financial goals.
-- **Debt Management**: Learn how to prioritize and pay down high-interest debt to free up more of your income for savings and investments.
+## Setup and Installation
 
-## How It Works
-
-### 1. Input Your Financial Data
-Enter details about your income, savings, expenses, goals, and priorities. You can also paste your bank statement directly into the app for automatic parsing.
-
-### 2. Analyze Your Spending
-The app categorizes your expenses and provides a visual breakdown of where your money is going each month.
-
-### 3. Get Personalized Advice
-Receive friendly, actionable financial advice based on your current financial situation. The advice includes specific calculations to help you understand the impact of your financial decisions.
-
-### 4. Track Your Progress
-Use the app to continuously monitor your spending, savings, and progress toward your financial goals. Adjust your strategy as needed with the help of ongoing advice.
-
-## 🖥️ Installation
-
-### Prerequisites
-
-- **Python 3.7+**
-- **Streamlit**: For running the web application.
-- **FastAPI**: For running the backend API.
-- **Matplotlib**: For generating visualizations.
-- **Pandas**: For data handling and manipulation.
-- **OpenAI API Key**: Required for generating AI-based financial advice. Register for an Open AI account and get a key and save in your env variable as described below
-- **Quandl API Key**: Required for pulling financial and economic data. Register for a Quandl account and get an api key and save in your env variable as described below
-
-### Setup
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/yourusername/personalized-budgeting-assistant.git
-   cd personalized-budgeting-assistant
+1. Clone the repository:
+   ```
+   git clone https://github.com/your-username/AI-Budgeting-Assistant.git
+   cd AI-Budgeting-Assistant
    ```
 
-2. **Install dependencies**:
-   ```bash
+2. Install the required packages:
+   ```
    pip install -r requirements.txt
    ```
 
-3. **Set Up API Keys**:
-   Export your API keys as environment variables:
-   ```bash
-   export OPENAI_API_KEY='your-openai-api-key'
-   export QUANDL_API_KEY='your-quandl-api-key'
+3. Set up your OpenAI API key as an environment variable:
+   ```
+   export OPENAI_API_KEY='your-api-key-here'
    ```
 
-### Running the Application
+## Running the Application
 
-#### Start the Backend Server
-
-1. **Navigate to the Backend Directory**:
-   ```bash
-   cd backEnd
+1. Start the backend server:
+   ```
+   uvicorn backEnd.api:app --reload
    ```
 
-2. **Run the FastAPI server**:
-   ```bash
-   uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+2. In a new terminal, run the Streamlit app:
+   ```
+   streamlit run frontEnd/app.py
    ```
 
-#### Start the Frontend
+3. Open your web browser and go to http://localhost:8501
 
-1. **Navigate to the Frontend Directory**:
-   ```bash
-   cd frontEnd
-   ```
+## How to Use
 
-2. **Run the Streamlit app**:
-   ```bash
-   streamlit run app.py
-   ```
+1. Navigate to the "Financial Analysis" section.
+2. Upload your bank statement (CSV format).
+3. Fill in your financial information and goals.
+4. Click "Generate Analysis" to receive AI-powered financial advice.
 
-### Important Notes
+## Project Structure
 
-- **Port Conflicts**: Note that both the FastAPI backend and Streamlit frontend default to using port 8000. To avoid conflicts:
-  - Run FastAPI on a different port (e.g., 8001) by changing the `uvicorn` command:
-    ```bash
-    uvicorn api:app --host 0.0.0.0 --port 8001 --reload
-    ```
-  - Update the frontend `app.py` to use the correct backend URL if you change the port.
+AI-Budgeting-Assistant/
+├── frontEnd/
+│ ├── app.py
+│ ├── layout.py
+│ ├── input_handlers.py
+│ ├── advice.py
+│ └── charts.py
+├── backEnd/
+│ ├── api.py
+│ ├── data_validation.py
+│ └── recommender.py
+├── requirements.txt
+└── README.md
 
-- **Multiple Runs**: If you want to run multiple instances, ensure that the ports are not conflicting. Use the following commands to manage ports:
-  - Find the process using a port:
-    ```bash
-    lsof -i :8000
-    ```
-  - Kill the process using the port:
-    ```bash
-    kill -9 <processID>
-    ```
-
-## Example Bank Statement
-
-Bank Statement - August 2024
-
-```plaintext
-
-| Date        | Description          | Amount (USD)  |
-|-------------|----------------------|---------------|
-| 08/01/2024  | Opening Balance       |               |
-| 08/03/2024  | Coffee Shop           | -8.50         |
-| 08/05/2024  | Textbook Purchase     | -75.00        |
-| 08/12/2024  | Grocery Store         | -45.75        |
-| 08/15/2024  | Rent Payment          | -2600.00      |
-| 08/18/2024  | Phone Bill            | -30.00        |
-| 08/20/2024  | Online Subscription   | -60.99        |
-| 08/22/2024  | Public Transportation | -300.00       |
-| 08/25/2024  | Income                | +8000.00      |
-| 08/27/2024  | Fast Food             | -15.00        |
-| 08/30/2024  | Movie Night           | -10.00        |
-| 08/31/2024  | Closing Balance       |               |
-
-```
+## Technology Stack
+- Frontend: Streamlit
+- Backend: FastAPI
+- Data Processing: Pandas
+- AI Model: OpenAI GPT-4
+- Language: Python 3.9+
