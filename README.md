@@ -48,8 +48,18 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
 3. Fill in your financial information and goals.
 4. Click "Generate Analysis" to receive AI-powered financial advice.
 
+
+## Technology Stack
+- Frontend: Streamlit
+- Backend: FastAPI
+- Data Processing: Pandas
+- AI Model: OpenAI GPT-4
+- Language: Python 3.9+
+
+
 ## Project Structure
 
+```
 AI-Budgeting-Assistant/
 ├── frontEnd/
 │ ├── app.py
@@ -63,10 +73,40 @@ AI-Budgeting-Assistant/
 │ └── recommender.py
 ├── requirements.txt
 └── README.md
+```
 
-## Technology Stack
-- Frontend: Streamlit
-- Backend: FastAPI
-- Data Processing: Pandas
-- AI Model: OpenAI GPT-4
-- Language: Python 3.9+
+```
+File Descriptions: 
+
+Frontend (frontEnd/):
+
+app.py: Main Streamlit application orchestrating UI components and user interactions.
+
+layout.py: Renders different sections/pages like Home and Financial Analysis.
+
+input_handlers.py: Manages user data input, including bank statement uploads and financial details.
+
+advice.py: Handles the generation and display of AI-powered financial advice.
+
+charts.py: Creates and displays visual charts for financial data visualization.
+
+
+Backend (backEnd/):
+
+
+api.py: FastAPI server connecting the frontend to the backend 
+
+recommender.py: Core logic used in interfacing with OpenAI's GPT-4 to produce personalized advice.
+
+data_validation.py: Defines data models to ensure incoming data is valid and well-structured.
+
+init_.py: Marks the directory as a Python package, enabling proper module imports.
+
+
+Root Directory:
+
+requirements.txt: Lists all Python dependencies required for the project.
+
+README.md: Provides an overview, setup instructions, and documentation for the project.
+
+```

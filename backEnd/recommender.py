@@ -1,8 +1,7 @@
 import openai
 import os
 from typing import List, Dict
-from backEnd.data_validation import UserData
-import pandas as pd
+from .data_validation import UserData
 
 # Set your OpenAI API key from environment variable
 api_key = os.getenv("OPENAI_API_KEY")
@@ -10,52 +9,6 @@ if not api_key:
     raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
 
 openai.api_key = api_key
-
-def categorize_expenses(description: str) -> str:
-    """
-    Categorizes the expense based on keywords in the description.
-    """
-    categories = {
-        "rent": ["rent", "rents"],
-        "utilities": ["utility", "utilities"],
-        "groceries": ["grocery", "groceries"],
-    }
-
-    description_lower = description.lower()
-    for category, keywords in categories.items():
-        if any(keyword in description_lower for keyword in keywords):
-            return category
-    return "discretionary"  # Default category if no match
-
-def parse_bank_statement(bank_statement: str) -> Dict[str, float]:
-    """
-    Parses the bank statement and categorizes the expenses.
-    Returns a dictionary where keys are categories and values are the total amounts spent.
-    """
-    lines = bank_statement.strip().splitlines()
-    categorized_expenses = {"rent": 0, "utilities": 0, "groceries": 0, "discretionary": 0}
-
-    for line in lines:
-        if '|' in line and 'Date' not in line:
-            parts = [part.strip() for part in line.split('|')]
-            if len(parts) >= 3:
-                description = parts[1]
-                amount_str = parts[2]
-
-                # Convert the amount string to a float
-                if amount_str:
-                    try:
-                        amount = float(amount_str.replace('+', '').replace('-', '').replace(',', ''))
-                        if '-' in amount_str:
-                            amount = -amount  # Convert negative expenses
-                    except ValueError:
-                        continue
-
-                    # Categorize the expense based on the description
-                    category = categorize_expenses(description)
-                    categorized_expenses[category] += abs(amount)
-
-    return categorized_expenses
 
 def calculate_savings_rate(total_income: float, total_expenses: float) -> float:
     """
@@ -96,8 +49,8 @@ def generate_advice_stream(user_data: UserData):
             "categorized_expenses": categorized_expenses
         }
 
-        # Construct GPT prompt for chat completion
-        gpt_prompt = f"""You are a knowledgeable financial advisor AI Chatbot and you specialized in personalized financial planning. 
+        #  GPT prompt for recommendations
+        gpt_prompt = f"""You are a knowledgeable financial advisor AI Chatbot specializing in personalized financial planning. 
         Your task is to provide detailed financial advice based on the following user details:
 
         Name: {user_context['name']}
@@ -115,11 +68,24 @@ def generate_advice_stream(user_data: UserData):
         {', '.join([f'{category}: ${amount:.2f}' for category, amount in user_context['categorized_expenses'].items()])}
 
         Please provide comprehensive, personalized financial advice to help the user achieve their savings goal and optimize expenses. Include specific strategies for budgeting, saving, and investing based on their unique situation and goals.
+
+        Important: When suggesting budget cuts or changes in spending habits, always provide:
+        1. A clear explanation of WHY the cut or change is necessary or beneficial.
+        2. Specific, actionable advice on HOW to implement the suggested cut or change.
+        3. If possible, quantify the potential impact of the suggested change.
+
+        For example, instead of just saying "Reduce dining out expenses", say something like:
+        "Consider reducing your dining out expenses by 30% (WHY) This could save you approximately $X per month, which would significantly accelerate your progress towards your savings goal. (HOW) You can achieve this by:
+        1. Cooking at home 2 more nights per week and bringing lunch to work 3 days a week.
+        2. Using meal planning and grocery lists to make home cooking more efficient and cost-effective.
+        3. When dining out, look for happy hour specials or use restaurant discount apps."
+
+        Provide this level of detail and explanation for each significant recommendation in your advice. Further more, ensure that the text outputted is not garbled and it is spaced and formatted properly.
         """
 
         # Call OpenAI API to generate advice
         response = openai.ChatCompletion.create(
-            model="gpt-4",  # or "gpt-3.5-turbo" if you prefer
+            model="gpt-4",  
             messages=[
                 {"role": "system", "content": "You are a helpful financial advisor."},
                 {"role": "user", "content": gpt_prompt}
