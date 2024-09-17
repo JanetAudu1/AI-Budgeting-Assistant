@@ -15,6 +15,21 @@ logger = logging.getLogger(__name__)
 
 @app.post("/get_advice")
 def get_advice(user_data: UserData):
+    """
+    FastAPI endpoint for generating financial advice.
+    
+    This function receives user data, logs the request, fetches financial sources,
+    and generates personalized financial advice.
+    
+    Args:
+    user_data (UserData): The user's financial data and goals.
+    
+    Returns:
+    dict: A dictionary containing the generated advice.
+    
+    Raises:
+    HTTPException: If there's an error in processing the request or generating advice.
+    """
     try:
         logger.info(f"Received request for user: {user_data.name}")
 

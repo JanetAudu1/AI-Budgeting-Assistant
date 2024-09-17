@@ -12,7 +12,14 @@ openai.api_key = api_key
 
 def calculate_savings_rate(total_income: float, total_expenses: float) -> float:
     """
-    Calculates the savings rate based on income and expenses.
+    Calculate the savings rate based on total income and expenses.
+
+    Args:
+        total_income (float): The total income of the user.
+        total_expenses (float): The total expenses of the user.
+
+    Returns:
+        float: The calculated savings rate as a percentage.
     """
     if total_income == 0:
         return 0  # Avoid division by zero
@@ -20,7 +27,16 @@ def calculate_savings_rate(total_income: float, total_expenses: float) -> float:
 
 def generate_advice_stream(user_data: UserData):
     """
-    Generates personalized financial advice and streams the response from GPT-4.
+    Generate personalized financial advice and stream the response from GPT-4.
+
+    Args:
+        user_data (UserData): The user's financial data and goals.
+
+    Yields:
+        str: Chunks of generated financial advice.
+
+    Raises:
+        Exception: If there's an error in generating the advice.
     """
     try:
         # Use the user-provided income directly
@@ -90,7 +106,10 @@ def generate_advice_stream(user_data: UserData):
                 {"role": "system", "content": "You are a helpful financial advisor."},
                 {"role": "user", "content": gpt_prompt}
             ],
-            stream=True
+            #  max_tokens=200,  # Control the token output length
+             temperature=0.7,  # Adjust the randomness
+             frequency_penalty=0.5, # To control repetition
+             stream=True
         )
 
         # Stream the response
