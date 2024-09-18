@@ -1,5 +1,7 @@
 streamlit==1.21.0
-matplotlib==3.6.2
 pandas==1.5.2
+matplotlib==3.6.2
+fastapi
+uvicorn
+requests
 openai==0.27.0
-
