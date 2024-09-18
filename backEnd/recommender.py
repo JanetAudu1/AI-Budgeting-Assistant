@@ -2,6 +2,7 @@ import openai
 import os
 from typing import List, Dict
 from .data_validation import UserData
+from backEnd.config import get_sources
 
 # Set your OpenAI API key from environment variable
 api_key = os.getenv("OPENAI_API_KEY")
@@ -71,8 +72,13 @@ def generate_advice_stream(user_data: UserData):
         def format_optional_numeric(value):
             return f"${value:.2f}" if value is not None else "Not specified"
 
+        # Get financial sources
+        sources = get_sources()
+        
         #  GPT prompt for recommendations
         gpt_prompt = f"""You are a knowledgeable financial advisor AI Chatbot specializing in personalized financial planning. 
+        Your advice is based on information from reputable sources including: {sources}
+        
         Your task is to provide detailed financial advice based on the following user details:
 
         Name: {user_context['name']}
