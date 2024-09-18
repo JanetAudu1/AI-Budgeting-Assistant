@@ -42,18 +42,18 @@ def handle_inputs():
         categorized_expenses = calculate_expenses(df)
 
     else:
-        st.write("Please upload your bank statement.")
+        st.warning("Please upload your bank statement.")
         return None
 
-    name = st.text_input("Name")
-    age = st.number_input("Age", min_value=0, max_value=120, step=1)
-    address = st.text_input("Address")
-    current_income = st.number_input("Current Monthly Income ($)", min_value=0.0, format="%.2f")
-    current_savings = st.number_input("Current Savings ($)", min_value=0.0, format="%.2f")
-    goals = st.text_area("Financial Goals (comma-separated)")
-    timeline_months = st.number_input("Timeline (months)", min_value=1, step=1)
-    priorities = st.text_area("Priorities (comma-separated)")
-    savings_goal = st.number_input("Savings Goal ($)", min_value=0.0, format="%.2f")
+    name = st.text_input("Name", max_chars=100)
+    age = st.number_input("Age", min_value=18, max_value=120, step=1)
+    address = st.text_input("Address", max_chars=200)
+    current_income = st.number_input("Current Monthly Income ($)", min_value=0.0, step=100.0, format="%.2f")
+    current_savings = st.number_input("Current Savings ($)", min_value=0.0, step=1000.0, format="%.2f")
+    goals = st.text_area("Financial Goals (comma-separated)", max_chars=500)
+    timeline_months = st.number_input("Timeline (months)", min_value=1, max_value=600, step=1)
+    priorities = st.text_area("Priorities (comma-separated)", max_chars=500)
+    savings_goal = st.number_input("Savings Goal ($)", min_value=0.0, step=1000.0, format="%.2f")
 
     if st.button("Generate Analysis"):
         user_data = UserData(
@@ -68,5 +68,12 @@ def handle_inputs():
             priorities=[priority.strip() for priority in priorities.split(',') if priority.strip()],
             savings_goal=savings_goal
         )
-        return user_data
+
+        if user_data.validate() and user_data.validate_bank_statement():
+            return user_data
+        else:
+            for error in user_data.validation_errors:
+                st.error(error)
+            return None
+
     return None

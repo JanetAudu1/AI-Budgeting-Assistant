@@ -106,7 +106,6 @@ def generate_advice_stream(user_data: UserData):
                 {"role": "system", "content": "You are a helpful financial advisor."},
                 {"role": "user", "content": gpt_prompt}
             ],
-            #  max_tokens=200,  # Control the token output length
              temperature=0.7,  # Adjust the randomness
              frequency_penalty=0.5, # To control repetition
              stream=True
