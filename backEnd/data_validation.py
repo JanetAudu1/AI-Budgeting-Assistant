@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 import pandas as pd
 
 @dataclass
@@ -20,8 +20,10 @@ class UserData:
         goals (List[str]): A list of the user's financial goals.
         timeline_months (int): The timeline for financial goals in months.
         bank_statement (pd.DataFrame): The user's bank statement as a pandas DataFrame.
-        priorities (List[str]): A list of the user's financial priorities.
         savings_goal (float): The user's savings goal amount.
+        priorities (Optional[List[str]]): A list of the user's financial priorities (optional).
+        debt (Optional[float]): The user's current total debt (optional).
+        debt_repayment_goal (Optional[float]): The user's debt repayment goal amount (optional).
     """
 
     name: str
@@ -32,8 +34,10 @@ class UserData:
     goals: List[str]
     timeline_months: int
     bank_statement: pd.DataFrame
-    priorities: List[str]
     savings_goal: float
+    priorities: Optional[List[str]] = None
+    debt: Optional[float] = None
+    debt_repayment_goal: Optional[float] = None
     validation_errors: List[str] = field(default_factory=list)
 
     def validate(self):
@@ -52,8 +56,17 @@ class UserData:
         self._validate_numeric(self.current_savings, 0, 10000000, "Current Savings")
         self._validate_list(self.goals, "Goals")
         self._validate_numeric(self.timeline_months, 1, 600, "Timeline")
-        self._validate_list(self.priorities, "Priorities")
         self._validate_numeric(self.savings_goal, 0.01, 10000000, "Savings Goal")
+        
+        # Only validate priorities if they are provided
+        if self.priorities is not None:
+            self._validate_list(self.priorities, "Priorities")
+        
+        # Only validate debt and debt_repayment_goal if they are provided
+        if self.debt is not None:
+            self._validate_numeric(self.debt, 0, 10000000, "Debt")
+        if self.debt_repayment_goal is not None:
+            self._validate_numeric(self.debt_repayment_goal, 0, 10000000, "Debt Repayment Goal")
         
         return len(self.validation_errors) == 0
 

@@ -36,5 +36,10 @@ def display_analysis_page(inputs):
             st.write(f"Total Expenses: ${total_expenses:.2f}")
             st.write(f"Total Deposits: ${total_deposits:.2f}")
             st.write(f"Net Cash Flow: ${total_deposits - total_expenses:.2f}")
+
+            if inputs.debt is not None:
+                st.write(f"Current Debt: ${inputs.debt:.2f}")
+            if inputs.debt_repayment_goal is not None:
+                st.write(f"Debt Repayment Goal: ${inputs.debt_repayment_goal:.2f}")
     except Exception as e:
         st.error(f"Error displaying analysis: {str(e)}")

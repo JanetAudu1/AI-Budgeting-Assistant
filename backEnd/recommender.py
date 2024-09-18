@@ -62,8 +62,14 @@ def generate_advice_stream(user_data: UserData):
             "savings_goal": user_data.savings_goal,
             "age": user_data.age,
             "location": user_data.address,
-            "categorized_expenses": categorized_expenses
+            "categorized_expenses": categorized_expenses,
+            "debt": user_data.debt,
+            "debt_repayment_goal": user_data.debt_repayment_goal
         }
+
+        # Helper function to format optional numeric fields
+        def format_optional_numeric(value):
+            return f"${value:.2f}" if value is not None else "Not specified"
 
         #  GPT prompt for recommendations
         gpt_prompt = f"""You are a knowledgeable financial advisor AI Chatbot specializing in personalized financial planning. 
@@ -78,25 +84,21 @@ def generate_advice_stream(user_data: UserData):
         Financial Goals: {', '.join(user_context['goals'])}
         Timeline to achieve goals: {user_context['timeline']} months
         Savings Goal: ${user_context['savings_goal']:.2f}
-        Priorities: {', '.join(user_context['priorities'])}
+        Priorities: {', '.join(user_context['priorities']) if user_context['priorities'] else 'Not specified'}
+        Current Debt: {format_optional_numeric(user_context['debt'])}
+        Debt Repayment Goal: {format_optional_numeric(user_context['debt_repayment_goal'])}
 
         Categorized Expenses:
         {', '.join([f'{category}: ${amount:.2f}' for category, amount in user_context['categorized_expenses'].items()])}
 
-        Please provide comprehensive, personalized financial advice to help the user achieve their savings goal and optimize expenses. Include specific strategies for budgeting, saving, and investing based on their unique situation and goals.
+        Please provide comprehensive, personalized financial advice to help the user achieve their savings goal, optimize expenses, and manage their debt if applicable. Include specific strategies for budgeting, saving, investing, and debt repayment based on their unique situation and goals.
 
-        Important: When suggesting budget cuts or changes in spending habits, always provide:
-        1. A clear explanation of WHY the cut or change is necessary or beneficial.
-        2. Specific, actionable advice on HOW to implement the suggested cut or change.
+        Important: When suggesting budget cuts, changes in spending habits, or debt repayment strategies, always provide:
+        1. A clear explanation of WHY the suggestion is necessary or beneficial.
+        2. Specific, actionable advice on HOW to implement the suggested change.
         3. If possible, quantify the potential impact of the suggested change.
 
-        For example, instead of just saying "Reduce dining out expenses", say something like:
-        "Consider reducing your dining out expenses by 30% (WHY) This could save you approximately $X per month, which would significantly accelerate your progress towards your savings goal. (HOW) You can achieve this by:
-        1. Cooking at home 2 more nights per week and bringing lunch to work 3 days a week.
-        2. Using meal planning and grocery lists to make home cooking more efficient and cost-effective.
-        3. When dining out, look for happy hour specials or use restaurant discount apps."
-
-        Provide this level of detail and explanation for each significant recommendation in your advice. Further more, ensure that the text outputted is not garbled and it is spaced and formatted properly.
+        Ensure that the text outputted is not garbled and it is spaced and formatted properly.
         """
 
         # Call OpenAI API to generate advice
