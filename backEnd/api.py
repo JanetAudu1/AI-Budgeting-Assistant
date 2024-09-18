@@ -2,49 +2,65 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from fastapi import FastAPI, HTTPException, Depends
-from recommender import generate_advice_stream 
-from data_validation import UserData
-from config import get_sources
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, Field
+from typing import List, Optional
+import pandas as pd
 import logging
+from backEnd.data_validation import UserData
+from backEnd.recommender import generate_advice_stream
 
 app = FastAPI()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+class AdviceResponse(BaseModel):
+    advice: str
+
+class UserDataModel(BaseModel):
+    name: str
+    age: int
+    address: str
+    current_income: Optional[float] = Field(None)
+    current_savings: Optional[float] = Field(None)
+    goals: List[str]
+    timeline_months: int
+    bank_statement: List[dict]
+    savings_goal: Optional[float] = Field(None)
+    priorities: Optional[List[str]] = None
+    debt: Optional[float] = Field(None)
+    debt_repayment_goal: Optional[float] = Field(None)
+
+    class Config:
+        arbitrary_types_allowed = True
+
 @app.post("/get_advice")
-def get_advice(user_data: UserData):
-    """
-    FastAPI endpoint for generating financial advice.
-    
-    This function receives user data, logs the request, fetches financial sources,
-    and generates personalized financial advice.
-    
-    Args:
-    user_data (UserData): The user's financial data and goals.
-    
-    Returns:
-    dict: A dictionary containing the generated advice.
-    
-    Raises:
-    HTTPException: If there's an error in processing the request or generating advice.
-    """
+async def get_advice(user_data: UserDataModel):
     try:
-        logger.info(f"Received request for user: {user_data.name}")
+        # Convert bank_statement back to DataFrame if needed
+        bank_statement_df = pd.DataFrame(user_data.bank_statement)
+        
+        # Create UserData object
+        user_data_obj = UserData(
+            name=user_data.name,
+            age=user_data.age,
+            address=user_data.address,
+            current_income=user_data.current_income or 0.0,
+            current_savings=user_data.current_savings or 0.0,
+            goals=user_data.goals,
+            timeline_months=user_data.timeline_months,
+            bank_statement=bank_statement_df,
+            savings_goal=user_data.savings_goal or 0.0,
+            priorities=user_data.priorities,
+            debt=user_data.debt,
+            debt_repayment_goal=user_data.debt_repayment_goal
+        )
 
-        sources = get_sources()
-        logger.info(f"Fetching financial advice for {user_data.name} using sources: {sources}")
-
-        advice = generate_advice_stream(user_data, sources)
-
-        return {"advice": advice}
-
-    except HTTPException as e:
-        logger.error(f"HTTP error processing request: {str(e)}")
-        raise
-
+        # Generate advice using the existing generate_advice_stream function
+        return StreamingResponse(generate_advice_stream(user_data_obj), media_type="text/plain")
+    
     except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail=f"Error generating advice: {str(e)}")
 

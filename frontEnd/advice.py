@@ -1,9 +1,12 @@
 import logging
+import requests
+import json
 from backEnd.data_validation import UserData
-from backEnd.recommender import generate_advice_stream
 import streamlit as st
 
 logger = logging.getLogger(__name__)
+
+API_URL = "http://localhost:8000"  # Adjust this if your FastAPI server runs on a different port
 
 def generate_advice_ui(inputs: UserData):
     """
@@ -15,33 +18,30 @@ def generate_advice_ui(inputs: UserData):
     advice_placeholder = st.empty()
     complete_advice = ""
 
-    advice_placeholder.text("Generating Financial Advice...")
-
     try:
-        for advice_chunk in generate_advice_stream(inputs):
-            if advice_chunk:
-                complete_advice += advice_chunk
-                advice_placeholder.markdown(f"<div class='streamed-advice'>{complete_advice}</div>", unsafe_allow_html=True)
+        # Convert UserData to dictionary
+        user_data_dict = inputs.to_dict()
+        
+        # Ensure the data is JSON serializable
+        json_data = json.dumps(user_data_dict)
+        
+        # Make a POST request to the FastAPI endpoint with streaming enabled
+        with requests.post(f"{API_URL}/get_advice", data=json_data, headers={'Content-Type': 'application/json'}, stream=True) as response:
+            if response.status_code == 200:
+                for chunk in response.iter_content(chunk_size=None, decode_unicode=True):
+                    if chunk:
+                        complete_advice += chunk
+                        advice_placeholder.text(complete_advice)
             else:
-                logger.warning("Received empty advice chunk")
-
-    except ValueError as ve:
-        error_message = f"Invalid input data: {str(ve)}"
-        logger.error(error_message)
-        st.error(error_message)
-
-    except ConnectionError as ce:
-        error_message = "Unable to connect to the advice generation service. Please try again later."
-        logger.error(f"Connection error: {str(ce)}")
-        st.error(error_message)
-
+                st.error(f"Failed to get advice. Status code: {response.status_code}")
+                logger.error(f"API error: {response.text}")
+    
+    except requests.RequestException as e:
+        st.error("Failed to connect to the advice service.")
+        logger.error(f"Request error: {str(e)}")
+    except json.JSONDecodeError as e:
+        st.error("Error in data serialization.")
+        logger.error(f"JSON encode error: {str(e)}")
     except Exception as e:
-        error_message = "An unexpected error occurred while generating advice."
-        logger.exception(f"Unexpected error in generate_advice_ui: {str(e)}")
-        st.error(error_message)
-
-    finally:
-        if not complete_advice:
-            st.warning("No advice was generated. Please check your inputs and try again.")
-        else:
-            st.success("Financial advice generation complete!")
+        st.error("An unexpected error occurred.")
+        logger.error(f"Unexpected error: {str(e)}")

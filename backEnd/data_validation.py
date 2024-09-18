@@ -1,6 +1,8 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import List, Optional
 import pandas as pd
+import math
+import json
 
 @dataclass
 class UserData:
@@ -103,3 +105,28 @@ class UserData:
             return False
         
         return True
+
+    def to_dict(self):
+        def clean_float(value):
+            if isinstance(value, float):
+                if math.isnan(value) or math.isinf(value):
+                    return None
+                return float(f"{value:.2f}")  # Round to 2 decimal places
+            return value
+
+        data = asdict(self)
+        # Convert DataFrame to dict, if present
+        if isinstance(data['bank_statement'], pd.DataFrame):
+            # Apply clean_float to each column that contains floats
+            for col in data['bank_statement'].select_dtypes(include=['float64']).columns:
+                data['bank_statement'][col] = data['bank_statement'][col].map(clean_float)
+            
+            # Convert to records and then to JSON-safe dict
+            data['bank_statement'] = json.loads(data['bank_statement'].to_json(orient='records'))
+        
+        # Clean other float fields
+        for key, value in data.items():
+            if isinstance(value, float):
+                data[key] = clean_float(value)
+        
+        return data
