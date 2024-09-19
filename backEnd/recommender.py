@@ -60,12 +60,10 @@ def generate_advice_stream(user_data: UserData):
             "goals": user_data.goals,
             "timeline": user_data.timeline_months,
             "priorities": user_data.priorities,
-            "savings_goal": user_data.savings_goal,
             "age": user_data.age,
             "location": user_data.address,
-            "categorized_expenses": categorized_expenses,
-            "debt": user_data.debt,
-            "debt_repayment_goal": user_data.debt_repayment_goal
+            "categorized_expenses": categorized_expenses
+           
         }
 
         # Helper function to format optional numeric fields
@@ -89,11 +87,8 @@ def generate_advice_stream(user_data: UserData):
         Current Savings Rate: {user_context['savings_rate']:.2f}%
         Financial Goals: {', '.join(user_context['goals'])}
         Timeline to achieve goals: {user_context['timeline']} months
-        Savings Goal: ${user_context['savings_goal']:.2f}
         Priorities: {', '.join(user_context['priorities']) if user_context['priorities'] else 'Not specified'}
-        Current Debt: {format_optional_numeric(user_context['debt'])}
-        Debt Repayment Goal: {format_optional_numeric(user_context['debt_repayment_goal'])}
-
+       
         Categorized Expenses:
         {', '.join([f'{category}: ${amount:.2f}' for category, amount in user_context['categorized_expenses'].items()])}
 

@@ -53,9 +53,6 @@ def handle_inputs():
     goals = st.text_area("Financial Goals (comma-separated)", max_chars=500)
     timeline_months = st.number_input("Timeline (months)", min_value=1, max_value=600, step=1)
     priorities = st.text_area("Priorities (comma-separated)", max_chars=500)
-    savings_goal = st.number_input("Savings Goal ($)", min_value=0.0, step=1000.0, format="%.2f")    
-    debt = st.number_input("Current Debt ($)", min_value=0.0, step=1000.0, format="%.2f", help="Optional: Enter your current total debt")
-    debt_repayment_goal = st.number_input("Debt Repayment Goal ($)", min_value=0.0, step=1000.0, format="%.2f", help="Optional: Enter your debt repayment goal")
 
     if st.button("Generate Analysis"):
         try:
@@ -68,10 +65,7 @@ def handle_inputs():
                 goals=[goal.strip() for goal in goals.split(',') if goal.strip()],
                 timeline_months=timeline_months,
                 bank_statement=df,
-                priorities=[priority.strip() for priority in priorities.split(',') if priority.strip()] if priorities else None,
-                savings_goal=savings_goal,
-                debt=debt if debt > 0 else None,
-                debt_repayment_goal=debt_repayment_goal if debt_repayment_goal > 0 else None
+                priorities=[priority.strip() for priority in priorities.split(',') if priority.strip()] if priorities else None
             )
             
             if user_data.validate() and user_data.validate_bank_statement():

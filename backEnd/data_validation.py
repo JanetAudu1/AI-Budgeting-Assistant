@@ -36,10 +36,7 @@ class UserData:
     goals: List[str]
     timeline_months: int
     bank_statement: pd.DataFrame
-    savings_goal: float
     priorities: Optional[List[str]] = None
-    debt: Optional[float] = None
-    debt_repayment_goal: Optional[float] = None
     validation_errors: List[str] = field(default_factory=list)
 
     def validate(self):
@@ -58,18 +55,12 @@ class UserData:
         self._validate_numeric(self.current_savings, 0, 10000000, "Current Savings")
         self._validate_list(self.goals, "Goals")
         self._validate_numeric(self.timeline_months, 1, 600, "Timeline")
-        self._validate_numeric(self.savings_goal, 0.01, 10000000, "Savings Goal")
         
         # Only validate priorities if they are provided
         if self.priorities is not None:
             self._validate_list(self.priorities, "Priorities")
         
-        # Only validate debt and debt_repayment_goal if they are provided
-        if self.debt is not None:
-            self._validate_numeric(self.debt, 0, 10000000, "Debt")
-        if self.debt_repayment_goal is not None:
-            self._validate_numeric(self.debt_repayment_goal, 0, 10000000, "Debt Repayment Goal")
-        
+       
         return len(self.validation_errors) == 0
 
     def _validate_string(self, value, field_name):

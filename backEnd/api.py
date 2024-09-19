@@ -28,10 +28,8 @@ class UserDataModel(BaseModel):
     goals: List[str]
     timeline_months: int
     bank_statement: List[dict]
-    savings_goal: Optional[float] = Field(None)
     priorities: Optional[List[str]] = None
-    debt: Optional[float] = Field(None)
-    debt_repayment_goal: Optional[float] = Field(None)
+   
 
     class Config:
         arbitrary_types_allowed = True
@@ -52,10 +50,7 @@ async def get_advice(user_data: UserDataModel):
             goals=user_data.goals,
             timeline_months=user_data.timeline_months,
             bank_statement=bank_statement_df,
-            savings_goal=user_data.savings_goal or 0.0,
-            priorities=user_data.priorities,
-            debt=user_data.debt,
-            debt_repayment_goal=user_data.debt_repayment_goal
+            priorities=user_data.priorities
         )
 
         # Generate advice using the existing generate_advice_stream function
