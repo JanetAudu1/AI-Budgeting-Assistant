@@ -1,6 +1,6 @@
 import streamlit as st
 
-# This must be the first Streamlit command
+# compulsory first Streamlit command
 st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
 
 from layout import display_home_page, display_analysis_page
