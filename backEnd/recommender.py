@@ -4,7 +4,7 @@ from typing import List, Dict
 from .data_validation import UserData
 from backEnd.config import get_sources
 
-# Set your OpenAI API key from environment variable
+# Set OpenAI API key from environment variable
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
