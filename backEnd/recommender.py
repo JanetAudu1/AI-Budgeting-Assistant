@@ -75,51 +75,56 @@ def generate_advice_stream(user_data: UserData):
         
         #  GPT prompt for recommendations
         gpt_prompt = f"""
-            You are a knowledgeable budgeting assistant specializing in personalized financial planning.
-            Your advice is based on information from reputable sources, including: {sources}
+        
+        You are a friendly, professional budgeting expert. Your advice is based on comprehensive analysis and information from reputable sources including: {sources}
 
-            Your task is to provide thorough and professional financial advice based on the following user details:
+        Your task is to provide detailed, yet approachable financial advice based on the following details:
 
-            Name: {user_context['name']}
-            Age: {user_context['age']}
-            Location: {user_context['location']}
-            Monthly Income: ${user_context['income']:.2f}
-            Monthly Expenses: ${user_context['expenses']:.2f}
-            Current Savings Rate: {user_context['savings_rate']:.2f}%
-            Financial Goals: {', '.join(user_context['goals'])}
-            Timeline to achieve goals: {user_context['timeline']} months
-            Priorities: {', '.join(user_context['priorities']) if user_context['priorities'] else 'Not specified'}
+        Name: {user_context['name']}
+        Age: {user_context['age']}
+        Location: {user_context['location']}
+        Monthly Income: ${user_context['income']:.2f}
+        Monthly Expenses: ${user_context['expenses']:.2f}
+        Current Savings Rate: {user_context['savings_rate']:.2f}%
+        Financial Goals: {', '.join(user_context['goals'])}
+        Timeline to achieve goals: {user_context['timeline']} months
+        Financial Priorities: {', '.join(user_context['priorities']) if user_context['priorities'] else 'Not specified'}
 
-            Categorized Expenses:
-            {', '.join([f'{category}: ${amount:.2f}' for category, amount in user_context['categorized_expenses'].items()])}
+        Expense Breakdown:
+        {', '.join([f'{category}: ${amount:.2f}' for category, amount in user_context['categorized_expenses'].items()])}
 
-            After analyzing the user's details, please offer professional advice that includes:
-            1. A breakdown of current financial habits.
-            2. Recommendations for improving savings and reaching the user's financial goals within the specified timeline.
-            3. Insights on how to better align monthly spending with the user's priorities and goals.
+        Provide a friendly, comprehensive financial analysis and actionable advice tailored to {user_context['name']}'s situation. Your recommendations should be strategic and data-driven, but explained in an easy-to-understand manner.
 
-            Once the financial advice is complete, generate a proposed monthly budget based on the recommendations shared, ensuring it is realistic and tailored to the user's goals.
+        Assess whether {user_context['name']}'s financial goals are achievable within their {user_context['timeline']}-month timeline. Clearly state if each goal is realistically attainable, and if not, suggest friendly adjustments to either the goals or their financial approach.
 
-            At the end of your advice, include the following separator:
-            ---BUDGET_JSON_START---
-            Then, provide the budget as a JSON object like this:
-            {{
-                "Proposed Monthly Budget": {{
-                    "Category1": amount1,
-                    "Category2": amount2,
-                    ...
-                }}
+        After your advice, create a proposed monthly budget that reflects your recommendations and aligns with {user_context['name']}'s financial goals. The budget should:
+        1. Total exactly to their monthly income of ${user_context['income']:.2f}.
+        2. Not include income as a category.
+        3. Be structured to meet their savings goals if possible, considering their {user_context['timeline']}-month timeline and other financial priorities.
+        4. Use specific, descriptive category names that align with common budgeting practices and their unique situation.
+
+        At the end of your advice, include this separator:
+        ---BUDGET_JSON_START---
+        Then, provide the proposed monthly budget as a JSON object:
+        {{
+            "Proposed Monthly Budget": {{
+                "Category1": amount1,
+                "Category2": amount2,
+                ...
             }}
-            Followed by:
-            ---BUDGET_JSON_END---
+        }}
+        Followed by:
+        ---BUDGET_JSON_END---
 
-            After the JSON, conclude your advice with: "Best of luck with your financial journey, {user_context['name']}!"
+        After the budget JSON, briefly summarize if this budget allows {user_context['name']} to meet their goals within their {user_context['timeline']}-month timeline. If not, suggest what adjustments might be needed to either the goals or the timeline.
+
+        Conclude your friendly advice with: "I'm excited to support you on your journey to financial success, {user_context['name']}! If you have any questions about this plan, please don't hesitate to ask. You've got this!"
         """
         # Call OpenAI API to generate advice
         response = openai.ChatCompletion.create(
             model="gpt-4",  
             messages=[
-                {"role": "system", "content": "You are a helpful financial advisor."},
+                {"role": "system", "content": "You are a helpful budgeting assistant."},
                 {"role": "user", "content": gpt_prompt}
             ],
              temperature=0.7,  # Adjust the randomness

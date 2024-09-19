@@ -34,8 +34,6 @@ def display_analysis_page(inputs):
             generate_income_vs_expenses_chart(total_income, total_expenses)
 
             st.write(f"Total Expenses: ${total_expenses:.2f}")
-            st.write(f"Total Deposits: ${total_deposits:.2f}")
-            st.write(f"Net Cash Flow: ${total_deposits - total_expenses:.2f}")
 
    
     except Exception as e:
