@@ -74,34 +74,47 @@ def generate_advice_stream(user_data: UserData):
         sources = get_sources()
         
         #  GPT prompt for recommendations
-        gpt_prompt = f"""You are a knowledgeable financial advisor AI Chatbot specializing in personalized financial planning. 
-        Your advice is based on information from reputable sources including: {sources}
-        
-        Your task is to provide detailed financial advice based on the following user details:
+        gpt_prompt = f"""
+            You are a knowledgeable budgeting assistant specializing in personalized financial planning.
+            Your advice is based on information from reputable sources, including: {sources}
 
-        Name: {user_context['name']}
-        Age: {user_context['age']}
-        Location: {user_context['location']}
-        Monthly Income: ${user_context['income']:.2f}
-        Monthly Expenses: ${user_context['expenses']:.2f}
-        Current Savings Rate: {user_context['savings_rate']:.2f}%
-        Financial Goals: {', '.join(user_context['goals'])}
-        Timeline to achieve goals: {user_context['timeline']} months
-        Priorities: {', '.join(user_context['priorities']) if user_context['priorities'] else 'Not specified'}
-       
-        Categorized Expenses:
-        {', '.join([f'{category}: ${amount:.2f}' for category, amount in user_context['categorized_expenses'].items()])}
+            Your task is to provide thorough and professional financial advice based on the following user details:
 
-        Please provide comprehensive, personalized financial advice to help the user achieve their savings goal, optimize expenses, and manage their debt if applicable. Include specific strategies for budgeting, saving, investing, and debt repayment based on their unique situation and goals.
+            Name: {user_context['name']}
+            Age: {user_context['age']}
+            Location: {user_context['location']}
+            Monthly Income: ${user_context['income']:.2f}
+            Monthly Expenses: ${user_context['expenses']:.2f}
+            Current Savings Rate: {user_context['savings_rate']:.2f}%
+            Financial Goals: {', '.join(user_context['goals'])}
+            Timeline to achieve goals: {user_context['timeline']} months
+            Priorities: {', '.join(user_context['priorities']) if user_context['priorities'] else 'Not specified'}
 
-        Important: When suggesting budget cuts, changes in spending habits, or debt repayment strategies, always provide:
-        1. A clear explanation of WHY the suggestion is necessary or beneficial.
-        2. Specific, actionable advice on HOW to implement the suggested change.
-        3. If possible, quantify the potential impact of the suggested change.
+            Categorized Expenses:
+            {', '.join([f'{category}: ${amount:.2f}' for category, amount in user_context['categorized_expenses'].items()])}
 
-        Ensure that the text outputted is not garbled and it is spaced and formatted properly.
+            After analyzing the user's details, please offer professional advice that includes:
+            1. A breakdown of current financial habits.
+            2. Recommendations for improving savings and reaching the user's financial goals within the specified timeline.
+            3. Insights on how to better align monthly spending with the user's priorities and goals.
+
+            Once the financial advice is complete, generate a proposed monthly budget based on the recommendations shared, ensuring it is realistic and tailored to the user's goals.
+
+            At the end of your advice, include the following separator:
+            ---BUDGET_JSON_START---
+            Then, provide the budget as a JSON object like this:
+            {{
+                "Proposed Monthly Budget": {{
+                    "Category1": amount1,
+                    "Category2": amount2,
+                    ...
+                }}
+            }}
+            Followed by:
+            ---BUDGET_JSON_END---
+
+            After the JSON, conclude your advice with: "Best of luck with your financial journey, {user_context['name']}!"
         """
-
         # Call OpenAI API to generate advice
         response = openai.ChatCompletion.create(
             model="gpt-4",  
