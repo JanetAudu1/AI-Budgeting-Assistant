@@ -9,7 +9,7 @@ import io
 
 logger = logging.getLogger(__name__)
 
-API_URL = "http://localhost:8000"  # Adjust this if your FastAPI server runs on a different port
+API_URL = "http://localhost:8000" 
 
 def clean_text(text):
     # Preserve line breaks, remove extra whitespace
