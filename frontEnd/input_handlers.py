@@ -48,7 +48,7 @@ def handle_inputs():
     name = st.text_input("Name", max_chars=100)
     age = st.number_input("Age", min_value=18, max_value=120, step=1)
     address = st.text_input("Address", max_chars=200)
-    current_income = st.number_input("Current Monthly Income ($)", min_value=0.0, step=100.0, format="%.2f")
+    current_income = st.number_input("Current Net Monthly Income ($)", min_value=0.0, step=100.0, format="%.2f")
     current_savings = st.number_input("Current Savings ($)", min_value=0.0, step=1000.0, format="%.2f")
     goals = st.text_area("Financial Goals (comma-separated)", max_chars=500)
     timeline_months = st.number_input("Timeline (months)", min_value=1, max_value=600, step=1)

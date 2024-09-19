@@ -4,6 +4,8 @@ import json
 import re
 from backEnd.data_validation import UserData
 import streamlit as st
+import pandas as pd
+import io
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +18,9 @@ def clean_text(text):
     # Remove empty lines
     cleaned_lines = [line for line in cleaned_lines if line]
     return '\n\n'.join(cleaned_lines)  # Join with double newlines for better readability
+
+def escape_dollar_signs(text):
+    return text.replace('$', r'\$')
 
 def generate_advice_ui(inputs: UserData):
     """
@@ -52,12 +57,45 @@ def generate_advice_ui(inputs: UserData):
                 complete_advice = ""
                 for chunk in response.iter_content(chunk_size=None, decode_unicode=True):
                     if chunk:
-                        chunk = chunk.replace("$", r"\$")
                         complete_advice += chunk
-                        # Clean the text before displaying
-                        cleaned_advice = clean_text(complete_advice)
-                        # Use st.markdown with the cleaned text
-                        advice_placeholder.markdown(f'<div class="advice-container">{cleaned_advice}</div>', unsafe_allow_html=True)
+                        # Display everything up to the budget JSON marker
+                        display_text = complete_advice.split("---BUDGET_JSON_START---")[0]
+                        advice_placeholder.markdown(escape_dollar_signs(clean_text(display_text)))
+        
+                # After streaming, handle the budget JSON
+                parts = complete_advice.split("---BUDGET_JSON_START---")
+                if len(parts) > 1:
+                    budget_json_part = parts[1].split("---BUDGET_JSON_END---")[0]
+                    
+                    try:
+                        budget_json = json.loads(budget_json_part)
+                        budget_data = budget_json["Proposed Monthly Budget"]
+                        
+                        # Create DataFrame from budget data
+                        df = pd.DataFrame(list(budget_data.items()), columns=['Category', 'Amount'])
+                        df['Amount'] = df['Amount'].apply(lambda x: f"${x:,.2f}")
+                        
+                        st.markdown("## 📊 Proposed Monthly Budget")
+                        st.table(df)
+                        
+                        # Allow user to download the budget as CSV
+                        csv = df.to_csv(index=False)
+                        st.download_button(
+                            label="Download Budget as CSV",
+                            data=csv,
+                            file_name="proposed_monthly_budget.csv",
+                            mime="text/csv",
+                        )
+                    except json.JSONDecodeError:
+                        st.write("Error parsing budget data.")
+                else:
+                    st.write("No budget data found in the advice.")
+
+                # Display the conclusion
+                conclusion = re.search(r"Best of luck with your financial journey,.*", complete_advice)
+                if conclusion:
+                    st.markdown(escape_dollar_signs(conclusion.group()))
+
             else:
                 st.error(f"Failed to get advice. Status code: {response.status_code}")
                 logger.error(f"API error: {response.text}")
@@ -69,5 +107,5 @@ def generate_advice_ui(inputs: UserData):
         st.error("Error in data serialization.")
         logger.error(f"JSON encode error: {str(e)}")
     except Exception as e:
-        st.error("An unexpected error occurred.")
+        st.error(f"An unexpected error occurred: {str(e)}")
         logger.error(f"Unexpected error: {str(e)}")
