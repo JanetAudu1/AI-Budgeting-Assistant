@@ -23,9 +23,6 @@ class UserData:
         timeline_months (int): The timeline for financial goals in months.
         bank_statement (pd.DataFrame): The user's bank statement as a pandas DataFrame.
         savings_goal (float): The user's savings goal amount.
-        priorities (Optional[List[str]]): A list of the user's financial priorities (optional).
-        debt (Optional[float]): The user's current total debt (optional).
-        debt_repayment_goal (Optional[float]): The user's debt repayment goal amount (optional).
     """
 
     name: str
