@@ -78,7 +78,6 @@ AI-Budgeting-Assistant/
 │   ├── api/
 │   │   ├── __init__.py
 │   │   ├── main.py
-│   │   ├── models.py
 │   │   └── routes.py
 │   ├── core/
 │   │   ├── __init__.py
@@ -93,36 +92,48 @@ AI-Budgeting-Assistant/
 │   ├── test_api.py
 │   └── test_recommender.py
 ├── requirements.txt
-├── README.md
-└── .gitignore
+└── README.md
 ```
 
 ```
 File Descriptions: 
 
-Frontend (frontEnd/):
+Frontend (app/ui/):
 
-app.py: Main Streamlit application orchestrating UI components and user interactions.
+app.py: Main Streamlit application orchestrating UI components and user interactions.
 
-layout.py: Renders different sections/pages like Home and Financial Analysis.
+layout.py: Renders different sections/pages like Home and Financial Analysis.
 
-input_handlers.py: Manages user data input, including bank statement uploads and financial details.
+input_handlers.py: Manages user data input, including bank statement uploads and financial details.
 
-advice.py: Handles the generation and display of AI-powered financial advice.
+advice.py: Handles the generation and display of AI-powered financial advice.
 
-charts.py: Creates and displays visual charts for financial data visualization.
-
-
-Backend (backEnd/):
+charts.py: Creates and displays visual charts for financial data visualization.
 
 
-api.py: FastAPI server connecting the frontend to the backend 
+Backend (app/api/ and app/core/):
 
-recommender.py: Core logic used in interfacing with OpenAI's GPT-4 to produce personalized advice.
+main.py: FastAPI server setup and configuration.
 
-data_validation.py: Defines data models to ensure incoming data is valid and well-structured.
+routes.py: Defines API endpoints and request handling.
 
-init_.py: Marks the directory as a Python package, enabling proper module imports.
+config.py: Stores application-wide configurations.
+
+data_validation.py: Defines data models to ensure incoming data is valid and well-structured.
+
+
+Services (app/services/):
+
+recommender.py: Core logic for interfacing with OpenAI's GPT-4 to produce personalized advice.
+
+
+Tests (tests/):
+
+test_ui.py: Contains tests for the UI components.
+
+test_api.py: Includes tests for the API endpoints.
+
+test_recommender.py: Tests for the recommender service.
 
 
 Root Directory:
