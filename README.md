@@ -23,14 +23,14 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    ```
    
 3a. Get OpenAI API key 
-      ```
-      https://platform.openai.com/docs/quickstart
-      ```
+```
+https://platform.openai.com/docs/quickstart
+```
 
 3b. Set up your OpenAI API key as an environment variable:
-      ```
-      export OPENAI_API_KEY='your-api-key-here'
-      ```
+```
+ export OPENAI_API_KEY='your-api-key-here'
+```
 
 ## Running the Application
 Open two different tabs on your terminal and in each one, run the following commands
