@@ -2,13 +2,12 @@ import sys
 from pathlib import Path
 import pandas as pd
 from typing import Dict
-from charts import generate_expense_chart  
 import streamlit as st
 
 # Add the parent directory to sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from backEnd.data_validation import UserData
+from app.core.data_validation import UserData
 
 def calculate_expenses(bank_statement: pd.DataFrame) -> Dict[str, float]:
     # Ensure 'Withdrawals' column exists and is numeric

@@ -1,11 +1,17 @@
+import sys
+from pathlib import Path
+
+# Add the project root to the Python path
+project_root = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(project_root))
+
 import streamlit as st
+from app.ui.layout import display_home_page, display_analysis_page
+from app.ui.input_handlers import handle_inputs
+from app.ui.advice import generate_advice_ui
 
-# compulsory first Streamlit command
+# Set page config as the first Streamlit command
 st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
-
-from layout import display_home_page, display_analysis_page
-from input_handlers import handle_inputs
-from advice import generate_advice_ui
 
 # Custom CSS (updated)
 st.markdown("""

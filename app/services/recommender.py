@@ -1,8 +1,8 @@
 import openai
 import os
 from typing import List, Dict
-from .data_validation import UserData
-from backEnd.config import get_sources
+from app.core.data_validation import UserData
+from app.core.config import get_sources
 
 def setup_openai():
     api_key = os.getenv("OPENAI_API_KEY")

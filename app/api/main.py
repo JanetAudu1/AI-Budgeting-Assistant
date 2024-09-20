@@ -1,15 +1,11 @@
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import List, Optional
 import pandas as pd
 import logging
-from backEnd.data_validation import UserData
-from backEnd.recommender import generate_advice_stream
+from app.core.data_validation import UserData
+from app.services.recommender import generate_advice_stream
 
 app = FastAPI()
 
@@ -58,4 +54,14 @@ async def get_advice(user_data: UserDataModel):
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating advice: {str(e)}")
+
+@app.post("/generate_advice")
+async def generate_advice(user_data: UserDataModel):
+    try:
+        return StreamingResponse(
+            generate_advice_stream(UserData(**user_data.model_dump())),
+            media_type="text/event-stream"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 

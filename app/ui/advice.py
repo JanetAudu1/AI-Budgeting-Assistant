@@ -2,7 +2,7 @@ import json
 import re
 import pandas as pd
 import streamlit as st
-from backEnd.data_validation import UserData
+from app.core.data_validation import UserData
 import requests
 import logging
 

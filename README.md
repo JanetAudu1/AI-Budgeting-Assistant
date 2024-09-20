@@ -66,18 +66,35 @@ Open two different tabs on your terminal and in each one, run the following comm
 
 ```
 AI-Budgeting-Assistant/
-├── frontEnd/
-│ ├── app.py
-│ ├── layout.py
-│ ├── input_handlers.py
-│ ├── advice.py
-│ └── charts.py
-├── backEnd/
-│ ├── api.py
-│ ├── data_validation.py
-│ └── recommender.py
+├── app/
+│   ├── __init__.py
+│   ├── ui/
+│   │   ├── __init__.py
+│   │   ├── app.py
+│   │   ├── layout.py
+│   │   ├── input_handlers.py
+│   │   ├── charts.py
+│   │   └── advice.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── models.py
+│   │   └── routes.py
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   └── data_validation.py
+│   └── services/
+│       ├── __init__.py
+│       └── recommender.py
+├── tests/
+│   ├── __init__.py
+│   ├── test_ui.py
+│   ├── test_api.py
+│   └── test_recommender.py
 ├── requirements.txt
-└── README.md
+├── README.md
+└── .gitignore
 ```
 
 ```
