@@ -20,11 +20,11 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # Sidebar for navigation
-options = st.sidebar.radio("Select a Section:", ["Home", "Financial Analysis"])
+options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
 
 if options == "Home":
     display_home_page()
-elif options == "Financial Analysis":
+elif options == "Budget Analysis":
     inputs = handle_inputs()
     if inputs:
         display_analysis_page(inputs)

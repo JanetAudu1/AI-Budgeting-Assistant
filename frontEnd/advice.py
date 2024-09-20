@@ -64,7 +64,7 @@ def generate_advice_ui(inputs: UserData):
     </style>
     """, unsafe_allow_html=True)
 
-    st.subheader("Financial Advice")
+    st.subheader("Financial Breakdown and Spending Analysis")
     
     advice_placeholder = st.empty()
     
@@ -72,7 +72,7 @@ def generate_advice_ui(inputs: UserData):
         user_data_dict = inputs.to_dict()
         json_data = json.dumps(user_data_dict)
         
-        with st.spinner("Generating personalized financial advice..."):
+        with st.spinner("Generating personalized financial analysis..."):
             response = requests.post(f"{API_URL}/get_advice", data=json_data, headers={'Content-Type': 'application/json'}, stream=True)
             
             if response.status_code == 200:

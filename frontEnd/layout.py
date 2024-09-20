@@ -7,11 +7,11 @@ def display_home_page():
     st.write("""
     ## Welcome to Your Personalized Budgeting Assistant
 
-    This tool is designed to help you manage your finances effectively. You can analyze your monthly expenses, get insights on your spending habits, and receive tailored financial advice to achieve your goals.
+    This tool is designed to help you manage your finances effectively. You can analyze your monthly expenses, get insights on your spending habits, and receive tailored financial and budget analysis to achieve your goals.
 
     ### Key Features:
     - **Expense Tracking**: Visualize where your money is going with intuitive charts.
-    - **Financial Insights**: Get personalized advice based on your financial data.
+    - **Financial Insights**: Get personalized advice based on your financial data and proposed budget.
     - **Goal Setting**: Set and track financial goals over time.
 
     Use the navigation menu to explore the features.
