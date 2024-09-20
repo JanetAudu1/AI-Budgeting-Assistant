@@ -4,10 +4,10 @@
 This AI-Powered Budgeting Assistant is a web application that provides personalized financial advice using OpenAI's GPT model. It analyzes user-provided financial data to generate tailored budgeting and savings recommendations.
 
 ## Features
-- User-friendly interface for inputting financial data
-- Bank statement analysis and expense categorization
-- Visual representation of expenses and income
-- AI-generated personalized financial advice
+- **Expense Tracking**: Visualize spending habits with intuitive charts
+- **Financial Insights**: Receive personalized advice based on financial data and proposed budgets
+- **Goal Setting**: Set and track financial objectives over time
+
 
 ## Setup and Installation
 
@@ -36,12 +36,12 @@ https://platform.openai.com/docs/quickstart
 Open two different tabs on your terminal and in each one, run the following commands
 1. Start the backend server:
    ```
-   uvicorn backEnd.api:app --reload
+   uvicorn app.api.main:app --reload
    ```
 
 2. In a new terminal, run the Streamlit app:
    ```
-   streamlit run frontEnd/app.py
+   streamlit run app/ui/app.py
    ```
 
 3. Open your web browser and go to http://localhost:8501
