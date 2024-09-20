@@ -21,14 +21,19 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    ```
    pip install -r requirements.txt
    ```
+   
+3a. Get OpenAI API key 
+   ```
+   https://platform.openai.com/docs/quickstart
+   ```
 
-3. Set up your OpenAI API key as an environment variable:
+3b. Set up your OpenAI API key as an environment variable:
    ```
    export OPENAI_API_KEY='your-api-key-here'
    ```
 
 ## Running the Application
-
+Open two different tabs on your terminal and in each one, run the following commands
 1. Start the backend server:
    ```
    uvicorn backEnd.api:app --reload
@@ -43,16 +48,16 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
 
 ## How to Use
 
-1. Navigate to the "Financial Analysis" section.
+1. Navigate to the "Budget Analysis" section.
 2. Upload your bank statement (CSV format).
 3. Fill in your financial information and goals.
-4. Click "Generate Analysis" to receive AI-powered financial advice.
+4. Click "Generate Analysis" to receive AI-powered budgetting advice.
 
 
 ## Technology Stack
 - Frontend: Streamlit
 - Backend: FastAPI
-- Data Processing: Pandas
+- Data Processing: Pandas   
 - AI Model: OpenAI GPT-4
 - Language: Python 3.9+
 
