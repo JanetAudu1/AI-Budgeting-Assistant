@@ -13,14 +13,13 @@ from app.ui.advice import generate_advice_ui
 # Set page config as the first Streamlit command
 st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
 
-# Custom CSS (updated)
+# Custom CSS (updated for dark mode)
 st.markdown("""
     <style>
-    body {font-family: 'Roboto', sans-serif;}
-    .main {background-color: #1E1E1E; color: #ECECEC;}
+    .stApp {background-color: #0E1117; color: #FAFAFA;}
     .stButton>button {background-color: #3D9970; color: white;}
-    .stTextArea>div>div>textarea {height: auto !important; min-height: 100px;}
-    .streamlit-expanderHeader {font-size: 16px; font-weight: bold;}
+    .stTextArea>div>div>textarea {background-color: #262730; color: #FAFAFA;}
+    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FAFAFA;}
     .streamlit-expanderContent {overflow: visible !important;}
     </style>
     """, unsafe_allow_html=True)
