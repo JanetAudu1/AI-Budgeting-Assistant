@@ -11,9 +11,41 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
 
 ## Setup and Installation
 
+### Option 1: Using Docker (Recommended)
+
+1. Install Docker on your machine if you haven't already:
+   [Get Docker](https://docs.docker.com/get-docker/)
+
+2. Clone the repository:
+   ```
+   git clone https://github.com/JanetAudu1/AI-Budgeting-Assistant.git
+   cd AI-Budgeting-Assistant
+   ```
+
+3. Build the Docker image:
+   ```
+   docker build -t ai-budgeting-assistant .
+   ```
+4a. Get OpenAI API key 
+   ```
+   https://platform.openai.com/docs/quickstart
+   ```
+   
+4b. Run the Docker container:
+   ```
+   docker run -d -p 8000:8000 -p 8501:8501 -e OPENAI_API_KEY='your-api-key-here' ai-budgeting-assistant
+   ```
+   Replace 'your-api-key-here' with your actual OpenAI API key.
+
+5. Access the application:
+   - FastAPI backend: http://localhost:8000
+   - Streamlit UI: http://localhost:8501
+
+### Option 2: Local Installation
+
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/AI-Budgeting-Assistant.git
+   git clone https://github.com/JanetAudu1/AI-Budgeting-Assistant.git
    cd AI-Budgeting-Assistant
    ```
 

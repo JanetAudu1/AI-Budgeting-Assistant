@@ -19,7 +19,9 @@ def test_generate_advice():
         "priorities": ["Emergency fund", "Debt repayment"]
     }
 
-    response = client.post("/generate_advice", json=user_data)
+    response = client.post("/api/generate_advice", json=user_data)
+    print(f"Response status code: {response.status_code}") 
+    print(f"Response content: {response.content}")  
     assert response.status_code == 200
     assert "content-type" in response.headers
     assert response.headers["content-type"] == "text/event-stream; charset=utf-8"
