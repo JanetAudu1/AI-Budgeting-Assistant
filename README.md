@@ -11,10 +11,12 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
 
 ## Setup and Installation
 
+
 ### Option 1: Using Docker (Recommended)
 
-1. Install Docker on your machine if you haven't already:
-   [Get Docker](https://docs.docker.com/get-docker/)
+1. Install Docker:
+   - For Windows: [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
+   - For macOS/Linux: [Get Docker](https://docs.docker.com/get-docker/)
 
 2. Clone the repository:
    ```
@@ -26,20 +28,29 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    ```
    docker build -t ai-budgeting-assistant .
    ```
-4a. Get OpenAI API key 
-   ```
-   https://platform.openai.com/docs/quickstart
-   ```
-   
-4b. Run the Docker container:
-   ```
-   docker run -d -p 8000:8000 -p 8501:8501 -e OPENAI_API_KEY='your-api-key-here' ai-budgeting-assistant
-   ```
-   Replace 'your-api-key-here' with your actual OpenAI API key.
 
-5. Access the application:
+4. Get OpenAI API key from https://platform.openai.com/docs/quickstart
+
+5. Create a `.env` file in the project root and add your OpenAI API key:
+   ```
+   OPENAI_API_KEY=your_actual_api_key_here
+   ```
+
+6. Run the Docker container:
+   - For Windows (PowerShell):
+     ```
+     docker run -d -p 8000:8000 -p 8501:8501 --env-file .\.env ai-budgeting-assistant
+     ```
+   - For macOS/Linux:
+     ```
+     docker run -d -p 8000:8000 -p 8501:8501 --env-file .env ai-budgeting-assistant
+     ```
+
+7. Access the application:
    - FastAPI backend: http://localhost:8000
    - Streamlit UI: http://localhost:8501
+
+Note for Windows users: Ensure Docker Desktop is running before executing these commands.
 
 ### Option 2: Local Installation
 
@@ -59,10 +70,12 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
 https://platform.openai.com/docs/quickstart
 ```
 
-3b. Set up your OpenAI API key as an environment variable:
-```
- export OPENAI_API_KEY='your-api-key-here'
-```
+3b. Create a `.env` file in the project root and add your OpenAI API key:
+   ```
+   OPENAI_API_KEY=your-api-key-here
+   Replace 'your-api-key-here' with your actual OpenAI API key.
+
+   ```
 
 ## Running the Application
 Open two different tabs on your terminal and in each one, run the following commands
@@ -92,6 +105,7 @@ Open two different tabs on your terminal and in each one, run the following comm
 - Data Processing: Pandas   
 - AI Model: OpenAI GPT-4
 - Language: Python 3.9+
+
 
 
 ## Project Structure
