@@ -89,7 +89,7 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
 
 def call_openai_api(prompt: str):
     return openai.ChatCompletion.create(
-        model="gpt-4",  
+        model="gpt-3.5-turbo",  
         messages=[
             {"role": "system", "content": "You are a helpful budgeting assistant."},
             {"role": "user", "content": prompt}
