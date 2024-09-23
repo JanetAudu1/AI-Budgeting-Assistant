@@ -8,10 +8,10 @@ load_dotenv()
 
 def setup_openai():
     api_key = os.getenv("OPENAI_API_KEY")
+    print("OpenAI API key set",api_key)
     if not api_key:
         raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
     openai.api_key = api_key
-
 def calculate_savings_rate(total_income: float, total_expenses: float) -> float:
     """
     Calculate the savings rate based on total income and expenses.
@@ -89,7 +89,7 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
 
 def call_openai_api(prompt: str):
     return openai.ChatCompletion.create(
-        model="gpt-4",  
+        model="gpt-4o",  
         messages=[
             {"role": "system", "content": "You are a helpful budgeting assistant."},
             {"role": "user", "content": prompt}
