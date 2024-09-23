@@ -22,8 +22,7 @@ async def get_advice(user_data_input: UserDataInput) -> StreamingResponse:
         current_savings=user_data_input.current_savings,
         goals=user_data_input.goals,
         timeline_months=user_data_input.timeline_months,
-        bank_statement=pd.DataFrame(user_data_input.bank_statement),
-        priorities=user_data_input.priorities
+        bank_statement=pd.DataFrame(user_data_input.bank_statement)
     )
     
     if user_data.validate() and user_data.validate_bank_statement():
