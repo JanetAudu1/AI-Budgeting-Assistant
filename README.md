@@ -1,13 +1,11 @@
 # AI-Powered Budgeting Assistant
 
 ## Overview
-This AI-Powered Budgeting Assistant is a web application that provides personalized financial advice using OpenAI's GPT model. It analyzes user-provided financial data to generate tailored budgeting and savings recommendations.
+This AI-Powered Budgeting Assistant is a web application that provides personalized financial budgeting advice using OpenAI's GPT model. It analyzes user-provided financial data to generate tailored budgeting and savings recommendations.
 
 ## Features
 - **Expense Tracking**: Visualize spending habits with intuitive charts
-- **Financial Insights**: Receive personalized advice based on financial data and proposed budgets
-- **Goal Setting**: Set and track financial objectives over time
-
+- **Financial Insights**: Receive personalized advice based on financial data inputted and goals set,and receive proposed budgets
 
 ## Setup and Installation
 
@@ -17,6 +15,7 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
 1. Install Docker:
    - For Windows: [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
    - For macOS/Linux: [Get Docker](https://docs.docker.com/get-docker/)
+   - Note: avoid signing up for docker hub using your email account, preferrably,sign up using your github account or sign up manually.
 
 2. Clone the repository:
    ```
@@ -28,15 +27,16 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    ```
    docker build -t ai-budgeting-assistant .
    ```
+4a. Note: For the purpose of the workshop, we have provided you an openai key, so you can skip step 4b and step 4c
 
-4. Get OpenAI API key from https://platform.openai.com/docs/quickstart
+4b. Get OpenAI API key from https://platform.openai.com/docs/quickstart
 
-5. Create a `.env` file in the project root and add your OpenAI API key:
+4c. Create a `.env` file in the project root and add your OpenAI API key:
    ```
    OPENAI_API_KEY=your_actual_api_key_here
    ```
-
-6. Run the Docker container:
+   
+5. Run the Docker container:
    - For Windows (PowerShell):
      ```
      docker run -d -p 8000:8000 -p 8501:8501 --env-file .\.env ai-budgeting-assistant
@@ -46,12 +46,30 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
      docker run -d -p 8000:8000 -p 8501:8501 --env-file .env ai-budgeting-assistant
      ```
 
-7. Access the application:
-   - FastAPI backend: http://localhost:8000
+6. Access the application:
    - Streamlit UI: http://localhost:8501
+   - FastAPI backend: http://localhost:8000 - already started with the docker run command, not neccessary to run.
 
-Note for Windows users: Ensure Docker Desktop is running before executing these commands.
+Important Docker Notes: 
 
+- Note for Windows users: Ensure Docker Desktop is running before executing these commands.
+- If you see an error relating to docker daemon not being connected, run:
+  ```
+   "docker login" to ensure you are logged in to the dockerhub
+    ```
+- If you see an error relating to "port already in use", run:
+   ```
+     lsof -i :<portnumber in use> - to see the processes running on that port
+     copy the PID
+     run kill -9 PID - to kill process running on the port
+    ```
+- To stop docker instance running on machine, run:
+   ```
+     docker ps - to see the docker processes running on your machine
+     copy ContainerID
+     docker stop <ContainerID>
+    ```
+  
 ### Option 2: Local Installation
 
 1. Clone the repository:
