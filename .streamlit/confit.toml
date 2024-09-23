@@ -1,5 +1,11 @@
 [theme]
 base="dark"
-primaryColor="#3D9970"
+primaryColor="#3d9970"
+backgroundColor="#1e1e1e"
+secondaryBackgroundColor="#252525"
+textColor="#ececec"
+
 
 # This forces the app to use dark mode
+
+
