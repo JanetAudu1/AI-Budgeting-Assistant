@@ -34,7 +34,6 @@ def prepare_user_context(user_data: UserData) -> Dict:
         "savings_rate": savings_rate,
         "goals": user_data.goals,
         "timeline": user_data.timeline_months,
-        "priorities": user_data.priorities,
         "age": user_data.age,
         "location": user_data.address,
         "categorized_expenses": categorized_expenses
@@ -54,7 +53,6 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
     Current Savings Rate: {user_context['savings_rate']:.2f}%
     Financial Goals: {', '.join(user_context['goals'])}
     Timeline to achieve goals: {user_context['timeline']} months
-    Financial Priorities: {', '.join(user_context['priorities']) if user_context['priorities'] else 'Not specified'}
 
     Expense Breakdown:
     {', '.join([f'{category}: ${amount:.2f}' for category, amount in user_context['categorized_expenses'].items()])}
@@ -66,7 +64,7 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
     After your advice, create a proposed monthly budget that reflects your recommendations and aligns with {user_context['name']}'s financial goals. The budget should:
     1. Total exactly to their monthly income of ${user_context['income']:.2f}.
     2. Not include income as a category.
-    3. Be structured to meet their savings goals if possible, considering their {user_context['timeline']}-month timeline and other financial priorities.
+    3. Be structured to meet their savings goals if possible, considering their {user_context['timeline']}-month timeline.
     4. Use specific, descriptive category names that align with common budgeting practices and their unique situation.
 
     At the end of your advice, include this separator:

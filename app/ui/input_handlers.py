@@ -51,7 +51,6 @@ def handle_inputs():
     current_savings = st.number_input("Current Savings ($)", min_value=0.0, step=1000.0, format="%.2f")
     goals = st.text_area("Financial Goals (comma-separated)", max_chars=500)
     timeline_months = st.number_input("Timeline (months)", min_value=1, max_value=600, step=1)
-    priorities = st.text_area("Priorities (comma-separated)", max_chars=500)
 
     if st.button("Generate Analysis"):
         try:
@@ -63,8 +62,7 @@ def handle_inputs():
                 current_savings=current_savings,
                 goals=[goal.strip() for goal in goals.split(',') if goal.strip()],
                 timeline_months=timeline_months,
-                bank_statement=df,
-                priorities=[priority.strip() for priority in priorities.split(',') if priority.strip()] if priorities else None
+                bank_statement=df
             )
             
             if user_data.validate() and user_data.validate_bank_statement():

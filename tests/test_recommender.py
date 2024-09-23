@@ -20,7 +20,6 @@ def sample_user_data():
             "Withdrawals": [0, 500],
             "Category": ["Income", "Food"]
         }),
-        priorities=["Increase savings", "Learn about investing"]
     )
 
 def test_calculate_savings_rate():

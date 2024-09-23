@@ -10,7 +10,6 @@ class UserDataInput(BaseModel):
     goals: List[str]
     timeline_months: int
     bank_statement: List[dict]
-    priorities: Optional[List[str]] = None
 
     class Config:
         arbitrary_types_allowed = True

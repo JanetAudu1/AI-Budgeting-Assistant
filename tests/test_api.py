@@ -15,8 +15,7 @@ def test_generate_advice():
         "bank_statement": [
             {"Date": "2023-05-01", "Description": "Salary", "Deposits": 5000, "Withdrawals": 0, "Category": "Income"},
             {"Date": "2023-05-02", "Description": "Rent", "Deposits": 0, "Withdrawals": 1500, "Category": "Housing"}
-        ],
-        "priorities": ["Emergency fund", "Debt repayment"]
+        ]
     }
 
     response = client.post("/api/generate_advice", json=user_data)

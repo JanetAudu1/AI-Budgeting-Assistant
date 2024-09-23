@@ -33,7 +33,6 @@ class UserData:
     goals: List[str]
     timeline_months: int
     bank_statement: pd.DataFrame
-    priorities: Optional[List[str]] = None
     validation_errors: List[str] = field(default_factory=list)
 
     def validate(self):
@@ -53,11 +52,6 @@ class UserData:
         self._validate_list(self.goals, "Goals")
         self._validate_numeric(self.timeline_months, 1, 600, "Timeline")
         
-        # Only validate priorities if they are provided
-        if self.priorities is not None:
-            self._validate_list(self.priorities, "Priorities")
-        
-       
         return len(self.validation_errors) == 0
 
     def _validate_string(self, value, field_name):
