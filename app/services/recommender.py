@@ -8,7 +8,7 @@ load_dotenv()
 
 def setup_openai():
     api_key = os.getenv("OPENAI_API_KEY")
-    print("OpenAI API key set",api_key)
+    print(f"Loaded API Key: {api_key}")  # Debugging line
     if not api_key:
         raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
     openai.api_key = api_key
@@ -89,7 +89,7 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
 
 def call_openai_api(prompt: str):
     return openai.ChatCompletion.create(
-        model="gpt-4o",  
+        model="gpt-4",  
         messages=[
             {"role": "system", "content": "You are a helpful budgeting assistant."},
             {"role": "user", "content": prompt}
