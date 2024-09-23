@@ -84,7 +84,7 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
 
     After the budget JSON, briefly summarize if this budget allows {user_context['name']} to meet their goals within their {user_context['timeline']}-month timeline. If not, suggest what adjustments might be needed to either the goals or the timeline.
 
-    Conclude your friendly advice with: "I'm excited to support you on your journey to financial success, {user_context['name']}! If you have any questions about this plan, please don't hesitate to ask. You've got this!"
+    Conclude your friendly advice with: "I'm excited to support you on your journey to financial success, {user_context['name']}! You've got this!"
     """
 
 def call_openai_api(prompt: str):
@@ -101,7 +101,7 @@ def call_openai_api(prompt: str):
 
 def generate_advice_stream(user_data: UserData):
     """
-    Generate personalized financial advice and stream the response from GPT-4.
+    Generate personalized financial budgetadvice and stream the response from GPT-4.
     """
     try:
         setup_openai()
