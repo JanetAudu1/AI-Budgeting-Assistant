@@ -27,7 +27,7 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    ```
    docker build -t ai-budgeting-assistant .
    ```
-4a. Note: For the purpose of the workshop, we have provided you an openai key, so you can skip step 4b and step 4c
+4a. Note: For the purpose of the workshop, we have provided you an openai key, so you can skip step 4b and step 4c. If running this outside of the workshop please do not skip 4b and 4c. 
 
 4b. Get OpenAI API key from https://platform.openai.com/docs/quickstart
 
