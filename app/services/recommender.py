@@ -92,8 +92,8 @@ def call_openai_api(prompt: str):
             {"role": "system", "content": "You are a helpful budgeting assistant."},
             {"role": "user", "content": prompt}
         ],
-        temperature=0.7,
-        frequency_penalty=0.5,
+        temperature=0.9,
+        frequency_penalty=0.7,
         stream=True
     )
 
