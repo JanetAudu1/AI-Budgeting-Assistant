@@ -8,7 +8,6 @@ load_dotenv()
 
 def setup_openai():
     api_key = os.getenv("OPENAI_API_KEY")
-    print(f"Loaded API Key: {api_key}")  # Debugging line
     if not api_key:
         raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
     openai.api_key = api_key
@@ -48,23 +47,22 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
     Name: {user_context['name']}
     Age: {user_context['age']}
     Location: {user_context['location']}
-    Monthly Income: ${user_context['income']:.2f}
-    Monthly Expenses: ${user_context['expenses']:.2f}
-    Current Savings Rate: {user_context['savings_rate']:.2f}%
+    Monthly Income: ${float(user_context['income']):.2f}
+    Monthly Expenses: ${float(user_context['expenses']):.2f}
+    Current Savings Rate: {float(user_context['savings_rate']):.2f}%
     Financial Goals: {', '.join(user_context['goals'])}
-    Timeline to achieve goals: {user_context['timeline']} months
 
     Expense Breakdown:
-    {', '.join([f'{category}: ${amount:.2f}' for category, amount in user_context['categorized_expenses'].items()])}
+    {', '.join([f'{category}: ${float(amount):.2f}' for category, amount in user_context['categorized_expenses'].items()])}
 
     Provide a friendly, comprehensive financial analysis and actionable advice tailored to {user_context['name']}'s situation. Your recommendations should be strategic and data-driven, but explained in an easy-to-understand manner.
 
     Assess whether {user_context['name']}'s financial goals are achievable. Clearly state if each goal is realistically attainable, and if not, stress the point that the goals are not realistic and suggest friendly adjustments to either the goals or their financial approach.
 
     After your advice, create a proposed monthly budget that reflects your recommendations and aligns with {user_context['name']}'s financial goals. The budget should:
-    1. Total exactly to their monthly income of ${user_context['income']:.2f}.
+    1. Total exactly to their monthly income of ${float(user_context['income']):.2f}.
     2. Not include income as a category.
-    2. Be structured to meet their savings goals if possible, considering their {user_context['timeline']}-month timeline.
+    3. Be structured to meet their savings goals if possible, considering their financial priorities.
     4. Use specific, descriptive category names that align with common budgeting practices and their unique situation.
 
     At the end of your advice, include this separator:
