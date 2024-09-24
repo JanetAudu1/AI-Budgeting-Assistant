@@ -8,6 +8,9 @@ def generate_expense_chart(categorized_expenses):
         st.markdown("No expense data available.")
         return
 
+    # Exclude the "Income" category
+    categorized_expenses = {k: v for k, v in categorized_expenses.items() if k.lower() != 'income'}
+
     df = pd.DataFrame(list(categorized_expenses.items()), columns=['Category', 'Amount'])
     df = df.sort_values('Amount', ascending=False)
     df['Percentage'] = df['Amount'] / df['Amount'].sum() * 100
