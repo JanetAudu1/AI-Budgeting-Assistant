@@ -59,12 +59,12 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
 
     Provide a friendly, comprehensive financial analysis and actionable advice tailored to {user_context['name']}'s situation. Your recommendations should be strategic and data-driven, but explained in an easy-to-understand manner.
 
-    Assess whether {user_context['name']}'s financial goals are achievable within their {user_context['timeline']}-month timeline. Clearly state if each goal is realistically attainable, and if not, suggest friendly adjustments to either the goals or their financial approach.
+    Assess whether {user_context['name']}'s financial goals are achievable. Clearly state if each goal is realistically attainable, and if not, stress the point that the goals are not realistic and suggest friendly adjustments to either the goals or their financial approach.
 
     After your advice, create a proposed monthly budget that reflects your recommendations and aligns with {user_context['name']}'s financial goals. The budget should:
     1. Total exactly to their monthly income of ${user_context['income']:.2f}.
     2. Not include income as a category.
-    3. Be structured to meet their savings goals if possible, considering their {user_context['timeline']}-month timeline.
+    2. Be structured to meet their savings goals if possible, considering their {user_context['timeline']}-month timeline.
     4. Use specific, descriptive category names that align with common budgeting practices and their unique situation.
 
     At the end of your advice, include this separator:
@@ -80,9 +80,9 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
     Followed by:
     ---BUDGET_JSON_END---
 
-    After the budget JSON, briefly summarize if this budget allows {user_context['name']} to meet their goals within their {user_context['timeline']}-month timeline. If not, suggest what adjustments might be needed to either the goals or the timeline.
+    After the budget JSON, briefly summarize if this budget allows {user_context['name']} to meet their goals. If not, stress the point that the goals are not realistic and suggest what adjustments might be needed to either the goals or the timeline.
 
-    Conclude your friendly advice with: "I'm excited to support you on your journey to financial success, {user_context['name']}! You've got this!"
+    Conclude your friendly advice with: "You are already doing great and working towards your goals, {user_context['name']}! You've got this!"
     """
 
 def call_openai_api(prompt: str):
