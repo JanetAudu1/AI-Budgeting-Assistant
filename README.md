@@ -19,11 +19,15 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    - For macOS/Linux: [Get Docker](https://docs.docker.com/get-docker/)
    - Note: sign up to docker hub with your github account or directly.
    
-2. Clone the repository:
+2. Clone the repository in your terminal: 
    ```
    git clone https://github.com/JanetAudu1/AI-Budgeting-Assistant.git
    cd AI-Budgeting-Assistant
    ```
+   If you dont have git, you need to fix install git on your system:
+   For Windows: download and install Git from git-scm, then verify using git --version in PowerShell.
+   For Linux:  install using your package manager (e.g., sudo apt-get install git for Ubuntu), then verify with git --version.
+   For macOS:  use Homebrew (brew install git) or download from git-scm, then verify with git --version.
 
 3. Build the Docker image:
    ```
@@ -31,10 +35,11 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    ```
 
 4. Get OpenAI API key from https://platform.openai.com/docs/quickstart
+   Note that if you are running this in the workshop, I will provide you a key, so you can skip this part.
 
-5. Create a `.env` file in the project root and add your OpenAI API key:
+5. Check that you are in AI-Budgeting-Assistant folder/dir. Then create a `.env` file in the project root and add your OpenAI API key. 
    ```
-   OPENAI_API_KEY=your_actual_api_key_here
+   echo OPENAI_API_KEY=your-api-key-here > .env
    ```
 
 6. Run the Docker container:
