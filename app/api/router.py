@@ -1,20 +1,15 @@
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse, JSONResponse
-from app.api.models import UserDataInput
-from app.core.data_validation import UserData
-from app.services.recommender import generate_advice_stream
+from app.api.models import UserDataInput, UserData
+from app.core.data_validation import UserData as CoreUserData
 import pandas as pd
-import logging
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
 
-@router.post("/get_advice")
-async def get_advice(user_data_input: UserDataInput) -> StreamingResponse:
-    logger.info(f"Received request for user: {user_data_input.name}")
-    
-    # Convert UserDataInput to UserData
-    user_data = UserData(
+@router.post("/generate-advice")
+async def generate_advice(user_data_input: UserDataInput):
+    # Convert UserDataInput to CoreUserData
+    user_data = CoreUserData(
         name=user_data_input.name,
         age=user_data_input.age,
         address=user_data_input.address,
@@ -22,12 +17,11 @@ async def get_advice(user_data_input: UserDataInput) -> StreamingResponse:
         current_savings=user_data_input.current_savings,
         goals=user_data_input.goals,
         timeline_months=user_data_input.timeline_months,
-        bank_statement=pd.DataFrame(user_data_input.bank_statement)
+        bank_statement=user_data_input.bank_statement,
+        selected_llm=user_data_input.selected_llm
     )
-    
-    if user_data.validate() and user_data.validate_bank_statement():
-        logger.info(f"Validation successful for user: {user_data.name}")
-        return StreamingResponse(generate_advice_stream(user_data), media_type="text/event-stream")
-    else:
-        logger.error(f"Validation failed for user: {user_data.name}. Errors: {user_data.validation_errors}")
-        return JSONResponse(status_code=400, content={"errors": user_data.validation_errors})
+
+    # Perform additional validation
+    if not user_data.validate():
+        return JSONResponse(content={"errors": user_data.validation_errors}, status_code=400)
+

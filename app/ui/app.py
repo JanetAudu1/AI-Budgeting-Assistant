@@ -9,6 +9,7 @@ import streamlit as st
 from app.ui.layout import display_home_page, display_analysis_page
 from app.ui.input_handlers import handle_inputs
 from app.ui.advice import generate_advice_ui
+from app.api.models import UserDataInput
 
 # Set page config as the first Streamlit command
 st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
@@ -31,6 +32,6 @@ if options == "Home":
     display_home_page()
 elif options == "Budget Analysis":
     inputs = handle_inputs()
-    if inputs:
+    if inputs and isinstance(inputs, UserDataInput):
         display_analysis_page(inputs)
         generate_advice_ui(inputs)

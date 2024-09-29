@@ -1,16 +1,20 @@
 import openai
 import os
 from typing import List, Dict
-from app.core.data_validation import UserData
+from app.api.models import UserDataInput
 from app.core.config import get_sources
 from dotenv import load_dotenv
+import torch
+import logging
+from functools import lru_cache
+import time
+from .model_handlers import handle_huggingface_model, handle_gpt4
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 
-def setup_openai():
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise ValueError("No OpenAI API key found. Please set the OPENAI_API_KEY environment variable.")
-    openai.api_key = api_key
 def calculate_savings_rate(total_income: float, total_expenses: float) -> float:
     """
     Calculate the savings rate based on total income and expenses.
@@ -19,7 +23,7 @@ def calculate_savings_rate(total_income: float, total_expenses: float) -> float:
         return 0  # Avoid division by zero
     return (total_income - total_expenses) / total_income * 100
 
-def prepare_user_context(user_data: UserData) -> Dict:
+def prepare_user_context(user_data: UserDataInput) -> Dict:
     total_income = user_data.current_income
     bank_statement = user_data.bank_statement
     categorized_expenses = bank_statement.groupby('Category')['Withdrawals'].sum().to_dict()
@@ -39,6 +43,7 @@ def prepare_user_context(user_data: UserData) -> Dict:
     }
 
 def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
+    logger.info(f"Creating prompt for {user_context['selected_llm']} model")
     return f"""
     You are a friendly, professional budgeting expert. Your advice is based on comprehensive analysis and information from reputable sources including: {sources}
 
@@ -83,33 +88,36 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
     Conclude your friendly advice with: "You are already doing great and working towards your goals, {user_context['name']}! You've got this!"
     """
 
-def call_openai_api(prompt: str):
-    return openai.ChatCompletion.create(
-        model="gpt-4",  
-        messages=[
-            {"role": "system", "content": "You are a helpful budgeting assistant."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.9,
-        frequency_penalty=0.7,
-        stream=True
-    )
-
-def generate_advice_stream(user_data: UserData):
-    """
-    Generate personalized financial budgetadvice and stream the response from GPT-4.
-    """
+def call_llm_api(prompt: str, model_name: str, timeout: int = 30):
     try:
-        setup_openai()
+        if model_name == "GPT-4":
+            return handle_gpt4(prompt)
+        else:
+            start_time = time.time()
+            while time.time() - start_time < timeout:
+                try:
+                    return handle_huggingface_model(prompt, model_name)
+                except RuntimeError as e:
+                    if "CUDA out of memory" in str(e):
+                        torch.cuda.empty_cache()
+                        continue
+                    else:
+                        print(f"RuntimeError occurred: {str(e)}")
+                        raise
+            raise TimeoutError(f"Model {model_name} timed out after {timeout} seconds")
+    except Exception as e:
+        error_message = f"Error loading or running {model_name}: {str(e)}"
+        print(error_message)
+        return error_message
+
+def generate_advice_stream(user_data: UserDataInput):
+    try:
         user_context = prepare_user_context(user_data)
         sources = get_sources()
         gpt_prompt = create_gpt_prompt(user_context, sources)
-        response = call_openai_api(gpt_prompt)
+        response = call_llm_api(gpt_prompt, user_data.selected_llm)
 
-        for chunk in response:
-            if chunk['choices'][0]['finish_reason'] is not None:
-                break
-            yield chunk['choices'][0]['delta'].get('content', '')
+        yield response
 
     except Exception as e:
         yield f"Error generating advice: {str(e)}"

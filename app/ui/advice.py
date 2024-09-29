@@ -2,7 +2,7 @@ import json
 import re
 import pandas as pd
 import streamlit as st
-from app.core.data_validation import UserData
+from app.api.models import UserDataInput  # Change this import
 import requests
 import logging
 
@@ -52,7 +52,7 @@ def display_conclusion(complete_advice):
     if conclusion:
         st.markdown(escape_dollar_signs(conclusion.group()))
 
-def generate_advice_ui(inputs: UserData):
+def generate_advice_ui(inputs: UserDataInput):
     st.markdown("""
     <style>
     .advice-container {
@@ -69,8 +69,7 @@ def generate_advice_ui(inputs: UserData):
     advice_placeholder = st.empty()
     
     try:
-        user_data_dict = inputs.to_dict()
-        json_data = json.dumps(user_data_dict)
+        json_data = inputs.model_dump_json()
         
         with st.spinner("Generating personalized financial analysis..."):
             response = requests.post(f"{API_URL}/get_advice", data=json_data, headers={'Content-Type': 'application/json'}, stream=True)

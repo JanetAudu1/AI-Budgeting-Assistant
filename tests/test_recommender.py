@@ -42,3 +42,17 @@ def test_create_gpt_prompt(sample_user_data):
     assert "Source1" in prompt
     assert "Source2" in prompt
     assert "Monthly Income: $6000.00" in prompt
+
+def test_gpt4_response():
+    prompt = "Test prompt for GPT-4"
+    response = generate_gpt4_response(prompt)
+    assert response is not None
+    assert len(response) > 0
+
+def test_llama_response():
+    prompt = "Test prompt for LLaMA"
+    response = generate_llama_response(prompt)
+    assert response is not None
+    assert len(response) > 0
+
+# Similar tests for GPT-Neo and GPT-J

@@ -1,6 +1,11 @@
-from app.ui.charts import generate_expense_chart, generate_income_vs_expenses_chart
 import streamlit as st
 import pandas as pd
+from app.ui.charts import (
+    generate_expense_chart,
+    generate_income_vs_expenses_chart,
+    generate_savings_projection
+)
+from app.api.models import UserDataInput
 
 def display_home_page():
     st.title("💰 Personalized Budgeting Assistant")
@@ -17,33 +22,42 @@ def display_home_page():
     Use the navigation menu to explore the features.
     """)
 
-def display_analysis_page(inputs):
+def display_analysis_page(inputs: UserDataInput):
     st.header("Financial Analysis")
     
     try:
-        if hasattr(inputs, 'bank_statement') and isinstance(inputs.bank_statement, pd.DataFrame):
-            bank_statement = inputs.bank_statement
-            bank_statement['Withdrawals'] = pd.to_numeric(bank_statement['Withdrawals'], errors='coerce')
-            bank_statement['Deposits'] = pd.to_numeric(bank_statement['Deposits'], errors='coerce')
-
+        if inputs.bank_statement:
+            bank_statement = pd.DataFrame([entry.dict() for entry in inputs.bank_statement])
+            
+            # Calculate total expenses and deposits
             total_expenses = bank_statement['Withdrawals'].sum()
             total_deposits = bank_statement['Deposits'].sum()
-            total_income = inputs.current_income if hasattr(inputs, 'current_income') else total_deposits
+            total_income = inputs.current_income
 
-            if 'Category' in bank_statement.columns:
-                categorized_expenses = bank_statement.groupby('Category')['Withdrawals'].sum().to_dict()
-            else:
-                categorized_expenses = {'Uncategorized': total_expenses}
+            # Create categorized expenses dictionary
+            categorized_expenses = bank_statement.groupby('Category')['Withdrawals'].sum().dropna().to_dict()
 
-            if categorized_expenses and total_income is not None:
-                generate_expense_chart(categorized_expenses)
-                generate_income_vs_expenses_chart(total_income, total_expenses)
+            # Generate charts
+            generate_expense_chart(categorized_expenses)
+            generate_income_vs_expenses_chart(total_income, total_expenses)
 
-                st.write(f"Total Income: ${total_income:.2f}")
-                st.write(f"Total Expenses: ${total_expenses:.2f}")
+            monthly_savings = total_income - total_expenses
+            generate_savings_projection(inputs.current_savings, monthly_savings, inputs.timeline_months)
+
+            # Display financial goals
+            if inputs.goals:
+                st.subheader("Financial Goals")
+                for goal in inputs.goals:
+                    st.write(f"• {goal}")
+
+            # Display financial summary
+            st.write(f"Total Income: ${total_income:.2f}")
+            st.write(f"Total Expenses: ${total_expenses:.2f}")
+            st.write(f"Monthly Savings: ${monthly_savings:.2f}")
 
         else:
             st.warning("No valid bank statement data available. Please upload your bank statement.")
    
     except Exception as e:
         st.error(f"Error displaying analysis: {str(e)}")
+        st.error(f"Bank statement data: {bank_statement.head().to_dict()}")  # For debugging

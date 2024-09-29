@@ -1,37 +1,54 @@
 import streamlit as st
-import matplotlib.pyplot as plt
-import pandas as pd
+import plotly.graph_objects as go
+import plotly.express as px
 
 # Chart generation functions
 def generate_expense_chart(categorized_expenses):
-    if not categorized_expenses:
-        st.markdown("No expense data available.")
-        return
+    """
+    Generates and display a pie chart showing expense breakdown by category.
 
-    # Exclude the "Income" category
-    categorized_expenses = {k: v for k, v in categorized_expenses.items() if k.lower() != 'income'}
-
-    df = pd.DataFrame(list(categorized_expenses.items()), columns=['Category', 'Amount'])
-    df = df.sort_values('Amount', ascending=False)
-    df['Percentage'] = df['Amount'] / df['Amount'].sum() * 100
-
-    fig, ax = plt.subplots(figsize=(12, 8))
-    bars = ax.barh(df['Category'], df['Amount'], color='#2C6E49')
-
-    for i, (value, percentage) in enumerate(zip(df['Amount'], df['Percentage'])):
-        ax.text(value, i, f'${value:,.2f} ({percentage:.1f}%)', 
-                va='center', ha='left', fontweight='bold', fontsize=8, color='white',
-                bbox=dict(facecolor='#2C6E49', edgecolor='none', alpha=0.7, pad=2))
-
-    ax.set_xlabel('Amount (USD)')
-    ax.set_title('Expenses by Category')
-    plt.tight_layout()
-    st.pyplot(fig)
+    Args:
+        categorized_expenses (dict): A dictionary where keys are expense categories
+        and values are the total expenses for each category.
+    """
+    fig = px.pie(
+        values=list(categorized_expenses.values()),
+        names=list(categorized_expenses.keys()),
+        title="Expense Breakdown by Category"
+    )
+    fig.update_traces(textposition='inside', textinfo='percent+label')
+    st.plotly_chart(fig)
 
 def generate_income_vs_expenses_chart(total_income, total_expenses):
-    st.markdown("### 💰 Income vs. Expenses")
-    bar_data = pd.DataFrame({
-        'Category': ['Income', 'Expenses'],
-        'Amount': [total_income, total_expenses]
-    })
-    st.bar_chart(bar_data.set_index('Category'))
+    """
+    Generates and display a bar chart comparing total income to total expenses.
+
+    Args:
+        total_income (float): The user's total income.
+        total_expenses (float): The user's total expenses.
+    """
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=["Income"], y=[total_income], name="Income"))
+    fig.add_trace(go.Bar(x=["Expenses"], y=[total_expenses], name="Expenses"))
+    fig.update_layout(title="Income vs Expenses", barmode='group')
+    st.plotly_chart(fig)
+
+def generate_savings_projection(current_savings, monthly_savings, timeline_months):
+    """
+    Generates and display a line chart projecting savings growth over time.
+
+    Args:
+        current_savings (float): The user's current savings amount.
+        monthly_savings (float): The estimated monthly savings amount.
+        timeline_months (int): The number of months to project into the future.
+    """
+    months = list(range(timeline_months + 1))
+    savings = [current_savings + (monthly_savings * i) for i in months]
+    
+    fig = px.line(
+        x=months,
+        y=savings,
+        title="Savings Projection",
+        labels={"x": "Months", "y": "Savings ($)"}
+    )
+    st.plotly_chart(fig)
