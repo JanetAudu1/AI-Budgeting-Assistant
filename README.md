@@ -24,10 +24,10 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    git clone https://github.com/JanetAudu1/AI-Budgeting-Assistant.git
    cd AI-Budgeting-Assistant
    ```
-   If you dont have git, you need to fix install git on your system:
-   For Windows: download and install Git from git-scm, then verify using git --version in PowerShell.
-   For Linux:  install using your package manager (e.g., sudo apt-get install git for Ubuntu), then verify with git --version.
-   For macOS:  use Homebrew (brew install git) or download from git-scm, then verify with git --version.
+    - If you dont have git, you need to fix install git on your system:
+    - For Windows: download and install Git from git-scm, then verify using git --version in PowerShell.
+    - For Linux:  install using your package manager (e.g., sudo apt-get install git for Ubuntu), then verify with git --version.
+    - For macOS:  use Homebrew (brew install git) or download from git-scm, then verify with git --version.
 
 3. Build the Docker image:
    ```
