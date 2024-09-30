@@ -7,13 +7,17 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 load_dotenv()
 
 from fastapi import FastAPI
-from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
-from app.api.router import router
+from fastapi.responses import StreamingResponse
+from app.api.models import UserDataInput
+from app.services.recommender import generate_advice_stream
 
-app = FastAPI(docs_url="/docs", redoc_url="/redoc")
-
-app.include_router(router)
+app = FastAPI()
 
 @app.get("/")
 async def root():
     return {"message": "Welcome to the AI Budgeting Assistant API"}
+
+@app.post("/get_advice")
+async def get_advice(user_data: UserDataInput):
+    return StreamingResponse(generate_advice_stream(user_data), media_type="text/plain")
+

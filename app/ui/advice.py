@@ -2,9 +2,9 @@ import json
 import re
 import pandas as pd
 import streamlit as st
-from app.api.models import UserDataInput  # Change this import
-import requests
+from app.api.models import UserDataInput  
 import logging
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -64,14 +64,14 @@ def generate_advice_ui(inputs: UserDataInput):
     </style>
     """, unsafe_allow_html=True)
 
-    st.subheader("Financial Breakdown and Spending Analysis")
+    st.subheader("FinancialAnalysis and Proposed Budget")
     
     advice_placeholder = st.empty()
     
     try:
         json_data = inputs.model_dump_json()
         
-        with st.spinner("Generating personalized financial analysis..."):
+        with st.spinner("Generating personalized financial analysis and proposed budget..."):
             response = requests.post(f"{API_URL}/get_advice", data=json_data, headers={'Content-Type': 'application/json'}, stream=True)
             
             if response.status_code == 200:
@@ -84,18 +84,22 @@ def generate_advice_ui(inputs: UserDataInput):
                 
                 budget_json = extract_budget_json(complete_advice)
                 if budget_json:
-                    budget_data = budget_json["Proposed Monthly Budget"]
-                    df = create_budget_dataframe(budget_data)
-                    display_budget_table(df)
-                    create_budget_download(df)
+                    budget_data = budget_json.get("Proposed Monthly Budget")
+                    if budget_data:
+                        df = create_budget_dataframe(budget_data)
+                        display_budget_table(df)
+                        create_budget_download(df)
+                    else:
+                        st.warning("No budget data found in the advice.")
                 else:
-                    st.write("No budget data found in the advice.")
+                    st.warning("No budget data found in the advice.")
 
                 display_conclusion(complete_advice)
             else:
                 st.error(f"Failed to get advice. Status code: {response.status_code}")
+                st.error(f"Response content: {response.text}")
 
     except requests.RequestException as e:
-        st.error("Failed to connect to the advice service.")
+        st.error(f"Failed to connect to the advice service: {str(e)}")
     except Exception as e:
         st.error(f"An unexpected error occurred: {str(e)}")

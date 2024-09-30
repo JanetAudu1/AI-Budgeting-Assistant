@@ -1,23 +1,21 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
-import openai
 import os
+import openai
 import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, TextIteratorStreamer
+from threading import Thread
+import queue
 
 def handle_huggingface_model(prompt, model_name):
     try:
-        print(f"Loading tokenizer for {model_name}...")
         tokenizer = AutoTokenizer.from_pretrained(model_name)
-        
-        print(f"Loading model for {model_name}...")
         model = AutoModelForCausalLM.from_pretrained(model_name)
         
-        print(f"Creating pipeline for {model_name}...")
-        generator = pipeline("text-generation", model=model, tokenizer=tokenizer, device=-1)  # Force CPU usage
+        inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=1024)
         
-        print(f"Generating response for {model_name}...")
-        response = generator(prompt, max_length=100, num_return_sequences=1)[0]['generated_text']
+        output = model.generate(**inputs, max_new_tokens=500, do_sample=True, top_k=50, top_p=0.95)
         
-        return response.strip()
+        return tokenizer.decode(output[0], skip_special_tokens=True)
+            
     except Exception as e:
         raise RuntimeError(f"Error processing {model_name}: {str(e)}")
 
@@ -29,8 +27,11 @@ def handle_gpt4(prompt):
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": "You are a helpful budgeting assistant."},
             {"role": "user", "content": prompt}
-        ]
+        ],
+        stream=True
     )
-    return response.choices[0].message['content'].strip()
+    for chunk in response:
+        if chunk.choices[0].delta.get('content'):
+            yield chunk.choices[0].delta.content

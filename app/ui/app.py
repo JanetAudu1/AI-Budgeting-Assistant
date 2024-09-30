@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+import os
 
 # Add the project root to the Python path
 project_root = Path(__file__).resolve().parent.parent.parent
@@ -35,3 +36,6 @@ elif options == "Budget Analysis":
     if inputs and isinstance(inputs, UserDataInput):
         display_analysis_page(inputs)
         generate_advice_ui(inputs)
+
+# Set environment variable to resolve tokenizer warnings
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
