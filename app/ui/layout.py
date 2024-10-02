@@ -6,7 +6,7 @@ from app.ui.charts import (
     generate_savings_projection
 )
 from app.api.models import UserDataInput
-from app.ui.advice import escape_dollar_signs  # Add this import
+from app.ui.advice import escape_dollar_signs  
 
 def display_home_page():
     st.title("💰 Personalized Budgeting Assistant")
