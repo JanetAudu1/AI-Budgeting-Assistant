@@ -1,5 +1,5 @@
-from typing import List, Dict
-from app.api.models import UserDataInput
+from typing import List, Dict, Tuple
+from app.api.models import UserDataInput, BankStatementEntry
 from app.core.config import get_sources
 from dotenv import load_dotenv
 import torch
@@ -32,7 +32,7 @@ def prepare_user_context(user_data: UserDataInput):
         else:
             raise ValueError("Invalid bank statement format")
 
-        required_columns = ['Date', 'Description', 'Category', 'Withdrawals', 'Deposits']
+        required_columns = ['Date', 'Description', 'Category', 'Withdrawals']
         if not all(col in df.columns for col in required_columns):
             missing_columns = [col for col in required_columns if col not in df.columns]
             logger.error(f"Missing columns in bank statement: {missing_columns}")
@@ -41,7 +41,6 @@ def prepare_user_context(user_data: UserDataInput):
             }
 
         df['Withdrawals'] = df['Withdrawals'].fillna(0.0).astype(float)
-        df['Deposits'] = df['Deposits'].fillna(0.0).astype(float)
 
         total_expenses = df['Withdrawals'].sum()
         
@@ -67,34 +66,30 @@ def prepare_user_context(user_data: UserDataInput):
             "error": f"Error processing user data: {str(e)}"
         }
 
-def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
-    print(f"Creating prompt with income: ${float(user_context['income']):.2f}")
-    print(f"User context in create_gpt_prompt: {user_context}")
-    print(f"Income type: {type(user_context['income'])}")
-    print(f"Income value: {user_context['income']}")
+def create_gpt_prompt(user_data: UserDataInput, sources: List[str]) -> Tuple[str, str]:
+    print(f"Creating prompt with income: ${user_data.current_income:.2f}")
     
-    system_message = f"""    You are a friendly, empathetic professional budget advisor. Provide a detailed yet approachable financial analysis and budgeting advice for the following client. Use a warm, first-person perspective as if you're having a conversation with a friend. The client's monthly income is EXACTLY ${float(user_context['income']):.2f}. 
+    system_message = f"""You are a friendly, empathetic professional budget advisor. Provide a detailed yet approachable financial analysis and budgeting advice for the following client. Use a warm, first-person perspective as if you're having a conversation with a friend. The client's monthly income is EXACTLY ${user_data.current_income:.2f}. 
     Always use this exact income figure in your analysis and advice. Do not assume or use any other income figure."""
     
     prompt = f"""
     Based on the following user information and financial data, provide a comprehensive financial analysis and advice:
 
-    Name: {user_context['name']}
-    Age: {user_context['age']}
-    Location: {user_context['address']}
-    Monthly Income: ${float(user_context['income']):.2f}
-    Current Savings: ${float(user_context['current_savings']):.2f}
-    Financial Goals: {', '.join(user_context['goals'])}
-    Timeline: {user_context['timeline_months']} months
+    Name: {user_data.name}
+    Age: {user_data.age}
+    Location: {user_data.address}
+    Monthly Income: ${user_data.current_income:.2f}
+    Current Savings: ${user_data.current_savings:.2f}
+    Financial Goals: {', '.join(user_data.goals)}
+    Timeline: {user_data.timeline_months} months
 
     Bank Statement Summary:
-    Total Deposits: ${float(user_context['total_deposits']):.2f}
-    Total Withdrawals: ${float(user_context['total_withdrawals']):.2f}
+    Total Withdrawals: ${sum(entry.Withdrawals for entry in user_data.bank_statement):.2f}
 
     Top Expense Categories:
-    {user_context['top_expenses']}
+    {get_top_expenses(user_data.bank_statement)}
 
-    IMPORTANT: The client's monthly income is EXACTLY ${float(user_context['income']):.2f}. Do not use any other income figure in your analysis or advice. This is the correct and only income figure to use.
+    IMPORTANT: The client's monthly income is EXACTLY ${user_data.current_income:.2f}. Do not use any other income figure in your analysis or advice. This is the correct and only income figure to use.
     Please provide the following:
     1. Income and Expense Analysis
     2. Savings Rate Evaluation
@@ -113,12 +108,23 @@ def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
     }}
     ---BUDGET_JSON_END---
 
-    Ensure that the total proposed budget matches the monthly income of ${float(user_context['income']):.2f}.
+    Ensure that the total proposed budget matches the monthly income of ${user_data.current_income:.2f}.
 
     Base your advice on best practices from reputable financial sources such as {', '.join(sources)}.
     """
 
     return system_message, prompt
+
+def get_top_expenses(bank_statement: List[BankStatementEntry]) -> str:
+    expenses = {}
+    for entry in bank_statement:
+        if entry.Withdrawals > 0:
+            expenses[entry.Category] = expenses.get(entry.Category, 0) + entry.Withdrawals
+    
+    sorted_expenses = sorted(expenses.items(), key=lambda x: x[1], reverse=True)
+    top_5 = sorted_expenses[:5]
+    
+    return "\n".join([f"{category}: ${amount:.2f}" for category, amount in top_5])
 
 def generate_advice_stream(user_data: UserDataInput):
     print("generate_advice_stream function called")
