@@ -6,7 +6,6 @@ from threading import Thread
 import queue
 import logging
 
-# Add this line at the top of the file, after the imports
 logger = logging.getLogger(__name__)
 
 def handle_huggingface_model(prompt, model_name):
