@@ -9,7 +9,8 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from .model_handlers import handle_huggingface_model, handle_gpt4
 import pandas as pd
 
-logging.basicConfig(level=logging.INFO)
+# Replace the existing logging setup with this:
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 load_dotenv()
@@ -23,18 +24,14 @@ def calculate_savings_rate(total_income: float, total_expenses: float) -> float:
     return (total_income - total_expenses) / total_income * 100
 
 def prepare_user_context(user_data: UserDataInput):
+    logger.info(f"Preparing user context with income: ${user_data.current_income:.2f}")
     try:
         if isinstance(user_data.bank_statement, list):
-            # Convert list of dictionaries to DataFrame
             df = pd.DataFrame([entry.dict() for entry in user_data.bank_statement])
         elif isinstance(user_data.bank_statement, pd.DataFrame):
             df = user_data.bank_statement
         else:
             raise ValueError("Invalid bank statement format")
-
-        logger.info(f"Bank statement columns: {df.columns}")
-        logger.info(f"Bank statement data types: {df.dtypes}")
-        logger.info(f"First few rows of bank statement: {df.head().to_dict()}")
 
         required_columns = ['Date', 'Description', 'Category', 'Withdrawals', 'Deposits']
         if not all(col in df.columns for col in required_columns):
@@ -44,19 +41,17 @@ def prepare_user_context(user_data: UserDataInput):
                 "error": f"Bank statement data is missing columns: {', '.join(missing_columns)}"
             }
 
-        # Convert Withdrawals and Deposits to float, replacing None with 0.0
         df['Withdrawals'] = df['Withdrawals'].fillna(0.0).astype(float)
         df['Deposits'] = df['Deposits'].fillna(0.0).astype(float)
 
         total_expenses = df['Withdrawals'].sum()
-        total_income = df['Deposits'].sum()
         
         categorized_expenses = df.groupby('Category')['Withdrawals'].sum().to_dict()
-        savings_rate = calculate_savings_rate(total_income, total_expenses)
+        savings_rate = calculate_savings_rate(user_data.current_income, total_expenses)
 
         return {
             "name": user_data.name,
-            "income": total_income,
+            "income": user_data.current_income,
             "expenses": total_expenses,
             "savings_rate": savings_rate,
             "goals": user_data.goals,
@@ -74,72 +69,81 @@ def prepare_user_context(user_data: UserDataInput):
         }
 
 def create_gpt_prompt(user_context: Dict, sources: List[str]) -> str:
-    return f"""
-    You are a friendly, empathetic professional budget advisor. Provide a detailed yet approachable financial analysis and budgetingadvice for the following client. Use a warm, first-person perspective as if you're having a conversation with a friend:
+    print(f"Creating prompt with income: ${float(user_context['income']):.2f}")
+    print(f"User context in create_gpt_prompt: {user_context}")
+    print(f"Income type: {type(user_context['income'])}")
+    print(f"Income value: {user_context['income']}")
     
-    Client Information:
-    - Name: {user_context['name']}
-    - Age: {user_context['age']}
-    - Location: {user_context['location']}
-    - Monthly Income: ${float(user_context['income']):.2f}
-    - Monthly Expenses: ${float(user_context['expenses']):.2f}
-    - Current Savings Rate: {float(user_context['savings_rate']):.2f}%
-    - Financial Goals: {', '.join(user_context['goals'])}
+    system_message = f"""    You are a friendly, empathetic professional budget advisor. Provide a detailed yet approachable financial analysis and budgeting advice for the following client. Use a warm, first-person perspective as if you're having a conversation with a friend. The client's monthly income is EXACTLY ${float(user_context['income']):.2f}. 
+    Always use this exact income figure in your analysis and advice. Do not assume or use any other income figure."""
+    
+    prompt = f"""
+    Based on the following user information and financial data, provide a comprehensive financial analysis and advice:
 
-    Expense Breakdown:
-    {', '.join([f'- {category}: ${float(amount):.2f}' for category, amount in user_context['categorized_expenses'].items()])}
+    Name: {user_context['name']}
+    Age: {user_context['age']}
+    Location: {user_context['address']}
+    Monthly Income: ${float(user_context['income']):.2f}
+    Current Savings: ${float(user_context['current_savings']):.2f}
+    Financial Goals: {', '.join(user_context['goals'])}
+    Timeline: {user_context['timeline_months']} months
 
-    Please provide your analysis and advice in the following format:
+    Bank Statement Summary:
+    Total Deposits: ${float(user_context['total_deposits']):.2f}
+    Total Withdrawals: ${float(user_context['total_withdrawals']):.2f}
 
-    1. Income and Expense Analysis:
-    [Provide a brief analysis of the client's income and expenses]
+    Top Expense Categories:
+    {user_context['top_expenses']}
 
-    2. Savings Rate Evaluation:
-    [Evaluate the client's current savings rate]
+    IMPORTANT: The client's monthly income is EXACTLY ${float(user_context['income']):.2f}. Do not use any other income figure in your analysis or advice. This is the correct and only income figure to use.
+    Please provide the following:
+    1. Income and Expense Analysis
+    2. Savings Rate Evaluation
+    3. Goal Feasibility
+    4. Recommendations for Improvement
+    5. Proposed Monthly Budget (in JSON format)
 
-    3. Goal Feasibility:
-    [Assess the feasibility of each of the client's financial goals]
-
-    4. Recommendations:
-    [Provide specific, actionable recommendations to improve the client's financial situation]
-
-    5. Conclusion:
-    [Summarize your advice and provide encouragement to the client]
-
-    Remember to be friendly, use "I" statements, and provide advice based on sound financial principles.
-
-    After your analysis, please include a JSON representation of the proposed monthly budget using the following format:
-
-      At the end of your advice, include this separator:
+    Use the following format for the Proposed Monthly Budget:
     ---BUDGET_JSON_START---
-    Then, provide the proposed monthly budget as a JSON object:
     {{
-        "Proposed Monthly Budget": {{
-            "Category1": amount1,
-            "Category2": amount2,
-            ...
-        }}
+      "Proposed Monthly Budget": {{
+        "Category1": {{"proposed_change": 0.00, "change_reason": "Reason for change"}},
+        "Category2": {{"proposed_change": 0.00, "change_reason": "Reason for change"}},
+        ...
+      }}
     }}
-    Followed by:
     ---BUDGET_JSON_END---
 
-    Replace [Total income], [Amount], and [Proposed savings amount] with actual numerical values based on your recommendations.
+    Ensure that the total proposed budget matches the monthly income of ${float(user_context['income']):.2f}.
+
+    Base your advice on best practices from reputable financial sources such as {', '.join(sources)}.
     """
 
+    return system_message, prompt
+
 def generate_advice_stream(user_data: UserDataInput):
+    print("generate_advice_stream function called")
+    print(f"Generating advice for user with income: ${user_data.current_income:.2f}")
     try:
+        print(f"Original user data income: {user_data.current_income}")
         user_context = prepare_user_context(user_data)
         if "error" in user_context:
+            print(f"Error in user context: {user_context['error']}")
             yield f"Error: {user_context['error']}"
             return
+
+        print(f"User context prepared. Income: ${float(user_context['income']):.2f}")
 
         sources = get_sources()
         gpt_prompt = create_gpt_prompt(user_context, sources)
         
+        print(f"GPT prompt created. Income in prompt: ${float(user_context['income']):.2f}")
+        print(f"Full GPT prompt: {gpt_prompt}")
+
         yield from call_llm_api(gpt_prompt, user_context['selected_llm'])
 
     except Exception as e:
-        logger.exception("Error in generate_advice_stream")
+        print(f"Error in generate_advice_stream: {str(e)}")
         yield f"Error generating advice: {str(e)}"
 
 def call_llm_api(prompt: str, model_name: str, timeout: int = 10):
@@ -166,3 +170,27 @@ def call_llm_api(prompt: str, model_name: str, timeout: int = 10):
     else:
         print(f"Unsupported model: {model_name}. Using GPT-4.")
         yield from handle_gpt4(prompt)
+
+def get_advice(user_data: UserDataInput):
+    print("get_advice function called")
+    print(f"Generating advice for user with income: ${user_data.current_income:.2f}")
+    try:
+        user_context = prepare_user_context(user_data)
+        if "error" in user_context:
+            print(f"Error in user context: {user_context['error']}")
+            yield f"Error: {user_context['error']}"
+            return
+
+        print(f"User context prepared. Income: ${float(user_context['income']):.2f}")
+
+        sources = get_sources()
+        system_message, gpt_prompt = create_gpt_prompt(user_context, sources)
+        
+        print(f"GPT prompt created. Income in prompt: ${float(user_context['income']):.2f}")
+        print(f"Full GPT prompt: {gpt_prompt}")
+
+        yield from call_llm_api(system_message, gpt_prompt, user_context['selected_llm'])
+
+    except Exception as e:
+        print(f"Error in get_advice: {str(e)}")
+        yield f"Error generating advice: {str(e)}"

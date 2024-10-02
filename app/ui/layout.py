@@ -6,6 +6,7 @@ from app.ui.charts import (
     generate_savings_projection
 )
 from app.api.models import UserDataInput
+from app.ui.advice import escape_dollar_signs  # Add this import
 
 def display_home_page():
     st.title("💰 Personalized Budgeting Assistant")
@@ -51,13 +52,12 @@ def display_analysis_page(inputs: UserDataInput):
                     st.write(f"• {goal}")
 
             # Display financial summary
-            st.write(f"Total Income: ${total_income:.2f}")
-            st.write(f"Total Expenses: ${total_expenses:.2f}")
-            st.write(f"Monthly Savings: ${monthly_savings:.2f}")
+            st.write(escape_dollar_signs(f"Total Income: ${total_income:.2f}"))
+            st.write(escape_dollar_signs(f"Total Expenses: ${total_expenses:.2f}"))
+            st.write(escape_dollar_signs(f"Monthly Savings: ${monthly_savings:.2f}"))
 
         else:
             st.warning("No valid bank statement data available. Please upload your bank statement.")
    
     except Exception as e:
         st.error(f"Error displaying analysis: {str(e)}")
-        st.error(f"Bank statement data: {bank_statement.head().to_dict()}")  # For debugging

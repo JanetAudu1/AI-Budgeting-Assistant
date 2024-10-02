@@ -4,6 +4,7 @@ from streamlit.testing.v1 import AppTest
 import io
 import pandas as pd
 from app.ui.app import display_home_page
+from app.ui.advice import create_budget_dataframe
 
 def mock_csv_file():
     data = {
@@ -28,4 +29,15 @@ def test_home_page():
     at.run()
     assert "💰 Personalized Budgeting Assistant" in at.get("title")[0].value
 
-
+def test_create_budget_dataframe_excludes_income():
+    budget_data = {
+        "Income": 5000,
+        "Rent": 1500,
+        "Utilities": 300,
+        "Groceries": 400,
+        "Entertainment": 200
+    }
+    df = create_budget_dataframe(budget_data)
+    
+    assert "Income" not in df['Category'].values, "Income should be excluded from the budget dataframe."
+    assert len(df) == 4, "There should be 4 categories excluding Income."

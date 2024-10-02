@@ -35,7 +35,8 @@ def handle_inputs():
     for col in ['Withdrawals', 'Deposits', 'Balance']:
         if col in df.columns:
             df[col] = df[col].replace('[\$,]', '', regex=True).astype(float)
-    
+            
+    st.subheader("Bank Statement Preview")
     st.write(df.head())
 
     name = st.text_input("Name", max_chars=100)

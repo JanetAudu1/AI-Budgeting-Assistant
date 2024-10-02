@@ -1,6 +1,11 @@
 import sys
 from pathlib import Path
 import os
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Add the project root to the Python path
 project_root = Path(__file__).resolve().parent.parent.parent

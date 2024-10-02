@@ -4,6 +4,10 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, TextIteratorStreamer
 from threading import Thread
 import queue
+import logging
+
+# Add this line at the top of the file, after the imports
+logger = logging.getLogger(__name__)
 
 def handle_huggingface_model(prompt, model_name):
     try:
@@ -19,19 +23,27 @@ def handle_huggingface_model(prompt, model_name):
     except Exception as e:
         raise RuntimeError(f"Error processing {model_name}: {str(e)}")
 
-def handle_gpt4(prompt):
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    if not openai.api_key:
-        raise ValueError("OPENAI_API_KEY environment variable is not set")
-    
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "You are a helpful budgeting assistant."},
-            {"role": "user", "content": prompt}
-        ],
-        stream=True
-    )
-    for chunk in response:
-        if chunk.choices[0].delta.get('content'):
-            yield chunk.choices[0].delta.content
+def handle_gpt4(system_message: str, prompt: str):
+    logger.info("Calling GPT-4 API")
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": prompt}
+            ],
+            stream=True
+        )
+        
+        full_response = ""
+        for chunk in response:
+            if chunk and 'content' in chunk['choices'][0]['delta']:
+                content = chunk['choices'][0]['delta']['content']
+                full_response += content
+                yield content
+
+        logger.info(f"Full GPT-4 response: {full_response}")
+        
+    except Exception as e:
+        logger.exception(f"Error in GPT-4 API call: {str(e)}")
+        yield f"Error: {str(e)}"
