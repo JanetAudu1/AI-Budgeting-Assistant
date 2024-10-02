@@ -9,7 +9,6 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from .model_handlers import handle_huggingface_model, handle_gpt4
 import pandas as pd
 
-# Replace the existing logging setup with this:
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
