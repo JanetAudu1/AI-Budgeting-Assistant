@@ -34,15 +34,11 @@ def handle_gpt4(system_message: str, prompt: str):
             stream=True
         )
         
-        full_response = ""
         for chunk in response:
             if chunk and 'content' in chunk['choices'][0]['delta']:
                 content = chunk['choices'][0]['delta']['content']
-                full_response += content
                 yield content
 
-        logger.info(f"Full GPT-4 response: {full_response}")
-        
     except Exception as e:
         logger.exception(f"Error in GPT-4 API call: {str(e)}")
         yield f"Error: {str(e)}"

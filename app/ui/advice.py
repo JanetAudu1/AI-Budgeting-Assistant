@@ -6,10 +6,11 @@ from app.api.models import UserDataInput
 import logging
 import requests
 import traceback
+from app.services.recommender import generate_advice_stream
 
 logger = logging.getLogger(__name__)
 
-API_URL = "http://localhost:8000" 
+API_URL = "http://localhost:8000" #not in use, as main.py is not running. Removed for easier deployment 
 
 def escape_dollar_signs(text):
     return text.replace('$', r'\$')
@@ -147,66 +148,36 @@ def display_conclusion(complete_advice):
         st.markdown(escape_dollar_signs(conclusion.group()))
 
 def generate_advice_ui(inputs: UserDataInput):
-    st.markdown("""
-    <style>
-    .advice-container {
-        white-space: pre-wrap;
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        hyphens: auto;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
     st.subheader("Financial Analysis and Proposed Budget")
     
     advice_placeholder = st.empty()
     
     try:
-        json_data = inputs.model_dump_json()
-        
+        complete_advice = ""
         with st.spinner("Generating personalized financial analysis and proposed budget..."):
-            response = requests.post(
-                f"{API_URL}/get_advice", 
-                data=json_data, 
-                headers={'Content-Type': 'application/json'}, 
-                stream=True
-            )
+            for chunk in generate_advice_stream(inputs):
+                complete_advice += chunk
+                display_text = complete_advice.split("---BUDGET_JSON_START---")[0]
+                advice_placeholder.markdown(escape_dollar_signs(clean_text(display_text)))
             
-            if response.status_code == 200:
-                complete_advice = ""
-                for chunk in response.iter_content(chunk_size=None, decode_unicode=True):
-                    if chunk:
-                        complete_advice += chunk
-                        display_text = complete_advice.split("---BUDGET_JSON_START---")[0]
-                        advice_placeholder.markdown(escape_dollar_signs(clean_text(display_text)))
-                
-                budget_json = extract_budget_json(complete_advice)
-                if budget_json:
-                    # Flatten the budget data if it's nested
-                    budget_data = budget_json.get("Proposed Monthly Budget", budget_json)
-                    if isinstance(budget_data, dict):
-
-                        # Convert bank_statement to DataFrame if it's not already
-                        bank_statement = pd.DataFrame([entry.dict() for entry in inputs.bank_statement])
-                        df = create_budget_dataframe(budget_data, bank_statement, inputs.current_income)
-                        if not df.empty:
-                            display_budget_table(df, inputs.current_income)  # Use current_income here
-                            create_budget_download(df)
-                        else:
-                            st.warning("Unable to create budget table from the provided data.")
+            budget_json = extract_budget_json(complete_advice)
+            if budget_json:
+                budget_data = budget_json.get("Proposed Monthly Budget", budget_json)
+                if isinstance(budget_data, dict):
+                    bank_statement = pd.DataFrame([entry.dict() for entry in inputs.bank_statement])
+                    df = create_budget_dataframe(budget_data, bank_statement, inputs.current_income)
+                    if not df.empty:
+                        display_budget_table(df, inputs.current_income)
+                        create_budget_download(df)
                     else:
-                        st.warning("Invalid budget data structure.")
+                        st.warning("Unable to create budget table from the provided data.")
                 else:
-                    st.warning("No budget data found in the advice.")
-
-                display_conclusion(complete_advice)
+                    st.warning("Invalid budget data structure.")
             else:
-                st.error(f"Failed to get advice. Status code: {response.status_code}")
-                st.error(f"Response content: {response.text}")
+                st.warning("No budget data found in the advice.")
 
-    except requests.RequestException as e:
-        st.error(f"Failed to connect to the advice service: {str(e)}")
+            display_conclusion(complete_advice)
+
     except Exception as e:
         st.error(f"An unexpected error occurred: {str(e)}")
-        st.error(f"Traceback: {traceback.format_exc()}")  # Add this line for more detailed error information
+        st.exception(e)

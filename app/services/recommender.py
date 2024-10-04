@@ -130,7 +130,6 @@ def generate_advice_stream(user_data: UserDataInput):
     print("generate_advice_stream function called")
     print(f"Generating advice for user with income: ${user_data.current_income:.2f}")
     try:
-        print(f"Original user data income: {user_data.current_income}")
         user_context = prepare_user_context(user_data)
         if "error" in user_context:
             print(f"Error in user context: {user_context['error']}")
@@ -140,41 +139,28 @@ def generate_advice_stream(user_data: UserDataInput):
         print(f"User context prepared. Income: ${float(user_context['income']):.2f}")
 
         sources = get_sources()
-        gpt_prompt = create_gpt_prompt(user_context, sources)
+        system_message, prompt = create_gpt_prompt(user_data, sources)
         
         print(f"GPT prompt created. Income in prompt: ${float(user_context['income']):.2f}")
-        print(f"Full GPT prompt: {gpt_prompt}")
+        print(f"Full GPT prompt: {prompt}")
 
-        yield from call_llm_api(gpt_prompt, user_context['selected_llm'])
+        yield from call_llm_api(system_message, prompt, user_context['selected_llm'])
 
     except Exception as e:
         print(f"Error in generate_advice_stream: {str(e)}")
-        yield f"Error generating advice: {str(e)}"
+        yield f"Error: {str(e)}"
 
-def call_llm_api(prompt: str, model_name: str, timeout: int = 10):
+def call_llm_api(system_message: str, prompt: str, model_name: str):
     if model_name == "GPT-4":
-        yield from handle_gpt4(prompt)
+        yield from handle_gpt4(system_message, prompt)
     elif model_name in ["gpt2", "distilgpt2"]:
         try:
-            with ThreadPoolExecutor() as executor:
-                future = executor.submit(handle_huggingface_model, prompt, model_name)
-                try:
-                    result = future.result(timeout=timeout)
-                    required_keywords = ["Income and Expense Analysis", "Savings Rate Evaluation", "Goal Feasibility", "Recommendations"]
-                    if len(result) < 200 or not all(keyword in result for keyword in required_keywords):
-                        print(f"Inadequate response from {model_name}. Falling back to GPT-4.")
-                        yield from handle_gpt4(prompt)
-                    else:
-                        yield result
-                except TimeoutError:
-                    print(f"Timeout reached for {model_name}. Falling back to GPT-4.")
-                    yield from handle_gpt4(prompt)
+            response = handle_huggingface_model(prompt, model_name)
+            yield response
         except Exception as e:
-            print(f"Error with {model_name}: {str(e)}. Falling back to GPT-4.")
-            yield from handle_gpt4(prompt)
+            yield f"Error processing {model_name}: {str(e)}"
     else:
-        print(f"Unsupported model: {model_name}. Using GPT-4.")
-        yield from handle_gpt4(prompt)
+        yield f"Unsupported model: {model_name}"
 
 def get_advice(user_data: UserDataInput):
     print("get_advice function called")

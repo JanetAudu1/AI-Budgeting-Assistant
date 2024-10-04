@@ -16,6 +16,7 @@ from app.ui.layout import display_home_page, display_analysis_page
 from app.ui.input_handlers import handle_inputs
 from app.ui.advice import generate_advice_ui
 from app.api.models import UserDataInput
+from app.services.recommender import generate_advice_stream
 
 # Set page config as the first Streamlit command
 st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
@@ -31,16 +32,20 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Sidebar for navigation
-options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
+def main():
+    
+    options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
 
-if options == "Home":
-    display_home_page()
-elif options == "Budget Analysis":
-    inputs = handle_inputs()
-    if inputs and isinstance(inputs, UserDataInput):
-        display_analysis_page(inputs)
-        generate_advice_ui(inputs)
+    if options == "Home":
+        display_home_page()
+    elif options == "Budget Analysis":
+        inputs = handle_inputs()
+        if inputs and isinstance(inputs, UserDataInput):
+            display_analysis_page(inputs)
+            generate_advice_ui(inputs)
 
-# Set environment variable to resolve tokenizer warnings
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    # Set environment variable to resolve tokenizer warnings
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+if __name__ == "__main__":
+    main()
