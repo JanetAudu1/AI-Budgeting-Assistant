@@ -41,9 +41,9 @@ except KeyError:
 try:
     os.environ["HUGGINGFACE_TOKEN"] = st.secrets["api_keys"]["HUGGINGFACE_TOKEN"]
 except KeyError:
-    st.warning("Hugging Face token not found. Some features may not work.")
-    # Optionally, you could set a default or dummy token here
-    # os.environ["HUGGINGFACE_TOKEN"] = "dummy_token"
+    if "HUGGINGFACE_TOKEN" not in os.environ:
+        st.warning("Hugging Face token not found. Some features may not work.")
+
 
 # Custom CSS (updated for dark mode)
 st.markdown("""
