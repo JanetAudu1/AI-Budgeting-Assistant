@@ -6,6 +6,9 @@ import streamlit as st
 import openai
 from dotenv import load_dotenv
 
+# Set page config as the first Streamlit command
+st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -41,8 +44,6 @@ except KeyError:
     if "HUGGINGFACE_TOKEN" not in os.environ:
         st.warning("Hugging Face token not found. Some features may not work.")
 
-# Set page config as the first Streamlit command
-st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
 
 # Custom CSS (updated for dark mode)
 st.markdown("""
