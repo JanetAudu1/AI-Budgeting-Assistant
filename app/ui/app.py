@@ -2,6 +2,9 @@ import sys
 from pathlib import Path
 import os
 import logging
+import streamlit as st
+import openai
+from dotenv import load_dotenv
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -11,12 +14,20 @@ logger = logging.getLogger(__name__)
 project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-import streamlit as st
+# Load environment variables
+load_dotenv()
+
 from app.ui.layout import display_home_page, display_analysis_page
 from app.ui.input_handlers import handle_inputs
 from app.ui.advice import generate_advice_ui
 from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
+
+# Set OpenAI API key using Streamlit secrets
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+# You can also set the Hugging Face token if needed
+os.environ["HUGGINGFACE_TOKEN"] = st.secrets["HUGGINGFACE_TOKEN"]
 
 # Set page config as the first Streamlit command
 st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")

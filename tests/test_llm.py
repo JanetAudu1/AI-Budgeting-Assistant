@@ -1,6 +1,14 @@
 import pytest
 import os
 from app.services.recommender import call_llm_api
+import streamlit as st
+from unittest.mock import patch
+
+# Mock Streamlit secrets
+@pytest.fixture(autouse=True)
+def mock_st_secrets():
+    with patch.object(st, 'secrets', {"OPENAI_API_KEY": "mock_key", "HUGGINGFACE_TOKEN": "mock_token"}):
+        yield
 
 # Check for required API keys
 if "HUGGINGFACE_TOKEN" not in os.environ:
