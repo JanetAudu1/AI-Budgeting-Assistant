@@ -155,12 +155,22 @@ def call_llm_api(system_message: str, prompt: str, model_name: str):
         yield from handle_gpt4(system_message, prompt)
     elif model_name in ["gpt2", "distilgpt2"]:
         try:
-            response = handle_huggingface_model(prompt, model_name)
-            yield response
+            with ThreadPoolExecutor() as executor:
+                future = executor.submit(handle_huggingface_model, prompt, model_name)
+                try:
+                    response = future.result(timeout=10)  # 10 second timeout
+                    yield response
+                except TimeoutError:
+                    print(f"Timeout reached for {model_name}. Falling back to GPT-4.")
+                    yield f"Timeout reached for {model_name}. Falling back to GPT-4.\n\n"
+                    yield from handle_gpt4(system_message, prompt)
         except Exception as e:
-            yield f"Error processing {model_name}: {str(e)}"
+            print(f"Error processing {model_name}: {str(e)}. Falling back to GPT-4.")
+            yield f"Error processing {model_name}: {str(e)}. Falling back to GPT-4.\n\n"
+            yield from handle_gpt4(system_message, prompt)
     else:
-        yield f"Unsupported model: {model_name}"
+        yield f"Unsupported model: {model_name}. Falling back to GPT-4.\n\n"
+        yield from handle_gpt4(system_message, prompt)
 
 def get_advice(user_data: UserDataInput):
     print("get_advice function called")
