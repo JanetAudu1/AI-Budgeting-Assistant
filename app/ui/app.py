@@ -23,11 +23,23 @@ from app.ui.advice import generate_advice_ui
 from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
 
-# Set OpenAI API key using Streamlit secrets
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+# Try to get the API key from Streamlit secrets, fall back to environment variable
+try:
+    # Access the OpenAI API key from the `api_keys` section in secrets
+    openai.api_key = st.secrets["api_keys"]["OPENAI_API_KEY"]
 
-# You can also set the Hugging Face token if needed
-os.environ["HUGGINGFACE_TOKEN"] = st.secrets["HUGGINGFACE_TOKEN"]
+except KeyError:
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    if not openai.api_key:
+        st.error("OpenAI API key not found. Please set it in .streamlit/secrets.toml or as an environment variable.")
+        st.stop()
+
+# Similarly for HUGGINGFACE_TOKEN
+try:
+    os.environ["HUGGINGFACE_TOKEN"] = st.secrets["HUGGINGFACE_TOKEN"]
+except KeyError:
+    if "HUGGINGFACE_TOKEN" not in os.environ:
+        st.warning("Hugging Face token not found. Some features may not work.")
 
 # Set page config as the first Streamlit command
 st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
