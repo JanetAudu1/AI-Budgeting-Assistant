@@ -36,7 +36,7 @@ except KeyError:
 
 # Similarly for HUGGINGFACE_TOKEN
 try:
-    os.environ["HUGGINGFACE_TOKEN"] = st.secrets["HUGGINGFACE_TOKEN"]
+    os.environ["HUGGINGFACE_TOKEN"] = st.secrets["api_keys"]["HUGGINGFACE_TOKEN"]
 except KeyError:
     if "HUGGINGFACE_TOKEN" not in os.environ:
         st.warning("Hugging Face token not found. Some features may not work.")
