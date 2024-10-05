@@ -6,6 +6,9 @@ import streamlit as st
 import openai
 from dotenv import load_dotenv
 
+# Print current working directory
+print(f"Current working directory: {os.getcwd()}")
+
 # Check if running on Streamlit Cloud
 is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
 
@@ -23,8 +26,20 @@ logger = logging.getLogger(__name__)
 project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-# Load environment variables (this won't have an effect on Streamlit Cloud)
-load_dotenv()
+# Try to load .env file
+env_path = Path('.env')
+if env_path.exists():
+    print(f".env file found at {env_path.absolute()}")
+    load_dotenv(env_path)
+else:
+    print(f".env file not found. Searched in {env_path.absolute()}")
+
+# Try to get API key from environment
+api_key = os.getenv("OPENAI_API_KEY")
+if api_key:
+    print("OPENAI_API_KEY found in environment variables")
+else:
+    print("OPENAI_API_KEY not found in environment variables")
 
 from app.ui.layout import display_home_page, display_analysis_page
 from app.ui.input_handlers import handle_inputs
