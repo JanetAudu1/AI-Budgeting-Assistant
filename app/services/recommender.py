@@ -44,37 +44,38 @@ def prepare_user_context(user_data: UserDataInput) -> Dict[str, Any]:
         return {"error": str(e)}
 
 def create_gpt_prompt(user_data: UserDataInput, sources: List[str], follow_up_question: str = None) -> Tuple[str, str]:
-    print(f"Creating prompt with income: ${user_data.current_income:.2f}")
-    
-    system_message = f"""You are a friendly, empathetic professional budget advisor. Provide a detailed yet approachable financial analysis and budgeting advice for the following client. Use a warm, first-person perspective as if you're having a conversation with a friend. The client's monthly income is EXACTLY ${user_data.current_income:.2f}. 
-    Always use this exact income figure in your analysis and advice. Do not assume or use any other income figure."""
-    
+    system_message = """You are a friendly, empathetic professional budget advisor. Provide a detailed yet approachable financial analysis and budgeting advice for the following client. Use a warm, first-person perspective as if you're having a conversation with a friend. The client's monthly income is EXACTLY {income:.2f}. 
+    Always use this exact income figure in your analysis and advice. Do not assume or use any other income figure.""".format(income=user_data.current_income)
+
     prompt = f"""
     Based on the following user information and financial data, provide a comprehensive financial analysis and advice:
 
     Name: {user_data.name}
     Age: {user_data.age}
-    State: {user_data.state}  # Changed from 'Location' to 'State'
+    State: {user_data.state}
     Monthly Income: ${user_data.current_income:.2f}
     Current Savings: ${user_data.current_savings:.2f}
     Financial Goals: {', '.join(user_data.goals)}
     Timeline: {user_data.timeline_months} months
 
-    Bank Statement Summary:
-    Total Withdrawals: ${sum(entry.Withdrawals for entry in user_data.bank_statement):.2f}
-
     Budgeting Constraints:
     {format_constraints(user_data.constraints)}
+
+    Bank Statement Summary:
+    Total Withdrawals: ${sum(entry.Withdrawals for entry in user_data.bank_statement):.2f}
 
     Top Expense Categories:
     {get_top_expenses(user_data.bank_statement)}
 
     IMPORTANT: The client's monthly income is EXACTLY ${user_data.current_income:.2f}. Do not use any other income figure in your analysis or advice. This is the correct and only income figure to use.
+
+    CRITICAL: You MUST consider and address the provided budgeting constraints in your analysis and recommendations. Each constraint should be explicitly mentioned and factored into your advice.
+
     Please provide the following:
     1. Income and Expense Analysis
     2. Savings Rate Evaluation
     3. Goal Feasibility
-    4. Recommendations for Improvement
+    4. Recommendations for Improvement (considering the provided budgeting constraints)
     5. Proposed Monthly Budget (in JSON format)
 
     Use the following format for the Proposed Monthly Budget:
@@ -89,6 +90,7 @@ def create_gpt_prompt(user_data: UserDataInput, sources: List[str], follow_up_qu
     ---BUDGET_JSON_END---
 
     Ensure that the total proposed budget matches the monthly income of ${user_data.current_income:.2f}.
+    Your recommendations and proposed budget MUST take into account the user's budgeting constraints.
 
     Base your advice on best practices from reputable financial sources such as {', '.join(sources)}.
     """

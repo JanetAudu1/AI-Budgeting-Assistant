@@ -181,13 +181,15 @@ def generate_advice_ui(inputs: UserDataInput):
         st.session_state.regenerated_once = False
     if 'follow_up_question' not in st.session_state:
         st.session_state.follow_up_question = ""
+    if 'analysis_generated' not in st.session_state:
+        st.session_state.analysis_generated = False
 
     advice_placeholder = st.empty()
     budget_placeholder = st.empty()
     
     try:
         # Generate or display advice
-        if 'complete_advice' not in st.session_state or st.session_state.regenerate:
+        if not st.session_state.analysis_generated or st.session_state.regenerate:
             complete_advice = ""
             
             # Acknowledge the follow-up question if it exists
@@ -198,13 +200,37 @@ def generate_advice_ui(inputs: UserDataInput):
                 for chunk in generate_advice_stream(inputs, st.session_state.follow_up_question):
                     complete_advice += chunk
                     display_text = complete_advice.split("---BUDGET_JSON_START---")[0]
+                    
+                    # Insert Budgeting Constraints after Financial Goals
+                    goals_index = display_text.find("Financial Goals:")
+                    if goals_index != -1:
+                        next_section_index = display_text.find("\n\n", goals_index)
+                        if next_section_index != -1:
+                            constraints_text = "\n\nBudgeting Constraints:\n"
+                            for constraint in inputs.constraints:
+                                constraints_text += f"• {constraint}\n"
+                            display_text = display_text[:next_section_index] + constraints_text + display_text[next_section_index:]
+                    
                     advice_placeholder.markdown(escape_dollar_signs(clean_text(display_text)))
             
             st.session_state.complete_advice = complete_advice
             st.session_state.regenerate = False
+            st.session_state.analysis_generated = True
         else:
             complete_advice = st.session_state.complete_advice
-            advice_placeholder.markdown(escape_dollar_signs(clean_text(complete_advice.split("---BUDGET_JSON_START---")[0])))
+            display_text = complete_advice.split("---BUDGET_JSON_START---")[0]
+            
+            # Insert Budgeting Constraints after Financial Goals
+            goals_index = display_text.find("Financial Goals:")
+            if goals_index != -1:
+                next_section_index = display_text.find("\n\n", goals_index)
+                if next_section_index != -1:
+                    constraints_text = "\n\nBudgeting Constraints:\n"
+                    for constraint in inputs.constraints:
+                        constraints_text += f"• {constraint}\n"
+                    display_text = display_text[:next_section_index] + constraints_text + display_text[next_section_index:]
+            
+            advice_placeholder.markdown(escape_dollar_signs(clean_text(display_text)))
 
         # Display budget
         budget_data = extract_budget_json(complete_advice)
@@ -216,7 +242,10 @@ def generate_advice_ui(inputs: UserDataInput):
                 if not df.empty:
                     budget_placeholder.empty()
                     with budget_placeholder.container():
-                        st.subheader("Updated Proposed Budget")
+                        if st.session_state.regenerated_once:
+                            st.subheader("Updated Proposed Budget")
+                        else:
+                            st.subheader("Proposed Budget")
                         display_budget_table(df, inputs.current_income)
                         create_budget_download(df)
                 else:
@@ -244,18 +273,16 @@ def generate_advice_ui(inputs: UserDataInput):
             if st.button("Regenerate Analysis"):
                 st.session_state.regenerate = True
                 st.session_state.regenerated_once = True
+                st.session_state.analysis_generated = False
                 st.experimental_rerun()
         else:
             st.warning("You've already regenerated the analysis once. To get a new analysis, please start over with new inputs.")
             if st.button("Start Over"):
-                st.session_state.clear()
+                # Clear all session state variables
+                for key in list(st.session_state.keys()):
+                    del st.session_state[key]
                 st.experimental_rerun()
 
     except Exception as e:
         st.error(f"An unexpected error occurred: {str(e)}")
         st.exception(e)
-
-    if inputs.constraints:
-        st.subheader("Budgeting Constraints")
-        for constraint in inputs.constraints:
-            st.write(f"• {constraint}")

@@ -73,7 +73,7 @@ def handle_inputs():
             user_data = models.UserDataInput(
                 name=name,
                 age=age,
-                address=address,
+                state=address,  # Make sure this line is present and correct
                 current_income=current_income,
                 current_savings=current_savings,
                 goals=goals_list,
