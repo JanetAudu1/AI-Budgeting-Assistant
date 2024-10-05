@@ -45,6 +45,8 @@ def get_api_key(key_name: str) -> str:
         except KeyError:
             logger.error(f"{key_name} not found in Streamlit secrets")
     else:
+        # Load environment variables from .env file
+        load_dotenv()
         api_key = os.getenv(key_name)
         if api_key:
             logger.debug(f"{key_name} found in environment variables")
@@ -53,12 +55,7 @@ def get_api_key(key_name: str) -> str:
         return api_key
 
 # Set OpenAI API key
-if is_streamlit_cloud:
-    # Use Streamlit secrets for cloud deployment
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
-else:
-    # Use environment variable for local development
-    openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = get_api_key("OPENAI_API_KEY")
 
 # Verify that the API key is set
 if not openai.api_key:
