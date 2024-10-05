@@ -33,25 +33,30 @@ from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
 
 def get_api_key(key_name: str) -> str:
-    # Try getting the key from Streamlit secrets first
-    if "api_keys" in st.secrets and key_name in st.secrets["api_keys"]:
-        logger.debug(f"{key_name} found in Streamlit secrets")
-        return st.secrets["api_keys"][key_name]
+    # Load environment variables from .env file (this won't have an effect on Streamlit Cloud)
+    load_dotenv()
     
-    # Otherwise, fall back to the environment variables
-    env_value = os.getenv(key_name)
-    if env_value:
-        logger.debug(f"{key_name} found in environment variables")
-    else:
-        logger.warning(f"{key_name} not found in Streamlit secrets or environment variables")
-    return env_value
+    # Try to get the key from environment variables first
+    api_key = os.getenv(key_name)
+    
+    # If not found in environment variables and running on Streamlit Cloud, try secrets
+    if not api_key and os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud':
+        try:
+            api_key = st.secrets["api_keys"][key_name]
+        except KeyError:
+            st.error(f"{key_name} not found in Streamlit secrets.")
+    
+    if not api_key:
+        st.error(f"{key_name} not found in environment variables or Streamlit secrets.")
+    
+    return api_key
 
 # Set OpenAI API key
 openai.api_key = get_api_key("OPENAI_API_KEY")
 
 # Verify that the API key is set
 if not openai.api_key:
-    raise ValueError("OpenAI API key is not set. Please set the OPENAI_API_KEY in Streamlit secrets or environment variables.")
+    raise ValueError("OpenAI API key is not set. Please set the OPENAI_API_KEY in environment variables or Streamlit secrets.")
 
 # Print whether the API key is set (don't print the actual key)
 logger.info(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
