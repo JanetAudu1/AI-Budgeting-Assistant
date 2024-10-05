@@ -33,42 +33,28 @@ from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
 
 def get_api_key(key_name: str) -> str:
-    # Check if running on Streamlit Cloud
-    is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
-    logger.debug(f"Is Streamlit Cloud: {is_streamlit_cloud}")
-
-    if not is_streamlit_cloud:
-        # Print current working directory
-        logger.debug(f"Current working directory: {os.getcwd()}")
-
-        # Check if .env file exists
-        env_path = Path('.env')
-        if env_path.exists():
-            logger.debug(f".env file found at {env_path.absolute()}")
-            with open(env_path, 'r') as f:
-                logger.debug(f".env file contents:\n{f.read()}")
-        else:
-            logger.error(f".env file not found in {env_path.absolute()}")
-
-        # Load environment variables from .env file
-        load_dotenv()
-
-    api_key = os.getenv(key_name)
-    if api_key:
+    # Try getting the key from Streamlit secrets first
+    if "api_keys" in st.secrets and key_name in st.secrets["api_keys"]:
+        logger.debug(f"{key_name} found in Streamlit secrets")
+        return st.secrets["api_keys"][key_name]
+    
+    # Otherwise, fall back to the environment variables
+    env_value = os.getenv(key_name)
+    if env_value:
         logger.debug(f"{key_name} found in environment variables")
     else:
-        logger.error(f"{key_name} not found in environment variables")
-    return api_key
+        logger.warning(f"{key_name} not found in Streamlit secrets or environment variables")
+    return env_value
 
 # Set OpenAI API key
 openai.api_key = get_api_key("OPENAI_API_KEY")
 
 # Verify that the API key is set
 if not openai.api_key:
-    raise ValueError(f"OpenAI API key is not set. Please set the OPENAI_API_KEY in {'Streamlit secrets' if is_streamlit_cloud else 'environment variables'}.")
-    
+    raise ValueError("OpenAI API key is not set. Please set the OPENAI_API_KEY in Streamlit secrets or environment variables.")
+
 # Print whether the API key is set (don't print the actual key)
-print(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
+logger.info(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
 
 # Set Hugging Face token
 huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
