@@ -66,20 +66,29 @@ else:
 def main():
     st.title("AI Budgeting Assistant")
 
+    # Debug: Print session state
+    st.write("Session State:", st.session_state)
+
     # Main options in the sidebar
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
 
     if options == "Home":
         display_home_page()
     elif options == "Budget Analysis":
+        st.write("Debug: Entered Budget Analysis section")
+        
         if 'user_inputs' not in st.session_state:
             st.session_state.user_inputs = None
 
         inputs = handle_inputs()
+        st.write("Debug: Inputs received:", inputs)
+
         if inputs and isinstance(inputs, UserDataInput):
             st.session_state.user_inputs = inputs
+            st.write("Debug: User inputs set in session state")
 
         if st.session_state.user_inputs:
+            st.write("Debug: Displaying analysis")
             display_analysis_page(st.session_state.user_inputs)
             generate_advice_ui(st.session_state.user_inputs)
         else:
