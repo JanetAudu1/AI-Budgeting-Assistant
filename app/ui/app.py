@@ -10,29 +10,6 @@ from dotenv import load_dotenv
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Check if running on Streamlit Cloud
-is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
-logger.debug(f"Is Streamlit Cloud: {is_streamlit_cloud}")
-
-# Print the result
-print(f"Is Streamlit Cloud: {is_streamlit_cloud}")
-
-# Set page config as the first Streamlit command
-st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
-
-# Add the project root to the Python path
-project_root = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(project_root))
-
-# Load environment variables (this won't have an effect on Streamlit Cloud)
-load_dotenv()
-
-from app.ui.layout import display_home_page, display_analysis_page
-from app.ui.input_handlers import handle_inputs
-from app.ui.advice import generate_advice_ui
-from app.api.models import UserDataInput
-from app.services.recommender import generate_advice_stream
-
 def get_api_key(key_name: str) -> str:
     # Check if running on Streamlit Cloud
     is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
@@ -58,84 +35,50 @@ def get_api_key(key_name: str) -> str:
     return api_key
 
 # Set OpenAI API key
-openai.api_key = get_api_key("OPENAI_API_KEY")
-
-# Verify that the API key is set
-if not openai.api_key:
-    logger.error("OpenAI API key is not set.")
-else:
+api_key = get_api_key("OPENAI_API_KEY")
+if api_key:
+    openai.api_key = api_key
+    os.environ["OPENAI_API_KEY"] = api_key  # Set environment variable for other parts of the app
     logger.info("OpenAI API key is set successfully.")
-
-# Print whether the API key is set (don't print the actual key)
-logger.info(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
-
-# Set Hugging Face token
-huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
-if huggingface_token:
-    os.environ["HUGGINGFACE_TOKEN"] = huggingface_token
-
-# Custom CSS (updated for dark mode)
-st.markdown("""
-    <style>
-    .stApp {background-color: #0E1117; color: #FAFAFA;}
-    .stButton>button {background-color: #3D9970; color: white;}
-    .stTextArea>div>div>textarea {background-color: #262730; color: #FAFAFA;}
-    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FAFAFA;}
-    .streamlit-expanderContent {overflow: visible !important;}
-    </style>
-    """, unsafe_allow_html=True)
+else:
+    logger.error("OpenAI API key is not set.")
 
 def main():
     st.title("AI Budgeting Assistant")
 
-    # Debug section (only visible when running locally)
-    if not os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud':
-        st.sidebar.header("Debug Information")
-        if st.sidebar.checkbox("Show Environment Variables"):
-            st.sidebar.subheader("Environment Variables")
-            for key, value in os.environ.items():
-                if key.startswith("OPENAI") or key in ["STREAMLIT_RUNTIME_ENV"]:
-                    st.sidebar.text(f"{key}: {'*' * len(value)}")  # Mask the actual value
-            
-            # Specific check for OPENAI_API_KEY
-            openai_key = os.getenv("OPENAI_API_KEY")
-            st.sidebar.text(f"OPENAI_API_KEY set: {'Yes' if openai_key else 'No'}")
-            
-            # Check .env file
-            if os.path.exists('.env'):
-                st.sidebar.text(".env file exists")
-                with open('.env', 'r') as f:
-                    env_contents = f.read()
-                st.sidebar.text("Contents of .env file (keys only):")
-                for line in env_contents.split('\n'):
-                    if '=' in line:
-                        key = line.split('=')[0]
-                        st.sidebar.text(f"  {key}: {'*' * 10}")
-            else:
-                st.sidebar.text(".env file not found")
-
-            st.sidebar.text(f"Current working directory: {os.getcwd()}")
-
-    options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
-
-    if options == "Home":
-        display_home_page()
-    elif options == "Budget Analysis":
-        if 'user_inputs' not in st.session_state:
-            st.session_state.user_inputs = None
-
-        inputs = handle_inputs()
-        if inputs and isinstance(inputs, UserDataInput):
-            st.session_state.user_inputs = inputs
-
-        if st.session_state.user_inputs:
-            display_analysis_page(st.session_state.user_inputs)
-            generate_advice_ui(st.session_state.user_inputs)
+    # Debug section
+    st.sidebar.header("Debug Information")
+    if st.sidebar.checkbox("Show Environment Variables"):
+        st.sidebar.subheader("Environment Variables")
+        for key, value in os.environ.items():
+            if key.startswith("OPENAI") or key in ["STREAMLIT_RUNTIME_ENV"]:
+                st.sidebar.text(f"{key}: {'*' * len(value)}")  # Mask the actual value
+        
+        # Specific check for OPENAI_API_KEY
+        openai_key = os.getenv("OPENAI_API_KEY")
+        st.sidebar.text(f"OPENAI_API_KEY set: {'Yes' if openai_key else 'No'}")
+        
+        # Check .env file
+        if os.path.exists('.env'):
+            st.sidebar.text(".env file exists")
+            with open('.env', 'r') as f:
+                env_contents = f.read()
+            st.sidebar.text("Contents of .env file (keys only):")
+            for line in env_contents.split('\n'):
+                if '=' in line:
+                    key = line.split('=')[0]
+                    st.sidebar.text(f"  {key}: {'*' * 10}")
         else:
-            st.info("Please fill in your financial information to generate a budget analysis.")
+            st.sidebar.text(".env file not found")
+        
+        st.sidebar.text(f"Current working directory: {os.getcwd()}")
 
-    # Set environment variable to resolve tokenizer warnings
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    # Rest of your Streamlit app code...
+    if not openai.api_key:
+        st.error("OpenAI API key is not set. Please set the OPENAI_API_KEY in environment variables (local) or Streamlit secrets (cloud).")
+    else:
+        # Your app logic here
+        pass
 
 if __name__ == "__main__":
     main()
