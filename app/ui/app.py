@@ -10,80 +10,55 @@ from dotenv import load_dotenv
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Check if running on Streamlit Cloud
-is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
-logger.debug(f"Is Streamlit Cloud: {is_streamlit_cloud}")
+def is_streamlit_cloud():
+    return os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud' or os.getenv('IS_STREAMLIT_CLOUD') == 'true'
 
-# Print the result
-print(f"Is Streamlit Cloud: {is_streamlit_cloud}")
+def get_api_key(key_name: str) -> str:
+    running_on_cloud = is_streamlit_cloud()
+    logger.debug(f"Is Streamlit Cloud: {running_on_cloud}")
+    
+    if running_on_cloud:
+        # Running on Streamlit Cloud, use secrets
+        try:
+            api_key = st.secrets["api_keys"][key_name]
+            logger.debug(f"{key_name} found in Streamlit secrets")
+            return api_key
+        except KeyError:
+            logger.warning(f"{key_name} not found in Streamlit secrets")
+    else:
+        # Running locally, use environment variables
+        load_dotenv()  # Load environment variables from .env file
+        api_key = os.getenv(key_name)
+        if api_key:
+            logger.debug(f"{key_name} found in environment variables")
+            return api_key
+        else:
+            logger.warning(f"{key_name} not found in environment variables")
+    
+    return None
 
-# Set page config as the first Streamlit command
-st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
+# Set API keys
+openai_api_key = get_api_key("OPENAI_API_KEY")
+huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
 
-# Add the project root to the Python path
-project_root = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(project_root))
+if openai_api_key:
+    openai.api_key = openai_api_key
+    os.environ["OPENAI_API_KEY"] = openai_api_key
+    logger.info("OpenAI API key is set successfully.")
+else:
+    logger.error("OpenAI API key is not set.")
 
-# Load environment variables (this won't have an effect on Streamlit Cloud)
-load_dotenv()
+if huggingface_token:
+    os.environ["HUGGINGFACE_TOKEN"] = huggingface_token
+    logger.info("Hugging Face token is set successfully.")
+else:
+    logger.error("Hugging Face token is not set.")
 
 from app.ui.layout import display_home_page, display_analysis_page
 from app.ui.input_handlers import handle_inputs
 from app.ui.advice import generate_advice_ui
 from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
-
-def get_api_key(key_name: str) -> str:
-    # Check if running on Streamlit Cloud
-    is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
-    logger.debug(f"Is Streamlit Cloud: {is_streamlit_cloud}")
-    
-    if not is_streamlit_cloud:
-        # Running locally, use environment variables
-        load_dotenv()  # Load environment variables from .env file
-        api_key = os.getenv(key_name)
-        if api_key:
-            logger.debug(f"{key_name} found in environment variables")
-        else:
-            logger.warning(f"{key_name} not found in environment variables")
-    else:
-        # Running on Streamlit Cloud, use secrets
-        try:
-            api_key = st.secrets["api_keys"][key_name]
-            logger.debug(f"{key_name} found in Streamlit secrets")
-        except KeyError:
-            logger.warning(f"{key_name} not found in Streamlit secrets")
-            api_key = None
-    
-    return api_key
-
-# Set OpenAI API key
-openai.api_key = get_api_key("OPENAI_API_KEY")
-
-# Verify that the API key is set
-if not openai.api_key:
-    logger.error("OpenAI API key is not set.")
-else:
-    logger.info("OpenAI API key is set successfully.")
-
-# Print whether the API key is set (don't print the actual key)
-logger.info(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
-
-# Set Hugging Face token
-huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
-if huggingface_token:
-    os.environ["HUGGINGFACE_TOKEN"] = huggingface_token
-
-# Custom CSS (updated for dark mode)
-st.markdown("""
-    <style>
-    .stApp {background-color: #0E1117; color: #FAFAFA;}
-    .stButton>button {background-color: #3D9970; color: white;}
-    .stTextArea>div>div>textarea {background-color: #262730; color: #FAFAFA;}
-    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FAFAFA;}
-    .streamlit-expanderContent {overflow: visible !important;}
-    </style>
-    """, unsafe_allow_html=True)
 
 def main():
     st.title("AI Budgeting Assistant")
