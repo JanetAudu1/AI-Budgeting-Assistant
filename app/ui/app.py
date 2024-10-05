@@ -87,12 +87,14 @@ def main():
             st.session_state.user_inputs = inputs
             st.write("Debug: User inputs set in session state")
 
-        if st.session_state.user_inputs:
             st.write("Debug: Displaying analysis")
             display_analysis_page(st.session_state.user_inputs)
             generate_advice_ui(st.session_state.user_inputs)
         else:
             st.info("Please fill in your financial information to generate a budget analysis.")
+
+        # Debug: Print final session state
+        st.write("Final Session State:", st.session_state)
 
 # Entry point for the Streamlit app
 if __name__ == "__main__":
