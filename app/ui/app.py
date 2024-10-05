@@ -6,18 +6,19 @@ import streamlit as st
 import openai
 from dotenv import load_dotenv
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 # Check if running on Streamlit Cloud
 is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
+logger.debug(f"Is Streamlit Cloud: {is_streamlit_cloud}")
 
 # Print the result
 print(f"Is Streamlit Cloud: {is_streamlit_cloud}")
 
 # Set page config as the first Streamlit command
 st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
-
-# Configure logging to output to terminal
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 
 # Add the project root to the Python path
 project_root = Path(__file__).resolve().parent.parent.parent
@@ -33,21 +34,25 @@ from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
 
 def get_api_key(key_name: str) -> str:
-    # Check if running locally (not on Streamlit Cloud)
-    is_local = os.getenv('STREAMLIT_RUNTIME_ENV') != 'cloud'
+    # Check if running on Streamlit Cloud
+    is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
+    logger.debug(f"Is Streamlit Cloud: {is_streamlit_cloud}")
     
-    if is_local:
+    if not is_streamlit_cloud:
         # Running locally, use environment variables
         load_dotenv()  # Load environment variables from .env file
         api_key = os.getenv(key_name)
-        if not api_key:
-            st.error(f"{key_name} not found in environment variables.")
+        if api_key:
+            logger.debug(f"{key_name} found in environment variables")
+        else:
+            logger.warning(f"{key_name} not found in environment variables")
     else:
         # Running on Streamlit Cloud, use secrets
         try:
             api_key = st.secrets["api_keys"][key_name]
+            logger.debug(f"{key_name} found in Streamlit secrets")
         except KeyError:
-            st.error(f"{key_name} not found in Streamlit secrets.")
+            logger.warning(f"{key_name} not found in Streamlit secrets")
             api_key = None
     
     return api_key
@@ -57,7 +62,9 @@ openai.api_key = get_api_key("OPENAI_API_KEY")
 
 # Verify that the API key is set
 if not openai.api_key:
-    raise ValueError("OpenAI API key is not set. Please set the OPENAI_API_KEY in environment variables (local) or Streamlit secrets (cloud).")
+    logger.error("OpenAI API key is not set.")
+else:
+    logger.info("OpenAI API key is set successfully.")
 
 # Print whether the API key is set (don't print the actual key)
 logger.info(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
@@ -106,6 +113,8 @@ def main():
                         st.sidebar.text(f"  {key}: {'*' * 10}")
             else:
                 st.sidebar.text(".env file not found")
+
+            st.sidebar.text(f"Current working directory: {os.getcwd()}")
 
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
 
