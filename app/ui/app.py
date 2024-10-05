@@ -1,20 +1,21 @@
 import os
-import logging
-import streamlit as st
-import openai
-
 import sys
+import logging
 from pathlib import Path
 
 # Add the project root directory to Python path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+project_root = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(project_root))
 
-# Import your app's UI and logic modules
-from app.ui.layout import display_home_page, display_analysis_page
-from app.ui.input_handlers import handle_inputs
-from app.ui.advice import generate_advice_ui
-from app.api.models import UserDataInput
-from app.services.recommender import generate_advice_stream
+import streamlit as st
+import openai
+
+# Now import your app's UI and logic modules
+from ui.layout import display_home_page, display_analysis_page
+from ui.input_handlers import handle_inputs
+from ui.advice import generate_advice_ui
+from api.models import UserDataInput
+from services.recommender import generate_advice_stream
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
