@@ -4,8 +4,6 @@ import pandas as pd
 import streamlit as st
 from app.api.models import UserDataInput  
 import logging
-import requests
-import traceback
 from app.services.recommender import generate_advice_stream
 
 logger = logging.getLogger(__name__)
@@ -22,74 +20,106 @@ def clean_text(text):
     return '\n\n'.join(cleaned_lines)
 
 def extract_budget_json(complete_advice):
-    parts = complete_advice.split("---BUDGET_JSON_START---")
-    if len(parts) > 1:
-        budget_json_part = parts[1].split("---BUDGET_JSON_END---")[0]
+    start_marker = "---BUDGET_JSON_START---"
+    end_marker = "---BUDGET_JSON_END---"
+    
+    try:
+        start_index = complete_advice.index(start_marker) + len(start_marker)
+        end_index = complete_advice.index(end_marker, start_index)
+        budget_json_part = complete_advice[start_index:end_index].strip()
+        
         try:
-            return json.loads(budget_json_part)
-        except json.JSONDecodeError:
-            st.write("Error parsing budget data.")
-    return None
+            budget_data = json.loads(budget_json_part)
+            if "Proposed Monthly Budget" in budget_data:
+                return budget_data["Proposed Monthly Budget"]
+            else:
+                return budget_data
+        except json.JSONDecodeError as e:
+            logger.error(f"Error parsing budget JSON: {e}")
+            logger.debug(f"Attempted to parse: {budget_json_part}")
+            return None
+    except ValueError:
+        logger.warning("Budget JSON markers not found in the advice")
+        return None
 
 def create_budget_dataframe(budget_data, bank_statement, current_income):
     if not isinstance(budget_data, dict):
         st.warning("Invalid budget data format. Expected a dictionary.")
         return pd.DataFrame()
 
+    # Convert bank_statement to DataFrame if it's a list
+    if isinstance(bank_statement, list):
+        bank_statement = pd.DataFrame(bank_statement)
+
+    # Check if 'Category' column exists, if not, use a default category
+    if 'Category' not in bank_statement.columns:
+        st.warning("'Category' column not found in bank statement. Using 'Uncategorized' for all entries.")
+        bank_statement['Category'] = 'Uncategorized'
+
+    # Check if 'Withdrawals' column exists, if not, use 'Amount' or create a default
+    if 'Withdrawals' not in bank_statement.columns:
+        if 'Amount' in bank_statement.columns:
+            bank_statement['Withdrawals'] = bank_statement['Amount'].apply(lambda x: abs(float(x)) if x < 0 else 0)
+        else:
+            st.warning("'Withdrawals' or 'Amount' column not found. Using 0 for all entries.")
+            bank_statement['Withdrawals'] = 0
+
     previous_spend = bank_statement.groupby('Category')['Withdrawals'].sum().to_dict()
 
     rows = []
     total_proposed = 0
-    for category, data in budget_data.items():
-        if category.lower() not in ['income', 'deposits', 'paychecks']:
-            prev_spend = previous_spend.get(category, 0)
-            
-            if isinstance(data, dict):
-                proposed_change = data.get('proposed_change', prev_spend)
-                change_reason = data.get('change_reason', '')
-            else:
-                proposed_change = data
-                change_reason = ''
+    for category, details in budget_data.items():
+        if isinstance(details, dict):
+            try:
+                proposed_change = float(details.get('proposed_change', 0))
+            except ValueError:
+                st.warning(f"Invalid proposed change for {category}. Using 0.")
+                proposed_change = 0
+            change_reason = details.get('change_reason', '')
+        elif isinstance(details, (int, float)):
+            proposed_change = float(details)
+            change_reason = ''
+        else:
+            st.warning(f"Invalid data for {category}. Skipping this category.")
+            continue
 
-            if isinstance(proposed_change, str):
-                proposed_change = float(proposed_change.replace('$', '').replace(',', ''))
-            
-            difference = proposed_change - prev_spend
-            percentage_change = (difference / prev_spend * 100) if prev_spend != 0 else 100
-
-            # Provide a default explanation for significant changes if no reason is given
-            if not change_reason and abs(percentage_change) > 10:
-                if difference < 0:
-                    change_reason = f"Significant decrease of {abs(percentage_change):.2f}% suggested to optimize budget."
-                else:
-                    change_reason = f"Increase of {percentage_change:.2f}% suggested based on financial goals and priorities."
-
-            total_proposed += proposed_change
-            
-            rows.append({
-                'Category': category,
-                'Previous Spend': prev_spend,
-                'Proposed Change': proposed_change,
-                'Difference': difference,
-                'Change Reason': change_reason
-            })
+        previous = float(previous_spend.get(category, 0))
+        
+        # Calculate the new proposed amount
+        new_amount = previous + proposed_change
+        
+        # Calculate percentage change
+        if previous != 0:
+            percent_change = ((new_amount - previous) / previous) * 100
+        else:
+            percent_change = float('inf') if new_amount > 0 else 0
+        
+        rows.append({
+            'Category': category,
+            'Previous Spend': previous,
+            'Proposed Change': new_amount,
+            'Percent Change': percent_change,
+            'Change Reason': change_reason
+        })
+        total_proposed += new_amount
 
     # Adjust proposed changes if they exceed current income
     if total_proposed > current_income:
         adjustment_factor = current_income / total_proposed
         for row in rows:
             row['Proposed Change'] *= adjustment_factor
-            row['Difference'] = row['Proposed Change'] - row['Previous Spend']
-        total_proposed = current_income
+            row['Percent Change'] = ((row['Proposed Change'] - row['Previous Spend']) / row['Previous Spend']) * 100 if row['Previous Spend'] != 0 else float('inf')
 
     # Add savings category if not present
     if 'Savings' not in [row['Category'] for row in rows]:
-        savings_amount = current_income - total_proposed
+        savings_amount = current_income - sum(row['Proposed Change'] for row in rows)
+        previous_savings = float(previous_spend.get('Savings', 0))
+        percent_change = ((savings_amount - previous_savings) / previous_savings) * 100 if previous_savings != 0 else float('inf')
         rows.append({
             'Category': 'Savings',
-            'Previous Spend': previous_spend.get('Savings', 0),
+            'Previous Spend': previous_savings,
             'Proposed Change': savings_amount,
-            'Difference': savings_amount - previous_spend.get('Savings', 0),
+            'Percent Change': percent_change,
             'Change Reason': 'Allocated remaining amount to savings'
         })
 
@@ -99,39 +129,33 @@ def create_budget_dataframe(budget_data, bank_statement, current_income):
         st.warning("No valid budget data available to display.")
         return df
 
-    for col in ['Previous Spend', 'Proposed Change', 'Difference']:
+    for col in ['Previous Spend', 'Proposed Change']:
         df[col] = pd.to_numeric(df[col], errors='coerce')
 
-    df = df.sort_values('Difference', key=abs, ascending=False).reset_index(drop=True)
+    df = df.sort_values('Percent Change', key=abs, ascending=False).reset_index(drop=True)
 
-    for col in ['Previous Spend', 'Proposed Change', 'Difference']:
+    for col in ['Previous Spend', 'Proposed Change']:
         df[col] = df[col].apply(lambda x: f"${x:,.2f}" if pd.notnull(x) else "$0.00")
+    
+    df['Percent Change'] = df['Percent Change'].apply(lambda x: f"{x:,.2f}%" if pd.notnull(x) else "N/A")
 
     return df
 
 def display_budget_table(df, current_income):
-    st.markdown("## 📊 Proposed Monthly Budget")
+    st.subheader(f"Proposed Monthly Budget (Total Income: ${current_income:.2f})")
     
-    if df.empty:
-        st.warning("No budget data available to display.")
-        return
-
-    st.table(df)
+    # Calculate total proposed spend
+    total_proposed = df['Proposed Change'].apply(lambda x: float(x.replace('$', '').replace(',', ''))).sum()
     
-    try:
-        total_previous = df['Previous Spend'].replace('[\$,]', '', regex=True).astype(float).sum()
-        total_proposed = df['Proposed Change'].replace('[\$,]', '', regex=True).astype(float).sum()
-        
-        st.markdown(escape_dollar_signs(f"**Total Monthly Income:** ${current_income:,.2f}"))
-        st.markdown(escape_dollar_signs(f"**Total Previous Spend:** ${total_previous:,.2f}"))
-        st.markdown(escape_dollar_signs(f"**Total Proposed Spend:** ${total_proposed:,.2f}"))
-        
-        if abs(total_proposed - current_income) < 0.01:
-            st.success("✅ The proposed budget matches the monthly income.")
-        else:
-            st.error(escape_dollar_signs(f"⚠️ The proposed budget (${total_proposed:,.2f}) does not match the monthly income (${current_income:,.2f})."))
-    except Exception as e:
-        st.warning(f"Unable to calculate totals: {str(e)}")
+    # Display the table
+    st.table(df[['Category', 'Previous Spend', 'Proposed Change', 'Percent Change', 'Change Reason']])
+    
+    # Display total proposed spend
+    st.write(f"Total Proposed Spend: ${total_proposed:.2f}")
+    
+    # Calculate and display remaining budget
+    remaining_budget = current_income - total_proposed
+    st.write(f"Remaining Budget: ${remaining_budget:.2f}")
 
 def create_budget_download(df):
     csv = df.to_csv(index=False)
@@ -150,34 +174,88 @@ def display_conclusion(complete_advice):
 def generate_advice_ui(inputs: UserDataInput):
     st.subheader("Financial Analysis and Proposed Budget")
     
+    # Initialize session state
+    if 'regenerate' not in st.session_state:
+        st.session_state.regenerate = False
+    if 'regenerated_once' not in st.session_state:
+        st.session_state.regenerated_once = False
+    if 'follow_up_question' not in st.session_state:
+        st.session_state.follow_up_question = ""
+
     advice_placeholder = st.empty()
+    budget_placeholder = st.empty()
     
     try:
-        complete_advice = ""
-        with st.spinner("Generating personalized financial analysis and proposed budget..."):
-            for chunk in generate_advice_stream(inputs):
-                complete_advice += chunk
-                display_text = complete_advice.split("---BUDGET_JSON_START---")[0]
-                advice_placeholder.markdown(escape_dollar_signs(clean_text(display_text)))
+        # Generate or display advice
+        if 'complete_advice' not in st.session_state or st.session_state.regenerate:
+            complete_advice = ""
             
-            budget_json = extract_budget_json(complete_advice)
-            if budget_json:
-                budget_data = budget_json.get("Proposed Monthly Budget", budget_json)
-                if isinstance(budget_data, dict):
-                    bank_statement = pd.DataFrame([entry.dict() for entry in inputs.bank_statement])
-                    df = create_budget_dataframe(budget_data, bank_statement, inputs.current_income)
-                    if not df.empty:
+            # Acknowledge the follow-up question if it exists
+            if st.session_state.follow_up_question:
+                st.info(f"Regenerating analysis based on your follow-up: '{st.session_state.follow_up_question}'")
+            
+            with st.spinner("Generating personalized financial analysis and proposed budget..."):
+                for chunk in generate_advice_stream(inputs, st.session_state.follow_up_question):
+                    complete_advice += chunk
+                    display_text = complete_advice.split("---BUDGET_JSON_START---")[0]
+                    advice_placeholder.markdown(escape_dollar_signs(clean_text(display_text)))
+            
+            st.session_state.complete_advice = complete_advice
+            st.session_state.regenerate = False
+        else:
+            complete_advice = st.session_state.complete_advice
+            advice_placeholder.markdown(escape_dollar_signs(clean_text(complete_advice.split("---BUDGET_JSON_START---")[0])))
+
+        # Display budget
+        budget_data = extract_budget_json(complete_advice)
+        if budget_data:
+            budget_data = budget_data.get("Proposed Monthly Budget", budget_data)
+            if isinstance(budget_data, dict):
+                bank_statement = pd.DataFrame([entry.dict() for entry in inputs.bank_statement])
+                df = create_budget_dataframe(budget_data, bank_statement, inputs.current_income)
+                if not df.empty:
+                    budget_placeholder.empty()
+                    with budget_placeholder.container():
+                        st.subheader("Updated Proposed Budget")
                         display_budget_table(df, inputs.current_income)
                         create_budget_download(df)
-                    else:
-                        st.warning("Unable to create budget table from the provided data.")
                 else:
-                    st.warning("Invalid budget data structure.")
+                    st.warning("Unable to create budget table from the provided data.")
             else:
-                st.warning("No budget data found in the advice.")
+                st.warning("Invalid budget data structure.")
+        else:
+            st.warning("No budget data found in the advice. This might be due to an incomplete AI response or formatting issue.")
+            logger.warning(f"Complete advice without budget data: {complete_advice}")
+        
+        display_conclusion(complete_advice)
 
-            display_conclusion(complete_advice)
+        # Follow-up question input
+        st.subheader("Have a follow-up question or comment?")
+        follow_up_question = st.text_area("Enter your question or comment here:", 
+                                          value=st.session_state.follow_up_question,
+                                          height=100,
+                                          max_chars=500)
+        
+        # Save the follow-up question in session state
+        st.session_state.follow_up_question = follow_up_question
+
+        # Regenerate button
+        if not st.session_state.regenerated_once:
+            if st.button("Regenerate Analysis"):
+                st.session_state.regenerate = True
+                st.session_state.regenerated_once = True
+                st.experimental_rerun()
+        else:
+            st.warning("You've already regenerated the analysis once. To get a new analysis, please start over with new inputs.")
+            if st.button("Start Over"):
+                st.session_state.clear()
+                st.experimental_rerun()
 
     except Exception as e:
         st.error(f"An unexpected error occurred: {str(e)}")
         st.exception(e)
+
+    if inputs.constraints:
+        st.subheader("Budgeting Constraints")
+        for constraint in inputs.constraints:
+            st.write(f"• {constraint}")

@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 # Set page config as the first Streamlit command
 st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
 
-# Configure logging
+# Configure logging to output to terminal
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -26,24 +26,29 @@ from app.ui.advice import generate_advice_ui
 from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
 
-# Try to get the API key from Streamlit secrets, fall back to environment variable
-try:
-    # Access the OpenAI API key from the `api_keys` section in secrets
-    openai.api_key = st.secrets["api_keys"]["OPENAI_API_KEY"]
+def get_api_key(key_name: str) -> str:
+    # Check if running on Streamlit Cloud
+    is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
 
-except KeyError:
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    if not openai.api_key:
-        st.error("OpenAI API key not found. Please set it in .streamlit/secrets.toml or as an environment variable.")
-        st.stop()
+    if is_streamlit_cloud:
+        try:
+            return st.secrets["api_keys"][key_name]
+        except KeyError:
+            logger.warning(f"{key_name} not found in Streamlit secrets.")
+    else:
+        # Running locally, use environment variables
+        api_key = os.getenv(key_name)
+        if not api_key:
+            logger.warning(f"{key_name} not found in environment variables.")
+        return api_key
 
-# Similarly for HUGGINGFACE_TOKEN
-try:
-    os.environ["HUGGINGFACE_TOKEN"] = st.secrets["api_keys"]["HUGGINGFACE_TOKEN"]
-except KeyError:
-    if "HUGGINGFACE_TOKEN" not in os.environ:
-        st.warning("Hugging Face token not found. Some features may not work.")
+# Set OpenAI API key
+openai.api_key = get_api_key("OPENAI_API_KEY")
 
+# Set Hugging Face token
+huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
+if huggingface_token:
+    os.environ["HUGGINGFACE_TOKEN"] = huggingface_token
 
 # Custom CSS (updated for dark mode)
 st.markdown("""
@@ -57,16 +62,23 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 def main():
-    
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
 
     if options == "Home":
         display_home_page()
     elif options == "Budget Analysis":
+        if 'user_inputs' not in st.session_state:
+            st.session_state.user_inputs = None
+
         inputs = handle_inputs()
         if inputs and isinstance(inputs, UserDataInput):
-            display_analysis_page(inputs)
-            generate_advice_ui(inputs)
+            st.session_state.user_inputs = inputs
+
+        if st.session_state.user_inputs:
+            display_analysis_page(st.session_state.user_inputs)
+            generate_advice_ui(st.session_state.user_inputs)
+        else:
+            st.info("Please fill in your financial information to generate a budget analysis.")
 
     # Set environment variable to resolve tokenizer warnings
     os.environ["TOKENIZERS_PARALLELISM"] = "false"

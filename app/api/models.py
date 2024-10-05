@@ -13,15 +13,17 @@ class BankStatementEntry(BaseModel):
 class UserDataInput(BaseModel):
     name: str
     age: int = Field(..., ge=18, le=120)
-    address: str
+    state: str  # Changed from 'address' to 'state'
     current_income: float = Field(..., gt=0, le=1000000)
     current_savings: float = Field(..., ge=0, le=10000000)
     goals: List[str]
     timeline_months: int = Field(..., ge=1, le=600)
     bank_statement: List[BankStatementEntry]
     selected_llm: str
+    constraints: Optional[List[str]] = Field(None, description="User-specified constraints for budgeting")
+    follow_up_question: Optional[str] = None
 
-    @validator('name', 'address')
+    @validator('name', 'state')
     def validate_non_empty_string(cls, v):
         if not v.strip():
             raise ValueError("Must be a non-empty string")
