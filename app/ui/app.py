@@ -1,23 +1,9 @@
-import os
 import sys
 from pathlib import Path
-
-# Add the project root to the Python path
-project_root = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(project_root))
-
+import os
+import logging
 import streamlit as st
 import openai
-from dotenv import load_dotenv
-import logging
-
-# Now you can import from other parts of your app
-# For example:
-# from app.services.some_service import some_function
-
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 # Import your app's UI and logic modules
 from app.ui.layout import display_home_page, display_analysis_page
@@ -26,6 +12,10 @@ from app.ui.advice import generate_advice_ui
 from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 # Function to check if running on Streamlit Cloud
 def is_streamlit_cloud() -> bool:
     """
@@ -33,13 +23,12 @@ def is_streamlit_cloud() -> bool:
     """
     return st.secrets.get("IS_STREAMLIT_CLOUD", "false").lower() == "true"
 
-# Function to retrieve API keys from secrets or environment variables
+# Function to retrieve API keys from Streamlit secrets or environment variables (for local development)
 def get_api_key(key_name: str) -> str:
     """
-    Retrieve the API key from either Streamlit secrets (in the cloud) or environment variables (locally).
+    Retrieve the API key from Streamlit secrets on the cloud, or from environment variables locally.
     """
     if is_streamlit_cloud():
-        # Running on Streamlit Cloud, use secrets
         try:
             api_key = st.secrets["api_keys"].get(key_name)
             if api_key:
@@ -51,7 +40,6 @@ def get_api_key(key_name: str) -> str:
             logger.error(f"Error accessing Streamlit secrets: {str(e)}")
     else:
         # Running locally, use environment variables
-        load_dotenv()  # Load environment variables from .env file
         api_key = os.getenv(key_name)
         if api_key:
             logger.debug(f"{key_name} found in environment variables")
@@ -61,7 +49,7 @@ def get_api_key(key_name: str) -> str:
     
     return None
 
-# Set API keys
+# Set API keys directly from Streamlit secrets if running on the cloud
 openai_api_key = get_api_key("OPENAI_API_KEY")
 huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
 
