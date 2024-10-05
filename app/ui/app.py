@@ -87,6 +87,34 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 def main():
+    st.title("AI Budgeting Assistant")
+
+    # Debug section (only visible when running locally)
+    if not os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud':
+        st.sidebar.header("Debug Information")
+        if st.sidebar.checkbox("Show Environment Variables"):
+            st.sidebar.subheader("Environment Variables")
+            for key, value in os.environ.items():
+                if key.startswith("OPENAI") or key in ["STREAMLIT_RUNTIME_ENV"]:
+                    st.sidebar.text(f"{key}: {'*' * len(value)}")  # Mask the actual value
+            
+            # Specific check for OPENAI_API_KEY
+            openai_key = os.getenv("OPENAI_API_KEY")
+            st.sidebar.text(f"OPENAI_API_KEY set: {'Yes' if openai_key else 'No'}")
+            
+            # Check .env file
+            if os.path.exists('.env'):
+                st.sidebar.text(".env file exists")
+                with open('.env', 'r') as f:
+                    env_contents = f.read()
+                st.sidebar.text("Contents of .env file (keys only):")
+                for line in env_contents.split('\n'):
+                    if '=' in line:
+                        key = line.split('=')[0]
+                        st.sidebar.text(f"  {key}: {'*' * 10}")
+            else:
+                st.sidebar.text(".env file not found")
+
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
 
     if options == "Home":
