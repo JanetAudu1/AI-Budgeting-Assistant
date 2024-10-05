@@ -1,10 +1,23 @@
+import os
 import sys
 from pathlib import Path
-import os
-import logging
+
+# Add the project root to the Python path
+project_root = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(project_root))
+
 import streamlit as st
 import openai
 from dotenv import load_dotenv
+import logging
+
+# Now you can import from other parts of your app
+# For example:
+# from app.services.some_service import some_function
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Import your app's UI and logic modules
 from app.ui.layout import display_home_page, display_analysis_page
@@ -12,10 +25,6 @@ from app.ui.input_handlers import handle_inputs
 from app.ui.advice import generate_advice_ui
 from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
-
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 # Function to check if running on Streamlit Cloud
 def is_streamlit_cloud() -> bool:
