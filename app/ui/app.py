@@ -20,11 +20,17 @@ def get_api_key(key_name: str) -> str:
     if running_on_cloud:
         # Running on Streamlit Cloud, use secrets
         try:
-            api_key = st.secrets["api_keys"][key_name]
-            logger.debug(f"{key_name} found in Streamlit secrets")
-            return api_key
-        except KeyError:
-            logger.warning(f"{key_name} not found in Streamlit secrets")
+            if "api_keys" in st.secrets:
+                api_key = st.secrets["api_keys"].get(key_name)
+                if api_key:
+                    logger.debug(f"{key_name} found in Streamlit secrets")
+                    return api_key
+                else:
+                    logger.warning(f"{key_name} not found in Streamlit secrets")
+            else:
+                logger.warning("'api_keys' section not found in Streamlit secrets")
+        except Exception as e:
+            logger.error(f"Error accessing Streamlit secrets: {str(e)}")
     else:
         # Running locally, use environment variables
         load_dotenv()  # Load environment variables from .env file
