@@ -1,3 +1,4 @@
+import os
 import logging
 import streamlit as st
 import openai
