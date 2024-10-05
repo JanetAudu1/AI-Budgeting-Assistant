@@ -35,17 +35,21 @@ from app.services.recommender import generate_advice_stream
 def get_api_key(key_name: str) -> str:
     # Check if running on Streamlit Cloud
     is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
+    logger.debug(f"Is Streamlit Cloud: {is_streamlit_cloud}")
 
     if is_streamlit_cloud:
         try:
-            return st.secrets["api_keys"][key_name]
+            api_key = st.secrets["api_keys"][key_name]
+            logger.debug(f"{key_name} found in Streamlit secrets")
+            return api_key
         except KeyError:
-            logger.warning(f"{key_name} not found in Streamlit secrets.")
+            logger.error(f"{key_name} not found in Streamlit secrets")
     else:
-        # Running locally, use environment variables
         api_key = os.getenv(key_name)
-        if not api_key:
-            logger.warning(f"{key_name} not found in environment variables.")
+        if api_key:
+            logger.debug(f"{key_name} found in environment variables")
+        else:
+            logger.error(f"{key_name} not found in environment variables")
         return api_key
 
 # Set OpenAI API key
@@ -58,8 +62,8 @@ else:
 
 # Verify that the API key is set
 if not openai.api_key:
-    raise ValueError("OpenAI API key is not set. Please set the OPENAI_API_KEY in Streamlit secrets or environment variable.")
-
+    raise ValueError(f"OpenAI API key is not set. Please set the OPENAI_API_KEY in {'Streamlit secrets' if is_streamlit_cloud else 'environment variables'}.")
+    
 # Print whether the API key is set (don't print the actual key)
 print(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
 
