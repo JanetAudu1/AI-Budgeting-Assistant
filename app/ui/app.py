@@ -6,6 +6,12 @@ import streamlit as st
 import openai
 from dotenv import load_dotenv
 
+# Check if running on Streamlit Cloud
+is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
+
+# Print the result
+print(f"Is Streamlit Cloud: {is_streamlit_cloud}")
+
 # Set page config as the first Streamlit command
 st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
 
@@ -17,7 +23,7 @@ logger = logging.getLogger(__name__)
 project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-# Load environment variables
+# Load environment variables (this won't have an effect on Streamlit Cloud)
 load_dotenv()
 
 from app.ui.layout import display_home_page, display_analysis_page
@@ -43,7 +49,19 @@ def get_api_key(key_name: str) -> str:
         return api_key
 
 # Set OpenAI API key
-openai.api_key = get_api_key("OPENAI_API_KEY")
+if is_streamlit_cloud:
+    # Use Streamlit secrets for cloud deployment
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
+else:
+    # Use environment variable for local development
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# Verify that the API key is set
+if not openai.api_key:
+    raise ValueError("OpenAI API key is not set. Please set the OPENAI_API_KEY in Streamlit secrets or environment variable.")
+
+# Print whether the API key is set (don't print the actual key)
+print(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
 
 # Set Hugging Face token
 huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
