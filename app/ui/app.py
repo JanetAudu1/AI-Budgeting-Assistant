@@ -50,15 +50,15 @@ from app.services.recommender import generate_advice_stream
 def get_api_key(key_name: str) -> str:
     # Try getting the key from Streamlit secrets first
     if "api_keys" in st.secrets and key_name in st.secrets["api_keys"]:
-        logger.debug(f"{key_name} found in Streamlit secrets")
+        print(f"{key_name} found in Streamlit secrets")
         return st.secrets["api_keys"][key_name]
     
     # Otherwise, fall back to the environment variables
     env_value = os.getenv(key_name)
     if env_value:
-        logger.debug(f"{key_name} found in environment variables")
+        print(f"{key_name} found in environment variables")
     else:
-        logger.warning(f"{key_name} not found in Streamlit secrets or environment variables")
+        print(f"{key_name} not found in Streamlit secrets or environment variables")
     return env_value
 
 # Set OpenAI API key
@@ -69,7 +69,7 @@ if not openai.api_key:
     raise ValueError("OpenAI API key is not set. Please set the OPENAI_API_KEY in Streamlit secrets or environment variables.")
 
 # Print whether the API key is set (don't print the actual key)
-logger.info(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
+print(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
 
 # Set Hugging Face token
 huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
