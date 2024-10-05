@@ -19,7 +19,7 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    - For macOS/Linux: [Get Docker](https://docs.docker.com/get-docker/)
    - Note: sign up to docker hub with your github account or directly.
    
-2. Clone the repository in your terminal: 
+2. Clone the repository in your terminal(skip): 
    ```
    git clone https://github.com/JanetAudu1/AI-Budgeting-Assistant.git
    cd AI-Budgeting-Assistant
@@ -29,27 +29,30 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
     - For Linux:  install using your package manager (e.g., sudo apt-get install git for Ubuntu), then verify with git --version.
     - For macOS:  use Homebrew (brew install git) or download from git-scm, then verify with git --version.
 
-3. Build the Docker image:
-   ```
-   docker build -t ai-budgeting-assistant .
-   ```
-
-4. Get OpenAI API key from https://platform.openai.com/docs/quickstart
+3. Get OpenAI API key from https://platform.openai.com/docs/quickstart
    Note that if you are running this in the workshop, I will provide you a key, so you can skip this part.
 
-5. Check that you are in AI-Budgeting-Assistant folder/dir. Then create a `.env` file in the project root and add your OpenAI API key. 
+4. Check that you are in AI-Budgeting-Assistant folder/dir. Then create a `.env` file in the project root and add your OpenAI API key. 
    ```
    echo OPENAI_API_KEY=your-api-key-here > .env
+   ```
+   
+5. Build the Docker image:
+   ```
+   docker build -t ai-budgeting-assistant . (skip)
+   docker pull janetaudu1/ai-budgeting-assistant:vGHC
+
    ```
 
 6. Run the Docker container:
    - For Windows (PowerShell):
      ```
-     docker run -d -p 8000:8000 -p 8501:8501 --env-file .\.env ai-budgeting-assistant
+     docker run -d -p 8000:8000 -p 8501:8501 --env-file .\.env janetaudu1/ai-budgeting-assistant:vGHC
+
      ```
    - For macOS/Linux:
      ```
-     docker run -d -p 8000:8000 -p 8501:8501 --env-file .env ai-budgeting-assistant
+     docker run -d -p 8000:8000 -p 8501:8501 --env-file .env janetaudu1/ai-budgeting-assistant:vGHC
      ```
 
 7. Access the application:
