@@ -1,6 +1,3 @@
-import sys
-from pathlib import Path
-import os
 import logging
 import streamlit as st
 import openai
@@ -16,40 +13,31 @@ from app.services.recommender import generate_advice_stream
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Function to check if running on Streamlit Cloud
+# Function to check if running on Streamlit Cloud (via secrets)
 def is_streamlit_cloud() -> bool:
     """
     Detect if the app is running on Streamlit Cloud by checking the IS_STREAMLIT_CLOUD secret.
     """
     return st.secrets.get("IS_STREAMLIT_CLOUD", "false").lower() == "true"
 
-# Function to retrieve API keys from Streamlit secrets or environment variables (for local development)
+# Function to retrieve API keys from Streamlit secrets
 def get_api_key(key_name: str) -> str:
     """
-    Retrieve the API key from Streamlit secrets on the cloud, or from environment variables locally.
+    Retrieve the API key from Streamlit secrets.
     """
-    if is_streamlit_cloud():
-        try:
-            api_key = st.secrets["api_keys"].get(key_name)
-            if api_key:
-                logger.debug(f"{key_name} found in Streamlit secrets")
-                return api_key
-            else:
-                logger.warning(f"{key_name} not found in Streamlit secrets")
-        except Exception as e:
-            logger.error(f"Error accessing Streamlit secrets: {str(e)}")
-    else:
-        # Running locally, use environment variables
-        api_key = os.getenv(key_name)
+    try:
+        api_key = st.secrets["api_keys"].get(key_name)
         if api_key:
-            logger.debug(f"{key_name} found in environment variables")
+            logger.debug(f"{key_name} found in Streamlit secrets.")
             return api_key
         else:
-            logger.warning(f"{key_name} not found in environment variables")
+            logger.error(f"{key_name} not found in Streamlit secrets.")
+    except Exception as e:
+        logger.error(f"Error accessing Streamlit secrets: {str(e)}")
     
     return None
 
-# Set API keys directly from Streamlit secrets if running on the cloud
+# Set API keys
 openai_api_key = get_api_key("OPENAI_API_KEY")
 huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
 
@@ -62,7 +50,6 @@ else:
 
 # Set Hugging Face token
 if huggingface_token:
-    os.environ["HUGGINGFACE_TOKEN"] = huggingface_token
     logger.info("Hugging Face token is set successfully.")
 else:
     logger.error("Hugging Face token is not set.")
@@ -70,34 +57,6 @@ else:
 # Main function to run the Streamlit app
 def main():
     st.title("AI Budgeting Assistant")
-
-    # Debug section (visible when running locally)
-    if not is_streamlit_cloud():
-        st.sidebar.header("Debug Information")
-        if st.sidebar.checkbox("Show Environment Variables"):
-            st.sidebar.subheader("Environment Variables")
-            for key, value in os.environ.items():
-                if key.startswith("OPENAI") or key in ["STREAMLIT_RUNTIME_ENV"]:
-                    st.sidebar.text(f"{key}: {'*' * len(value)}")  # Mask the actual value
-            
-            # Specific check for OPENAI_API_KEY
-            openai_key = os.getenv("OPENAI_API_KEY")
-            st.sidebar.text(f"OPENAI_API_KEY set: {'Yes' if openai_key else 'No'}")
-            
-            # Check .env file existence
-            if os.path.exists('.env'):
-                st.sidebar.text(".env file exists")
-                with open('.env', 'r') as f:
-                    env_contents = f.read()
-                st.sidebar.text("Contents of .env file (keys only):")
-                for line in env_contents.split('\n'):
-                    if '=' in line:
-                        key = line.split('=')[0]
-                        st.sidebar.text(f"  {key}: {'*' * 10}")
-            else:
-                st.sidebar.text(".env file not found")
-
-            st.sidebar.text(f"Current working directory: {os.getcwd()}")
 
     # Main options in the sidebar
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
