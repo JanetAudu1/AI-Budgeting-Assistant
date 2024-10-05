@@ -3,6 +3,12 @@ import logging
 import streamlit as st
 import openai
 
+import sys
+from pathlib import Path
+
+# Add the project root directory to Python path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 # Import your app's UI and logic modules
 from app.ui.layout import display_home_page, display_analysis_page
 from app.ui.input_handlers import handle_inputs
