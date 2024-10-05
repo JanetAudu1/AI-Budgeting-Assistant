@@ -85,9 +85,9 @@ def main():
         else:
             st.info("Please fill in your financial information to generate a budget analysis.")
 
-    # Set environment variable to resolve tokenizer warnings
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
 # Entry point for the Streamlit app
 if __name__ == "__main__":
     main()
+
+# Set environment variable to resolve tokenizer warnings
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
