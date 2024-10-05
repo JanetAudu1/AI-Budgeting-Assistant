@@ -6,9 +6,6 @@ import streamlit as st
 import openai
 from dotenv import load_dotenv
 
-# Print current working directory
-print(f"Current working directory: {os.getcwd()}")
-
 # Check if running on Streamlit Cloud
 is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
 
@@ -26,20 +23,8 @@ logger = logging.getLogger(__name__)
 project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-# Try to load .env file
-env_path = Path('.env')
-if env_path.exists():
-    print(f".env file found at {env_path.absolute()}")
-    load_dotenv(env_path)
-else:
-    print(f".env file not found. Searched in {env_path.absolute()}")
-
-# Try to get API key from environment
-api_key = os.getenv("OPENAI_API_KEY")
-if api_key:
-    print("OPENAI_API_KEY found in environment variables")
-else:
-    print("OPENAI_API_KEY not found in environment variables")
+# Load environment variables (this won't have an effect on Streamlit Cloud)
+load_dotenv()
 
 from app.ui.layout import display_home_page, display_analysis_page
 from app.ui.input_handlers import handle_inputs
@@ -50,15 +35,15 @@ from app.services.recommender import generate_advice_stream
 def get_api_key(key_name: str) -> str:
     # Try getting the key from Streamlit secrets first
     if "api_keys" in st.secrets and key_name in st.secrets["api_keys"]:
-        print(f"{key_name} found in Streamlit secrets")
+        logger.debug(f"{key_name} found in Streamlit secrets")
         return st.secrets["api_keys"][key_name]
     
     # Otherwise, fall back to the environment variables
     env_value = os.getenv(key_name)
     if env_value:
-        print(f"{key_name} found in environment variables")
+        logger.debug(f"{key_name} found in environment variables")
     else:
-        print(f"{key_name} not found in Streamlit secrets or environment variables")
+        logger.warning(f"{key_name} not found in Streamlit secrets or environment variables")
     return env_value
 
 # Set OpenAI API key
@@ -69,7 +54,7 @@ if not openai.api_key:
     raise ValueError("OpenAI API key is not set. Please set the OPENAI_API_KEY in Streamlit secrets or environment variables.")
 
 # Print whether the API key is set (don't print the actual key)
-print(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
+logger.info(f"OpenAI API Key is set: {'Yes' if openai.api_key else 'No'}")
 
 # Set Hugging Face token
 huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
