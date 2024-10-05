@@ -37,22 +37,28 @@ def get_api_key(key_name: str) -> str:
     is_streamlit_cloud = os.getenv('STREAMLIT_RUNTIME_ENV') == 'cloud'
     logger.debug(f"Is Streamlit Cloud: {is_streamlit_cloud}")
 
-    if is_streamlit_cloud:
-        try:
-            api_key = st.secrets["api_keys"][key_name]
-            logger.debug(f"{key_name} found in Streamlit secrets")
-            return api_key
-        except KeyError:
-            logger.error(f"{key_name} not found in Streamlit secrets")
-    else:
+    if not is_streamlit_cloud:
+        # Print current working directory
+        logger.debug(f"Current working directory: {os.getcwd()}")
+
+        # Check if .env file exists
+        env_path = Path('.env')
+        if env_path.exists():
+            logger.debug(f".env file found at {env_path.absolute()}")
+            with open(env_path, 'r') as f:
+                logger.debug(f".env file contents:\n{f.read()}")
+        else:
+            logger.error(f".env file not found in {env_path.absolute()}")
+
         # Load environment variables from .env file
         load_dotenv()
-        api_key = os.getenv(key_name)
-        if api_key:
-            logger.debug(f"{key_name} found in environment variables")
-        else:
-            logger.error(f"{key_name} not found in environment variables")
-        return api_key
+
+    api_key = os.getenv(key_name)
+    if api_key:
+        logger.debug(f"{key_name} found in environment variables")
+    else:
+        logger.error(f"{key_name} not found in environment variables")
+    return api_key
 
 # Set OpenAI API key
 openai.api_key = get_api_key("OPENAI_API_KEY")
