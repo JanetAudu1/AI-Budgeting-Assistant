@@ -67,7 +67,7 @@ def main():
     st.title("AI Budgeting Assistant")
 
     # Debug: Print session state
-    st.write("Session State:", st.session_state)
+    st.write("Initial Session State:", st.session_state)
 
     # Main options in the sidebar
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
@@ -87,9 +87,19 @@ def main():
             st.session_state.user_inputs = inputs
             st.write("Debug: User inputs set in session state")
 
-            st.write("Debug: Displaying analysis")
-            display_analysis_page(st.session_state.user_inputs)
-            generate_advice_ui(st.session_state.user_inputs)
+            st.write("Debug: About to call display_analysis_page")
+            try:
+                display_analysis_page(st.session_state.user_inputs)
+                st.write("Debug: display_analysis_page completed successfully")
+            except Exception as e:
+                st.error(f"Error in display_analysis_page: {str(e)}")
+
+            st.write("Debug: About to call generate_advice_ui")
+            try:
+                generate_advice_ui(st.session_state.user_inputs)
+                st.write("Debug: generate_advice_ui completed successfully")
+            except Exception as e:
+                st.error(f"Error in generate_advice_ui: {str(e)}")
         else:
             st.info("Please fill in your financial information to generate a budget analysis.")
 
