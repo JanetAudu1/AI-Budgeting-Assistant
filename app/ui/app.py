@@ -99,6 +99,7 @@ dark_theme = """
     .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6,
     .stMarkdown p, .stMarkdown span, .stMarkdown div {
         color: #FFFFFF !important;
+        background-color: transparent !important;
     }
     
     /* Ensure all text inputs and their labels are white */
@@ -115,6 +116,7 @@ dark_theme = """
     /* Specific text elements */
     [data-testid="stText"] {
         color: #FFFFFF !important;
+        background-color: transparent !important;
     }
     
     /* Financial analysis results */
@@ -132,6 +134,7 @@ dark_theme = """
     /* Metric elements */
     [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
         color: #FFFFFF !important;
+        background-color: transparent !important;
     }
     
     /* Expander elements */
@@ -153,6 +156,16 @@ dark_theme = """
     [data-testid="stFileUploader"] label,
     .stMarkdown a {
         color: #FFFFFF !important;
+        background-color: transparent !important;
+        text-shadow: none !important;
+    }
+    
+    /* Remove any potential overlays */
+    .stApp::before, .stApp::after,
+    .stMarkdown::before, .stMarkdown::after,
+    [data-testid="stMarkdownContainer"]::before, [data-testid="stMarkdownContainer"]::after {
+        content: none !important;
+        background: none !important;
     }
 </style>
 """
