@@ -1,11 +1,32 @@
 /* app/static/style.css */
-/* Base styles that work for both themes */
+/* Base styles that work for both light and dark themes */
 
-.stApp > header {
-    background-color: transparent !important;
+:root {
+    --text-color: #2C3E50;
+    --background-color: #F8F9FA;
+    --secondary-background-color: #E9ECEF;
+    --accent-color: #3498DB;
 }
 
-.stButton>button {background-color: #3D9970; color: white;}
+.stApp {
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+.stSidebar {
+    background-color: var(--secondary-background-color);
+}
+
+.stButton > button {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3 {
+    color: var(--text-color);
+}
 
 [data-testid="stMarkdownContainer"] h1 {
     margin-top: 0.5em;
@@ -17,13 +38,13 @@
     margin-bottom: 1em;
 }
 
-[data-testid="stMarkdownContainer"] p {
-    margin-bottom: 1em;
-}
-
 [data-testid="stMarkdownContainer"] h3 {
     margin-top: 1.5em;
     margin-bottom: 0.5em;
+}
+
+[data-testid="stMarkdownContainer"] p {
+    margin-bottom: 1em;
 }
 
 [data-testid="stMarkdownContainer"] ul {
@@ -44,4 +65,11 @@
     padding-bottom: 1em;
 }
 
-/* Theme-specific styles are now handled in the Python code */
+/* Ensure good contrast for input fields */
+.stTextArea > div > div > textarea,
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input {
+    color: var(--text-color) !important;
+    background-color: var(--background-color) !important;
+    border: 1px solid var(--text-color);
+}

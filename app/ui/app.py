@@ -84,7 +84,16 @@ def load_css():
 
 # Main function to run the Streamlit app
 def main():
-    load_css()
+    if 'theme' not in st.session_state:
+        st.session_state.theme = 'dark'
+    
+    # Theme toggle in sidebar
+    if st.sidebar.checkbox("Use Light Theme", key='use_light_theme'):
+        st.session_state.theme = 'light'
+    else:
+        st.session_state.theme = 'dark'
+    
+    apply_theme(st.session_state.theme)
     
     # Main options in the sidebar
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
@@ -112,3 +121,23 @@ if __name__ == "__main__":
 
 # Set environment variable to resolve tokenizer warnings
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+def apply_theme(theme):
+    if theme == 'light':
+        st.markdown("""
+            <style>
+            .stApp {
+                background-color: white;
+                color: black;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+            <style>
+            .stApp {
+                background-color: #0e1117;
+                color: white;
+            }
+            </style>
+        """, unsafe_allow_html=True)
