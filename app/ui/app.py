@@ -58,6 +58,19 @@ def get_api_key(key_name: str) -> str:
             logger.error(f"{key_name} not found in environment variables.")
     return None
 
+# Debug: Print environment information
+logger.info(f"Is Streamlit Cloud: {is_streamlit_cloud()}")
+
+# If running on Streamlit Cloud, print the secrets (safely)
+if is_streamlit_cloud():
+    logger.info("Streamlit secrets keys: " + ", ".join(st.secrets.keys()))
+    if "api_keys" in st.secrets:
+        logger.info("API keys in secrets: " + ", ".join(st.secrets["api_keys"].keys()))
+    else:
+        logger.error("No 'api_keys' section in Streamlit secrets")
+else:
+    logger.warning("Not running on Streamlit Cloud. Make sure environment variables are set.")
+
 # Set API keys
 openai_api_key = get_api_key("OPENAI_API_KEY")
 logger.info(f"Retrieved OpenAI API key: {'*****' if openai_api_key else 'None'}")
@@ -68,18 +81,6 @@ if openai_api_key:
     logger.info(f"OpenAI API key set: {'*****' if openai.api_key else 'None'}")
 else:
     logger.error("OpenAI API key is not set.")
-
-# Debug: Print environment information
-logger.info(f"STREAMLIT_RUNTIME_ENV: {os.getenv('STREAMLIT_RUNTIME_ENV')}")
-logger.info(f"Is Streamlit Cloud: {is_streamlit_cloud()}")
-
-# If running on Streamlit Cloud, print the secrets (safely)
-if is_streamlit_cloud():
-    logger.info("Streamlit secrets keys: " + ", ".join(st.secrets.keys()))
-    if "api_keys" in st.secrets:
-        logger.info("API keys in secrets: " + ", ".join(st.secrets["api_keys"].keys()))
-    else:
-        logger.error("No 'api_keys' section in Streamlit secrets")
 
 # Custom CSS (updated for dark mode)
 st.markdown("""
