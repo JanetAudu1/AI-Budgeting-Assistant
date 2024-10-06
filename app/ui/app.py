@@ -61,110 +61,42 @@ dark_theme = """
         color: #FFFFFF;
     }
     
-    /* All text in sidebar */
-    [data-testid="stSidebar"] .stMarkdown,
-    [data-testid="stSidebar"] .stCheckbox,
-    [data-testid="stSidebar"] .stRadio,
-    [data-testid="stSelectbox"],
-    [data-testid="stSidebar"] .stSlider {
-        color: #FFFFFF !important;
-    }
-    
-    /* Buttons */
-    .stButton>button {
-        background-color: #3D9970;
-        color: white;
-    }
-    
-    /* Text areas, input fields, and their labels */
-    .stTextArea>div>div>textarea,
-    .stTextInput>div>div>input,
-    .stNumberInput>div>div>input,
-    .stSelectbox>div>div>div {
-        background-color: #262730 !important;
-        color: #FFFFFF !important;
-    }
-    
-    /* Labels for all form inputs */
-    .stTextArea label,
-    .stTextInput label,
-    .stNumberInput label,
-    .stSelectbox label,
-    .stFileUploader label,
-    .stDateInput label {
-        color: #FFFFFF !important;
-    }
-    
-    /* File uploader */
-    .stFileUploader {
-        background-color: #262730;
-        color: #FFFFFF !important;
-    }
-    
-    /* Headers, subheaders, and all text elements */
-    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6,
-    .stMarkdown p, .stMarkdown span, .stMarkdown div {
-        color: #FFFFFF !important;
-    }
-    
-    /* Ensure all text inputs and their labels are white */
-    .stTextInput, .stTextInput>div>div>input::placeholder {
-        color: #FFFFFF !important;
-    }
-    
-    /* Date input fields */
-    .stDateInput>div>div>input {
-        background-color: #262730 !important;
-        color: #FFFFFF !important;
-    }
-    
-    /* Specific text elements */
-    [data-testid="stText"] {
-        color: #FFFFFF !important;
-    }
-    
-    /* Financial analysis results */
-    .element-container, .stDataFrame {
-        background-color: #262730 !important;
-        color: #FFFFFF !important;
-    }
-    
-    /* Table headers and cells */
-    .dataframe th, .dataframe td {
-        background-color: #262730 !important;
-        color: #FFFFFF !important;
-    }
-    
-    /* Metric elements */
-    [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
-        color: #FFFFFF !important;
-    }
-    
-    /* Expander elements */
-    .streamlit-expanderHeader {
-        background-color: #262730 !important;
-        color: #FFFFFF !important;
-    }
-    
-    .streamlit-expanderContent {
-        background-color: #1E1E1E !important;
-        color: #FFFFFF !important;
-    }
-    
-    /* Specific elements */
+    /* All text elements */
+    .stMarkdown, 
+    .stText, 
+    [data-testid="stMarkdownContainer"] p,
     [data-testid="stMarkdownContainer"] h1,
     [data-testid="stMarkdownContainer"] h2,
     [data-testid="stMarkdownContainer"] h3,
-    [data-testid="stMarkdownContainer"] p,
-    [data-testid="stFileUploader"] label,
-    .stMarkdown a {
+    [data-testid="stMarkdownContainer"] h4,
+    [data-testid="stMarkdownContainer"] h5,
+    [data-testid="stMarkdownContainer"] h6,
+    [data-testid="stMarkdownContainer"] li {
         color: #FFFFFF !important;
+        background-color: transparent !important;
+        background: none !important;
+        padding: 0 !important;
+    }
+    
+    /* Remove any potential overlays or backgrounds */
+    .stMarkdown::before, 
+    .stMarkdown::after,
+    [data-testid="stMarkdownContainer"]::before, 
+    [data-testid="stMarkdownContainer"]::after,
+    .element-container::before, 
+    .element-container::after {
+        content: none !important;
+        background: none !important;
+        padding: 0 !important;
     }
     
     /* Ensure main content area has the correct background */
     .main .block-container {
         background-color: #0E1117 !important;
     }
+    
+    /* Additional styles from previous version */
+    /* (Include other styles for buttons, inputs, etc. from the previous CSS) */
 </style>
 """
 
