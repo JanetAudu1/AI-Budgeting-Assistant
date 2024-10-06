@@ -52,14 +52,13 @@ dark_theme = """
         color: #FFFFFF;
     }
     
-    /* Sidebar title */
-    .sidebar .sidebar-content .block-container h1 {
-        color: #FFFFFF;
-    }
-    
-    /* Sidebar content */
-    .sidebar .sidebar-content {
-        background-color: #1E1E1E;
+    /* All text in sidebar */
+    [data-testid="stSidebar"] .stMarkdown,
+    [data-testid="stSidebar"] .stCheckbox,
+    [data-testid="stSidebar"] .stRadio,
+    [data-testid="stSidebar"] .stSelectbox,
+    [data-testid="stSidebar"] .stSlider {
+        color: #FFFFFF !important;
     }
     
     /* Buttons */
@@ -82,22 +81,6 @@ dark_theme = """
     .stFileUploader label,
     .stDateInput label {
         color: #FFFFFF !important;
-    }
-    
-    /* Expander headers */
-    .streamlit-expanderHeader {
-        font-size: 16px;
-        font-weight: bold;
-        color: #FFFFFF;
-    }
-    
-    /* Expander content */
-    .streamlit-expanderContent {overflow: visible !important;}
-    
-    /* Dropdown menus */
-    .stSelectbox>div>div>div {
-        background-color: #262730;
-        color: #FFFFFF;
     }
     
     /* File uploader */
