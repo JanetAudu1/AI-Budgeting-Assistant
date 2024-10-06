@@ -60,19 +60,27 @@ def get_api_key(key_name: str) -> str:
 
     return None
 
+# Function to set API keys
+def set_api_keys():
+    keys = {}
+    for key_name in ["OPENAI_API_KEY", "HUGGINGFACE_TOKEN"]:
+        key_value = get_api_key(key_name)
+        keys[key_name] = key_value
+        if key_value:
+            logger.info(f"{key_name} is set successfully.")
+        else:
+            logger.error(f"{key_name} is not set.")
+    return keys
+
 # Set API keys
-openai_api_key = get_api_key("OPENAI_API_KEY")
-huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
+API_KEYS = set_api_keys()
 
 # Set OpenAI API key
-if openai_api_key:
-    openai.api_key = openai_api_key
-    logger.info("OpenAI API key is set successfully.")
-else:
-    logger.error("OpenAI API key is not set.")
+if API_KEYS["OPENAI_API_KEY"]:
+    openai.api_key = API_KEYS["OPENAI_API_KEY"]
 
 # Set Hugging Face token
-if huggingface_token:
+if API_KEYS["HUGGINGFACE_TOKEN"]:
     logger.info("Hugging Face token is set successfully.")
 else:
     logger.error("Hugging Face token is not set.")
