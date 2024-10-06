@@ -20,7 +20,12 @@ from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
 
 # Set page config as the first Streamlit command
-st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
+st.set_page_config(
+    page_title="AI Budgeting Assistant",
+    page_icon="💰",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -109,6 +114,12 @@ def main():
             generate_advice_ui(st.session_state.user_inputs)
         else:
             st.info("Please fill in your financial information to generate a budget analysis.")
+
+        # Add this near the top of your main() function or wherever you want the toggle to appear
+        if st.sidebar.checkbox("Use Light Mode"):
+            st.set_theme("light")
+        else:
+            st.set_theme("dark")
 
 # Entry point for the Streamlit app
 if __name__ == "__main__":

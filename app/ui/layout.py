@@ -41,9 +41,7 @@ def display_home_page():
 
 def display_analysis_page(inputs: UserDataInput):
     st.header("Financial Analysis")
-    
-    display_sample_bank_statement("analysis_page")
-    
+        
     try:
         if inputs.bank_statement:
             bank_statement = pd.DataFrame([entry.dict() for entry in inputs.bank_statement])
