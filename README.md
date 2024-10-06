@@ -12,7 +12,7 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
 ## Setup and Installation
 
 
-### Option 1: Using Docker (Recommended)
+### Option 1: Using Docker (Recommended - Quick Run of the App)
 
 1. Install Docker:
    - For Windows: [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/)
@@ -39,7 +39,6 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    
 5. Build the Docker image:
    ```
-   docker build -t ai-budgeting-assistant . (skip)
    docker pull janetaudu1/ai-budgeting-assistant:vGHC
 
    ```
@@ -56,13 +55,10 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
      ```
 
 7. Access the application:
-   - FastAPI backend: http://localhost:8000
    - Streamlit UI: http://localhost:8501
+   - FastAPI backend: http://localhost:8000
 
 Note for Windows users: Ensure Docker Desktop is running before executing these commands.
-
-Note: 
-if you get an error with the 
 
 
 ### Option 2: Local Installation
@@ -199,11 +195,29 @@ test_api.py: Includes tests for the API endpoints.
 
 test_recommender.py: Tests for the recommender service.
 
-
 Root Directory:
 
 requirements.txt: Lists all Python dependencies required for the project.
 
-README.md: Provides an overview, setup instructions, and documentation for the project.
+```
+## Contribution
+
+We welcome contributions! To get started:
+
+1. Fork the repository on GitHub.
+2. Create a new branch for your feature or bug fix:
+   ```
+      git checkout -b feature-name
+   ```
+3. Commit your changes and push them to your fork.
+4. Create a Pull Request on GitHub.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](https://opensource.org/license/mit) file for details.
+
+## About
+
+This project was developed for the Grace Hopper Conference 2024 to showcase the integration of AI-powered financial insights in budgeting tools. It is open source and available for use and contributions.
 
 ```
