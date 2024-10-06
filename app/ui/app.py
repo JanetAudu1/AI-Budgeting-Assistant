@@ -31,7 +31,7 @@ def is_streamlit_cloud() -> bool:
     """
     Detect if the app is running on Streamlit Cloud by checking the STREAMLIT_RUNTIME_ENV environment variable.
     """
-    return os.getenv("STREAMLIT_RUNTIME_ENV") == "cloud"
+    return st.secrets.get("IS_STREAMLIT_CLOUD", False)
 
 # Function to retrieve API keys
 def get_api_key(key_name: str) -> str:
@@ -40,9 +40,6 @@ def get_api_key(key_name: str) -> str:
     """
     if is_streamlit_cloud():
         try:
-            if "api_keys" not in st.secrets:
-                logger.error("'api_keys' section not found in Streamlit secrets.")
-                return None
             api_key = st.secrets["api_keys"].get(key_name)
             if api_key:
                 logger.info(f"{key_name} found in Streamlit secrets.")
