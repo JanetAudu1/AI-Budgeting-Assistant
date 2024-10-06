@@ -70,7 +70,8 @@ dark_theme = """
     /* Labels for form inputs */
     .stSelectbox label,
     .stTextInput label,
-    .stNumberInput label {
+    .stNumberInput label,
+    .stFileUploader label {
         color: #FFFFFF !important;
     }
     
@@ -78,6 +79,17 @@ dark_theme = """
     .stSelectbox>div>div>div {
         background-color: #262730;
         color: #FFFFFF;
+    }
+    
+    /* File uploader */
+    .stFileUploader {
+        background-color: #262730;
+        color: #FFFFFF;
+    }
+    
+    /* Headers and subheaders */
+    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6 {
+        color: #FFFFFF !important;
     }
 </style>
 """
