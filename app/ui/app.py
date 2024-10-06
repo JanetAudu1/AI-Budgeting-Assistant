@@ -28,14 +28,13 @@ logger = logging.getLogger(__name__)
 
 # Function to check if running on Streamlit Cloud
 def is_streamlit_cloud() -> bool:
-    try:
-        return st.secrets.get("IS_STREAMLIT_CLOUD", False)
-    except:
-        return False
+    return os.getenv("IS_STREAMLIT_CLOUD", "false").lower() == "true"
 
 # Function to retrieve API keys
 def get_api_key(key_name: str) -> str:
     if is_streamlit_cloud():
+        # Import streamlit only when running on Streamlit Cloud
+        import streamlit as st
         try:
             api_key = st.secrets["api_keys"].get(key_name)
             if api_key:
