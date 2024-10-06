@@ -28,29 +28,22 @@ logger = logging.getLogger(__name__)
 
 # Function to check if running on Streamlit Cloud
 def is_streamlit_cloud() -> bool:
-    """
-    Detect if the app is running on Streamlit Cloud by checking the STREAMLIT_RUNTIME_ENV environment variable.
-    """
-    return st.secrets.get("IS_STREAMLIT_CLOUD", False)
+    try:
+        return st.secrets.get("IS_STREAMLIT_CLOUD", False)
+    except FileNotFoundError:
+        return False
 
 # Function to retrieve API keys
 def get_api_key(key_name: str) -> str:
-    """
-    Retrieve the API key from Streamlit secrets (for cloud) or environment variables (for local development).
-    """
-    # Always check Streamlit secrets first
     try:
+        # Try to get from Streamlit secrets first
         if "api_keys" in st.secrets:
             api_key = st.secrets["api_keys"].get(key_name)
             if api_key:
                 logger.info(f"{key_name} found in Streamlit secrets.")
                 return api_key
-            else:
-                logger.error(f"{key_name} not found in Streamlit secrets.")
-        else:
-            logger.error("No 'api_keys' section in Streamlit secrets")
-    except Exception as e:
-        logger.error(f"Error accessing Streamlit secrets: {str(e)}")
+    except FileNotFoundError:
+        logger.info("Secrets file not found. Falling back to environment variables.")
     
     # Fallback to environment variables
     api_key = os.getenv(key_name)
@@ -63,15 +56,18 @@ def get_api_key(key_name: str) -> str:
     return None
 
 # Debug: Print environment information
-logger.info(f"Is Streamlit Cloud (from secrets): {is_streamlit_cloud()}")
+logger.info(f"Is Streamlit Cloud: {is_streamlit_cloud()}")
 logger.info(f"STREAMLIT_RUNTIME_ENV: {os.getenv('STREAMLIT_RUNTIME_ENV')}")
 
 # Print Streamlit secrets keys (safely)
-logger.info("Streamlit secrets keys: " + ", ".join(st.secrets.keys()))
-if "api_keys" in st.secrets:
-    logger.info("API keys in secrets: " + ", ".join(st.secrets["api_keys"].keys()))
-else:
-    logger.error("No 'api_keys' section in Streamlit secrets")
+try:
+    logger.info("Streamlit secrets keys: " + ", ".join(st.secrets.keys()))
+    if "api_keys" in st.secrets:
+        logger.info("API keys in secrets: " + ", ".join(st.secrets["api_keys"].keys()))
+    else:
+        logger.error("No 'api_keys' section in Streamlit secrets")
+except FileNotFoundError:
+    logger.info("No secrets file found. This is expected when running locally.")
 
 # Set API keys
 openai_api_key = get_api_key("OPENAI_API_KEY")
@@ -120,7 +116,7 @@ def main():
                 logger.info(f"Re-set OpenAI API key: {'*****' if openai.api_key else 'None'}")
             
             if not openai.api_key:
-                st.error("OpenAI API key is not set. Please check your Streamlit secrets configuration.")
+                st.error("OpenAI API key is not set. Please check your environment variables or Streamlit secrets configuration.")
                 return
             
             generate_advice_ui(st.session_state.user_inputs)
