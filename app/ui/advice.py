@@ -8,7 +8,7 @@ from app.services.recommender import generate_advice_stream
 
 logger = logging.getLogger(__name__)
 
-API_URL = "http://localhost:8000" #not in use, as main.py is not running. Removed for easier deployment 
+API_URL = "http://localhost:8000" #not in use. Removed for easier deployment 
 
 def escape_dollar_signs(text):
     return text.replace('$', r'\$')
