@@ -75,24 +75,45 @@ dark_theme = """
         color: #FFFFFF !important;
         background-color: transparent !important;
         background: none !important;
-        padding: 0 !important;
     }
     
-    /* Remove any potential overlays or backgrounds */
-    .stMarkdown::before, 
-    .stMarkdown::after,
-    [data-testid="stMarkdownContainer"]::before, 
-    [data-testid="stMarkdownContainer"]::after,
-    .element-container::before, 
-    .element-container::after {
-        content: none !important;
-        background: none !important;
-        padding: 0 !important;
+    /* Spacing for main title */
+    [data-testid="stMarkdownContainer"] h1 {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+    
+    /* Spacing for subtitle */
+    [data-testid="stMarkdownContainer"] h2 {
+        margin-top: 0.5em;
+        margin-bottom: 1em;
+    }
+    
+    /* Spacing for paragraphs */
+    [data-testid="stMarkdownContainer"] p {
+        margin-bottom: 1em;
+    }
+    
+    /* Spacing for "Key Features" section */
+    [data-testid="stMarkdownContainer"] h3 {
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+    }
+    
+    /* Spacing for list items */
+    [data-testid="stMarkdownContainer"] ul {
+        margin-bottom: 1em;
+    }
+    
+    [data-testid="stMarkdownContainer"] li {
+        margin-bottom: 0.5em;
     }
     
     /* Ensure main content area has the correct background */
     .main .block-container {
         background-color: #0E1117 !important;
+        padding-top: 1em;
+        padding-bottom: 1em;
     }
     
     /* Additional styles from previous version */
