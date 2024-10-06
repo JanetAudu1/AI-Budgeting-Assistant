@@ -26,21 +26,23 @@ st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Function to check if running on Streamlit Cloud by checking the runtime environment
+# Function to check if running on Streamlit Cloud
 def is_streamlit_cloud() -> bool:
     """
     Detect if the app is running on Streamlit Cloud by checking the STREAMLIT_RUNTIME_ENV environment variable.
     """
     return os.getenv("STREAMLIT_RUNTIME_ENV") == "cloud"
 
-# Function to retrieve API keys from environment variables or Streamlit secrets
+# Function to retrieve API keys
 def get_api_key(key_name: str) -> str:
     """
     Retrieve the API key from Streamlit secrets (for cloud) or environment variables (for local development).
     """
     if is_streamlit_cloud():
-        # Running on Streamlit Cloud, use secrets
         try:
+            if "api_keys" not in st.secrets:
+                logger.error("'api_keys' section not found in Streamlit secrets.")
+                return None
             api_key = st.secrets["api_keys"].get(key_name)
             if api_key:
                 logger.info(f"{key_name} found in Streamlit secrets.")
@@ -57,7 +59,6 @@ def get_api_key(key_name: str) -> str:
             return api_key
         else:
             logger.error(f"{key_name} not found in environment variables.")
-
     return None
 
 # Set API keys
@@ -75,10 +76,13 @@ else:
 logger.info(f"STREAMLIT_RUNTIME_ENV: {os.getenv('STREAMLIT_RUNTIME_ENV')}")
 logger.info(f"Is Streamlit Cloud: {is_streamlit_cloud()}")
 
-# If running locally, print the OPENAI_API_KEY environment variable (masked)
-if not is_streamlit_cloud():
-    env_api_key = os.getenv("OPENAI_API_KEY")
-    logger.info(f"OPENAI_API_KEY from env: {'*****' if env_api_key else 'None'}")
+# If running on Streamlit Cloud, print the secrets (safely)
+if is_streamlit_cloud():
+    logger.info("Streamlit secrets keys: " + ", ".join(st.secrets.keys()))
+    if "api_keys" in st.secrets:
+        logger.info("API keys in secrets: " + ", ".join(st.secrets["api_keys"].keys()))
+    else:
+        logger.error("No 'api_keys' section in Streamlit secrets")
 
 # Custom CSS (updated for dark mode)
 st.markdown("""
@@ -114,6 +118,10 @@ def main():
             if not openai.api_key:
                 openai.api_key = get_api_key("OPENAI_API_KEY")
                 logger.info(f"Re-set OpenAI API key: {'*****' if openai.api_key else 'None'}")
+            
+            if not openai.api_key:
+                st.error("OpenAI API key is not set. Please check your Streamlit secrets configuration.")
+                return
             
             generate_advice_ui(st.session_state.user_inputs)
         else:
