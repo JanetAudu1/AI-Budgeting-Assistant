@@ -110,34 +110,6 @@ dark_theme = """
     [data-testid="stText"] {
         color: #FFFFFF !important;
     }
-    
-    /* Financial analysis results */
-    .element-container, .stDataFrame {
-        background-color: #262730 !important;
-        color: #FFFFFF !important;
-    }
-    
-    /* Table headers and cells */
-    .dataframe th, .dataframe td {
-        background-color: #262730 !important;
-        color: #FFFFFF !important;
-    }
-    
-    /* Metric elements */
-    [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
-        color: #FFFFFF !important;
-    }
-    
-    /* Expander elements */
-    .streamlit-expanderHeader {
-        background-color: #262730 !important;
-        color: #FFFFFF !important;
-    }
-    
-    .streamlit-expanderContent {
-        background-color: #1E1E1E !important;
-        color: #FFFFFF !important;
-    }
 </style>
 """
 
