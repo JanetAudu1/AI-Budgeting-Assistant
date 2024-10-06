@@ -43,11 +43,42 @@ light_theme = """
 
 dark_theme = """
 <style>
+    /* Main app background */
     .stApp {background-color: #0E1117; color: #FFFFFF;}
+    
+    /* Buttons */
     .stButton>button {background-color: #3D9970; color: white;}
-    .stTextArea>div>div>textarea {background-color: #262730; color: #FFFFFF;}
-    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FFFFFF;}
+    
+    /* Text areas and input fields */
+    .stTextArea>div>div>textarea,
+    .stTextInput>div>div>input,
+    .stNumberInput>div>div>input {
+        background-color: #262730;
+        color: #FFFFFF;
+    }
+    
+    /* Expander headers */
+    .streamlit-expanderHeader {
+        font-size: 16px;
+        font-weight: bold;
+        color: #FFFFFF;
+    }
+    
+    /* Expander content */
     .streamlit-expanderContent {overflow: visible !important;}
+    
+    /* Labels for form inputs */
+    .stSelectbox label,
+    .stTextInput label,
+    .stNumberInput label {
+        color: #FFFFFF !important;
+    }
+    
+    /* Dropdown menus */
+    .stSelectbox>div>div>div {
+        background-color: #262730;
+        color: #FFFFFF;
+    }
 </style>
 """
 
