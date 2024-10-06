@@ -83,42 +83,50 @@ def load_css():
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 def apply_theme(theme):
-    base_styles = """
-        <style>
-        .main .block-container {
-            background-color: #0e1117;
-            color: white;
-            padding: 3rem;
-            border-radius: 10px;
-        }
-        .sidebar .sidebar-content {
-            background-color: #262730;
-        }
-        h1, h2, h3 {
-            color: #ffffff;
-        }
-        .stButton>button {
-            color: #4e4e4e;
-            background-color: #ffffff;
-            border-radius: 5px;
-        }
-        </style>
-    """
-    
     if theme == 'light':
-        light_styles = """
+        st.markdown("""
             <style>
             .main .block-container {
-                background-color: #1e2129;
+                background-color: #f0f2f6;
+                color: #262730;
+                padding: 3rem;
+                border-radius: 10px;
             }
             .sidebar .sidebar-content {
-                background-color: #2e3141;
+                background-color: #ffffff;
+            }
+            h1, h2, h3 {
+                color: #262730;
+            }
+            .stButton>button {
+                color: #ffffff;
+                background-color: #4e4e4e;
+                border-radius: 5px;
             }
             </style>
-        """
-        st.markdown(base_styles + light_styles, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     else:
-        st.markdown(base_styles, unsafe_allow_html=True)
+        st.markdown("""
+            <style>
+            .main .block-container {
+                background-color: #0e1117;
+                color: white;
+                padding: 3rem;
+                border-radius: 10px;
+            }
+            .sidebar .sidebar-content {
+                background-color: #262730;
+            }
+            h1, h2, h3 {
+                color: #ffffff;
+            }
+            .stButton>button {
+                color: #4e4e4e;
+                background-color: #ffffff;
+                border-radius: 5px;
+            }
+            </style>
+        """, unsafe_allow_html=True)
 
 # Main function to run the Streamlit app
 def main():
