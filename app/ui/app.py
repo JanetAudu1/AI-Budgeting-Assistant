@@ -62,20 +62,23 @@ def get_api_key(key_name: str) -> str:
 
 # Set API keys
 openai_api_key = get_api_key("OPENAI_API_KEY")
-huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
+logger.info(f"Retrieved OpenAI API key: {'*****' if openai_api_key else 'None'}")
 
 # Set OpenAI API key
 if openai_api_key:
     openai.api_key = openai_api_key
-    logger.info("OpenAI API key is set successfully.")
+    logger.info(f"OpenAI API key set: {'*****' if openai.api_key else 'None'}")
 else:
     logger.error("OpenAI API key is not set.")
 
-# Set Hugging Face token
-if huggingface_token:
-    logger.info("Hugging Face token is set successfully.")
-else:
-    logger.error("Hugging Face token is not set.")
+# Debug: Print environment information
+logger.info(f"STREAMLIT_RUNTIME_ENV: {os.getenv('STREAMLIT_RUNTIME_ENV')}")
+logger.info(f"Is Streamlit Cloud: {is_streamlit_cloud()}")
+
+# If running locally, print the OPENAI_API_KEY environment variable (masked)
+if not is_streamlit_cloud():
+    env_api_key = os.getenv("OPENAI_API_KEY")
+    logger.info(f"OPENAI_API_KEY from env: {'*****' if env_api_key else 'None'}")
 
 # Custom CSS (updated for dark mode)
 st.markdown("""
@@ -106,6 +109,12 @@ def main():
 
         if st.session_state.user_inputs:
             display_analysis_page(st.session_state.user_inputs)
+            
+            # Double-check API key before making the call
+            if not openai.api_key:
+                openai.api_key = get_api_key("OPENAI_API_KEY")
+                logger.info(f"Re-set OpenAI API key: {'*****' if openai.api_key else 'None'}")
+            
             generate_advice_ui(st.session_state.user_inputs)
         else:
             st.info("Please fill in your financial information to generate a budget analysis.")
