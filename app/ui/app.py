@@ -71,11 +71,59 @@ else:
 # Custom CSS (updated for dark mode)
 st.markdown("""
     <style>
-    .stApp {background-color: #0E1117; color: #FAFAFA;}
-    .stButton>button {background-color: #3D9970; color: white;}
-    .stTextArea>div>div>textarea {background-color: #262730; color: #FAFAFA;}
-    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FAFAFA;}
-    .streamlit-expanderContent {overflow: visible !important;}
+    :root {
+      /* Light theme (default) */
+      --background-color: #ffffff;
+      --text-color: #000000;
+      --table-background: #f5f5f5;
+      --table-text: #000000;
+      --upload-area-background: #ffffff;
+      --upload-area-border: #cccccc;
+      --upload-area-text: #000000;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        /* Dark theme */
+        --background-color: #1e1e1e;
+        --text-color: #ffffff;
+        --table-background: #2c2c2c;
+        --table-text: #ffffff;
+        --upload-area-background: #2c2c2c;
+        --upload-area-border: #444444;
+        --upload-area-text: #ffffff;
+      }
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+
+    .upload-area {
+      background-color: var(--upload-area-background);
+      border-color: var(--upload-area-border);
+      color: var(--upload-area-text);
+    }
+
+    table {
+      background-color: var(--table-background);
+      color: var(--table-text);
+    }
+
+    /* Ensure other elements use appropriate colors */
+    h1, h2, h3, p, label, input, button {
+      color: var(--text-color);
+    }
+
+    /* Add specific overrides for any elements that need different colors */
+    .file-name {
+      color: var(--text-color);
+    }
+
+    .success-message {
+      color: #28a745; /* Green color for success messages */
+    }
     </style>
     """, unsafe_allow_html=True)
 
