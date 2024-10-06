@@ -1,3 +1,11 @@
+"""
+FastAPI main application file for the AI Budgeting Assistant.
+
+This file sets up the FastAPI application, defines API routes,
+and handles the generation of financial advice through a
+streaming response.
+"""
+
 import sys
 import os
 from dotenv import load_dotenv
@@ -20,4 +28,3 @@ async def root():
 @app.post("/get_advice")
 async def get_advice(user_data: UserDataInput):
     return StreamingResponse(generate_advice_stream(user_data), media_type="text/plain")
-

@@ -1,3 +1,12 @@
+"""
+Layout module for the AI Budgeting Assistant.
+
+This module contains functions for displaying various pages and components
+of the application, including the home page, analysis page, and sample
+bank statement. It also includes functions for generating and displaying
+financial charts and summaries.
+"""
+
 import streamlit as st
 import pandas as pd
 from app.ui.charts import (

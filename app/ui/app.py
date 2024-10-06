@@ -1,3 +1,12 @@
+"""
+Main Streamlit application file for the AI Budgeting Assistant.
+
+This file sets up the Streamlit application, configures the environment,
+handles API key management, and defines the main application flow.
+It includes functions for loading CSS, retrieving API keys, and
+the main application logic.
+"""
+
 import sys
 from pathlib import Path
 import os

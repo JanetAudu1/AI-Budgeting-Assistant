@@ -1,3 +1,12 @@
+"""
+Input handling module for the AI Budgeting Assistant.
+
+This module manages user input processing, including handling
+of uploaded bank statements and other financial data inputs.
+It also includes utility functions for data validation and
+conversion.
+"""
+
 import sys
 from pathlib import Path
 import pandas as pd

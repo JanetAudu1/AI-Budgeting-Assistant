@@ -1,3 +1,13 @@
+"""
+Advice generation and display module for the AI Budgeting Assistant.
+
+This module handles the generation of financial advice, budget proposals,
+and the display of this information in the Streamlit UI. It includes
+functions for processing AI-generated advice, creating budget tables,
+and managing user interactions for regenerating advice or asking
+follow-up questions.
+"""
+
 import json
 import re
 import pandas as pd

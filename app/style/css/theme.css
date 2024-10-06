@@ -1,3 +1,10 @@
+/*
+Theme CSS for the AI Budgeting Assistant.
+
+This CSS file defines the color scheme and basic styling for the application,
+including support for both light and dark modes. It uses CSS variables
+to allow for easy theme switching and consistent styling across the app.
+*/
 :root {
   /* Light theme (default) */
   --background-color: #ffffff;

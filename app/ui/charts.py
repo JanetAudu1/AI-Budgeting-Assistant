@@ -1,3 +1,11 @@
+"""
+Chart generation module for the AI Budgeting Assistant.
+
+This module contains functions for creating various financial charts
+using Plotly, including expense breakdown pie charts and income vs
+expenses bar charts.
+"""
+
 import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px

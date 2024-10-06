@@ -1,3 +1,7 @@
+# Requirements file for the AI Budgeting Assistant
+# This file lists all the Python packages and their versions
+# required to run the application. Install using:
+# pip install -r requirements.txt
 streamlit==1.36.0
 pandas==2.2.1
 matplotlib==3.9.2

@@ -1,3 +1,7 @@
+# Streamlit configuration file
+# This file sets the theme for the Streamlit application,
+# forcing it to use dark mode and defining custom colors.
+
 [theme]
 base="dark"
 primaryColor="#3d9970"
@@ -5,7 +9,5 @@ backgroundColor="#1e1e1e"
 secondaryBackgroundColor="#252525"
 textColor="#ececec"
 
-
-# This forces the app to use dark mode
 
 
