@@ -41,17 +41,17 @@ def handle_inputs():
 
     name = st.text_input("Name", max_chars=100)
     age = st.number_input("Age", min_value=18, max_value=120, step=1)
-    address = st.text_input("State", help="Please enter your state of residence")  # Modified this line
+    address = st.text_input("Address (State)", help="Please enter your state of residence")
     current_income = st.number_input("Current Net Monthly Income ($)", min_value=0.0, step=100.0, format="%.2f")
     current_savings = st.number_input("Current Savings ($)", min_value=0.0, step=1000.0, format="%.2f")
     goals = st.text_area("Financial Goals (comma-separated)", max_chars=500)
     timeline_months = st.number_input("Timeline (months)", min_value=1, max_value=600, step=1)
 
-    llm_options = ["GPT-4 (Default)", "distilgpt2", "gpt2"]
-    selected_llm = st.selectbox("Select LLM Model", llm_options)
-
     constraints = st.text_area("Budgeting Constraints (One per line, optional)", help="Enter any specific constraints you want to be considered in your budget analysis.")
     constraints_list = [constraint.strip() for constraint in constraints.split('\n') if constraint.strip()]
+
+    llm_options = ["GPT-4 (Default)", "distilgpt2", "gpt2"]
+    selected_llm = st.selectbox("Select LLM Model", llm_options)
 
     if st.button("Generate Analysis"):
         try:
@@ -73,13 +73,13 @@ def handle_inputs():
             user_data = models.UserDataInput(
                 name=name,
                 age=age,
-                state=address,  # Make sure this line is present and correct
+                state=address,  
                 current_income=current_income,
                 current_savings=current_savings,
                 goals=goals_list,
                 timeline_months=timeline_months,
                 bank_statement=bank_statement_entries,
-                selected_llm=selected_model,  # This will be the clean model name
+                selected_llm=selected_model, 
                 constraints=constraints_list
             )
             return user_data

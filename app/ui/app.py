@@ -90,7 +90,6 @@ st.markdown("""
 
 # Main function to run the Streamlit app
 def main():
-    st.title("AI Budgeting Assistant")
 
     # Main options in the sidebar
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
