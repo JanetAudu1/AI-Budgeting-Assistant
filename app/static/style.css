@@ -13,8 +13,8 @@
 
 [data-testid="stSidebar"] .stMarkdown,
 [data-testid="stSidebar"] .stCheckbox,
-[data-testid="stSidebar"] .stRadio,
-[data-testid="stSelectbox"],
+[data-testid="stRadio"],
+[data-testid="stSidebar"] .stSelectbox,
 [data-testid="stSidebar"] .stSlider {
     color: #FFFFFF !important;
 }

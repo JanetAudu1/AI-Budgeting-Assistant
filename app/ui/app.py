@@ -82,11 +82,6 @@ def load_css():
     with open(css_file) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-def load_theme(theme):
-    css_file = Path(__file__).parent.parent / "static" / f"{theme}_theme.css"
-    with open(css_file) as f:
-        return f'<style>{f.read()}</style>'
-
 # Main function to run the Streamlit app
 def main():
     load_css()
