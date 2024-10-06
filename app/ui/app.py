@@ -120,6 +120,20 @@ def apply_theme(theme):
     else:
         st.markdown(base_styles, unsafe_allow_html=True)
 
+def main():
+    if 'theme' not in st.session_state:
+        st.session_state.theme = 'dark'
+    
+    # Theme toggle in sidebar
+    if st.sidebar.checkbox("Use Light Theme", key='use_light_theme'):
+        st.session_state.theme = 'light'
+    else:
+        st.session_state.theme = 'dark'
+    
+    apply_theme(st.session_state.theme)
+    
+    # ... rest of the main function ...
+
 # Main function to run the Streamlit app
 def main():
     if 'theme' not in st.session_state:
