@@ -69,63 +69,22 @@ else:
     logger.error("OpenAI API key is not set.")
 
 # Custom CSS (updated for dark mode)
-st.markdown("""
-    <style>
-    :root {
-      /* Light theme (default) */
-      --background-color: #ffffff;
-      --text-color: #000000;
-      --table-background: #f5f5f5;
-      --table-text: #000000;
-      --upload-area-background: #ffffff;
-      --upload-area-border: #cccccc;
-      --upload-area-text: #000000;
-    }
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        /* Dark theme */
-        --background-color: #1e1e1e;
-        --text-color: #ffffff;
-        --table-background: #2c2c2c;
-        --table-text: #ffffff;
-        --upload-area-background: #2c2c2c;
-        --upload-area-border: #444444;
-        --upload-area-text: #ffffff;
-      }
-    }
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    body {
-      background-color: var(--background-color);
-      color: var(--text-color);
-    }
+# Go up one directory to the 'app' folder
+app_dir = os.path.dirname(current_dir)
 
-    .upload-area {
-      background-color: var(--upload-area-background);
-      border-color: var(--upload-area-border);
-      color: var(--upload-area-text);
-    }
+# Construct the full path to theme.css in the style/css folder
+css_path = os.path.join(app_dir, 'style', 'css', 'theme.css')
 
-    table {
-      background-color: var(--table-background);
-      color: var(--table-text);
-    }
+# Load the CSS
+load_css(css_path)
 
-    /* Ensure other elements use appropriate colors */
-    h1, h2, h3, p, label, input, button {
-      color: var(--text-color);
-    }
-
-    /* Add specific overrides for any elements that need different colors */
-    .file-name {
-      color: var(--text-color);
-    }
-
-    .success-message {
-      color: #28a745; /* Green color for success messages */
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 # Main function to run the Streamlit app
 def main():
