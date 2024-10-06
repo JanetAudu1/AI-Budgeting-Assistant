@@ -77,6 +77,16 @@ if huggingface_token:
 else:
     logger.error("Hugging Face token is not set.")
 
+st.markdown("""
+    <style>
+    .stApp {background-color: #0E1117; color: #FAFAFA;}
+    .stButton>button {background-color: #3D9970; color: white;}
+    .stTextArea>div>div>textarea {background-color: #262730; color: #FAFAFA;}
+    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FAFAFA;}
+    .streamlit-expanderContent {overflow: visible !important;}
+    </style>
+    """, unsafe_allow_html=True)
+
 def load_css():
     css_file = Path(__file__).parent.parent / "static" / "style.css"
     with open(css_file) as f:
@@ -84,6 +94,7 @@ def load_css():
 
 def apply_theme(theme):
     base_styles = """
+        <style>
         .main .block-container {
             background-color: #0e1117;
             color: white;
@@ -101,10 +112,12 @@ def apply_theme(theme):
             background-color: #ffffff;
             border-radius: 5px;
         }
+        </style>
     """
     
     if theme == 'light':
         light_styles = """
+            <style>
             .main .block-container {
                 background-color: #1e2129;
             }
@@ -114,12 +127,11 @@ def apply_theme(theme):
             body {
                 background-color: #121212;
             }
+            </style>
         """
-        all_styles = base_styles + light_styles
+        st.markdown(base_styles + light_styles, unsafe_allow_html=True)
     else:
-        all_styles = base_styles
-
-    st.markdown(f"<style>{all_styles}</style>", unsafe_allow_html=True)
+        st.markdown(base_styles, unsafe_allow_html=True)
 
 def main():
     if 'theme' not in st.session_state:
@@ -133,21 +145,10 @@ def main():
     
     apply_theme(st.session_state.theme)
     
-    # ... rest of the main function ...
 
 # Main function to run the Streamlit app
 def main():
-    if 'theme' not in st.session_state:
-        st.session_state.theme = 'dark'
-    
-    # Theme toggle in sidebar
-    if st.sidebar.checkbox("Use Light Theme", key='use_light_theme'):
-        st.session_state.theme = 'light'
-    else:
-        st.session_state.theme = 'dark'
-    
-    apply_theme(st.session_state.theme)
-    
+
     # Main options in the sidebar
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
 
@@ -170,7 +171,6 @@ def main():
 # Entry point for the Streamlit app
 if __name__ == "__main__":
     main()
-
 
 # Set environment variable to resolve tokenizer warnings
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
