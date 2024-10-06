@@ -82,6 +82,26 @@ def load_css():
     with open(css_file) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
+def apply_theme(theme):
+    if theme == 'light':
+        st.markdown("""
+            <style>
+            .stApp {
+                background-color: white;
+                color: black;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+            <style>
+            .stApp {
+                background-color: #0e1117;
+                color: white;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+
 # Main function to run the Streamlit app
 def main():
     if 'theme' not in st.session_state:
@@ -121,23 +141,3 @@ if __name__ == "__main__":
 
 # Set environment variable to resolve tokenizer warnings
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-def apply_theme(theme):
-    if theme == 'light':
-        st.markdown("""
-            <style>
-            .stApp {
-                background-color: white;
-                color: black;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-    else:
-        st.markdown("""
-            <style>
-            .stApp {
-                background-color: #0e1117;
-                color: white;
-            }
-            </style>
-        """, unsafe_allow_html=True)
