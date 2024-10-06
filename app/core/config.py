@@ -4,11 +4,11 @@ def get_sources() -> str:
     """Retrieve financial sources from environment or default list."""
     # Default sources list
     default_sources = [
-        "Investopedia",
-        "NerdWallet",
-        "Financial Times",
-        "Bloomberg",
-        "The Wall Street Journal"
+        "Investopedia.com",
+        "NerdWallet.com",
+        "FinancialTimes.com",
+        "Bloomberg.com",
+        "TheWallStreetJournal.com"
     ]
     
     # Fetch from environment or use default
