@@ -60,31 +60,24 @@ def get_api_key(key_name: str) -> str:
 
     return None
 
-# Function to set API keys
-def set_api_keys():
-    keys = {}
-    for key_name in ["OPENAI_API_KEY", "HUGGINGFACE_TOKEN"]:
-        key_value = get_api_key(key_name)
-        keys[key_name] = key_value
-        if key_value:
-            logger.info(f"{key_name} is set successfully.")
-        else:
-            logger.error(f"{key_name} is not set.")
-    return keys
-
 # Set API keys
-API_KEYS = set_api_keys()
+openai_api_key = get_api_key("OPENAI_API_KEY")
+huggingface_token = get_api_key("HUGGINGFACE_TOKEN")
 
 # Set OpenAI API key
-if API_KEYS["OPENAI_API_KEY"]:
-    openai.api_key = API_KEYS["OPENAI_API_KEY"]
+if openai_api_key:
+    openai.api_key = openai_api_key
+    logger.info("OpenAI API key is set successfully.")
+else:
+    logger.error("OpenAI API key is not set.")
 
 # Set Hugging Face token
-if API_KEYS["HUGGINGFACE_TOKEN"]:
+if huggingface_token:
     logger.info("Hugging Face token is set successfully.")
 else:
     logger.error("Hugging Face token is not set.")
 
+# Custom CSS (updated for dark mode)
 st.markdown("""
     <style>
     .stApp {background-color: #0E1117; color: #FAFAFA;}
@@ -94,65 +87,6 @@ st.markdown("""
     .streamlit-expanderContent {overflow: visible !important;}
     </style>
     """, unsafe_allow_html=True)
-
-def load_css():
-    css_file = Path(__file__).parent.parent / "static" / "style.css"
-    with open(css_file) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-def apply_theme(theme):
-    base_styles = """
-        <style>
-        .main .block-container {
-            background-color: #0e1117;
-            color: white;
-            padding: 3rem;
-            border-radius: 10px;
-        }
-        .sidebar .sidebar-content {
-            background-color: #262730;
-        }
-        h1, h2, h3 {
-            color: #ffffff;
-        }
-        .stButton>button {
-            color: #4e4e4e;
-            background-color: #ffffff;
-            border-radius: 5px;
-        }
-        </style>
-    """
-    
-    if theme == 'light':
-        light_styles = """
-            <style>
-            .main .block-container {
-                background-color: #1e2129;
-            }
-            .sidebar .sidebar-content {
-                background-color: #2e3141;
-            }
-            body {
-                background-color: #121212;
-            }
-            </style>
-        """
-        st.markdown(base_styles + light_styles, unsafe_allow_html=True)
-    else:
-        st.markdown(base_styles, unsafe_allow_html=True)
-
-def main():
-    if 'theme' not in st.session_state:
-        st.session_state.theme = 'dark'
-    
-    # Theme toggle in sidebar
-    if st.sidebar.checkbox("Use Light Theme", key='use_light_theme'):
-        st.session_state.theme = 'light'
-    else:
-        st.session_state.theme = 'dark'
-    
-    apply_theme(st.session_state.theme)
-    
 
 # Main function to run the Streamlit app
 def main():
