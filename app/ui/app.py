@@ -19,107 +19,12 @@ from app.ui.advice import generate_advice_ui
 from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
+# Set page config as the first Streamlit command
+st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-
-# At the very beginning of your app
-st.set_page_config(
-    page_title="AI Budgeting Assistant",
-    page_icon="💰",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
-# Define light and dark theme CSS
-light_theme = """
-<style>
-    .stApp {background-color: #FFFFFF; color: #000000;}
-    .stButton>button {background-color: #3D9970; color: white;}
-    .stTextArea>div>div>textarea {background-color: #F0F2F6; color: #000000;}
-    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #000000;}
-</style>
-"""
-
-dark_theme = """
-<style>
-    /* Main app background */
-    .stApp {
-        background-color: #0E1117;
-        color: #FFFFFF;
-    }
-    
-    /* Header */
-    .stApp > header {
-        background-color: #000000 !important;
-        color: #FFFFFF !important;
-    }
-    
-    /* Sidebar */
-    [data-testid="stSidebar"] {
-        background-color: #1E1E1E;
-        color: #FFFFFF;
-    }
-    
-    /* All text elements */
-    .stMarkdown, 
-    .stText, 
-    [data-testid="stMarkdownContainer"] p,
-    [data-testid="stMarkdownContainer"] h1,
-    [data-testid="stMarkdownContainer"] h2,
-    [data-testid="stMarkdownContainer"] h3,
-    [data-testid="stMarkdownContainer"] h4,
-    [data-testid="stMarkdownContainer"] h5,
-    [data-testid="stMarkdownContainer"] h6,
-    [data-testid="stMarkdownContainer"] li {
-        color: #FFFFFF !important;
-        background-color: transparent !important;
-        background: none !important;
-    }
-    
-    /* Spacing for main title */
-    [data-testid="stMarkdownContainer"] h1 {
-        margin-top: 0.5em;
-        margin-bottom: 0.5em;
-    }
-    
-    /* Spacing for subtitle */
-    [data-testid="stMarkdownContainer"] h2 {
-        margin-top: 0.5em;
-        margin-bottom: 1em;
-    }
-    
-    /* Spacing for paragraphs */
-    [data-testid="stMarkdownContainer"] p {
-        margin-bottom: 1em;
-    }
-    
-    /* Spacing for "Key Features" section */
-    [data-testid="stMarkdownContainer"] h3 {
-        margin-top: 1.5em;
-        margin-bottom: 0.5em;
-    }
-    
-    /* Spacing for list items */
-    [data-testid="stMarkdownContainer"] ul {
-        margin-bottom: 1em;
-    }
-    
-    [data-testid="stMarkdownContainer"] li {
-        margin-bottom: 0.5em;
-    }
-    
-    /* Ensure main content area has the correct background */
-    .main .block-container {
-        background-color: #0E1117 !important;
-        padding-top: 1em;
-        padding-bottom: 1em;
-    }
-    
-    /* Additional styles from previous version */
-    /* (Include other styles for buttons, inputs, etc. from the previous CSS) */
-</style>
-"""
 
 # Function to check if running on Streamlit Cloud by checking the runtime environment
 def is_streamlit_cloud() -> bool:
@@ -172,8 +77,14 @@ if huggingface_token:
 else:
     logger.error("Hugging Face token is not set.")
 
+def load_css():
+    with open("app/static/style.css") as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
 # Main function to run the Streamlit app
 def main():
+    load_css()
+    
     # Theme toggle in sidebar
     if 'theme' not in st.session_state:
         st.session_state.theme = 'dark'

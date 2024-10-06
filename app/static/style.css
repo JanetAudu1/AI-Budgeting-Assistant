@@ -1,0 +1,124 @@
+/* app/static/style.css */
+.stApp {background-color: #0E1117; color: #FFFFFF;}
+
+.stApp > header {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+}
+
+[data-testid="stSidebar"] {
+    background-color: #1E1E1E;
+    color: #FFFFFF;
+}
+
+[data-testid="stSidebar"] .stMarkdown,
+[data-testid="stSidebar"] .stCheckbox,
+[data-testid="stSidebar"] .stRadio,
+[data-testid="stSelectbox"],
+[data-testid="stSidebar"] .stSlider {
+    color: #FFFFFF !important;
+}
+
+.stButton>button {background-color: #3D9970; color: white;}
+
+.stTextArea>div>div>textarea,
+.stTextInput>div>div>input,
+.stNumberInput>div>div>input,
+.stSelectbox>div>div>div {
+    background-color: #262730 !important;
+    color: #FFFFFF !important;
+}
+
+.stTextArea label,
+.stTextInput label,
+.stNumberInput label,
+.stSelectbox label,
+.stFileUploader label,
+.stDateInput label {
+    color: #FFFFFF !important;
+}
+
+.stFileUploader {
+    background-color: #262730;
+    color: #FFFFFF !important;
+}
+
+.stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6,
+.stMarkdown p, .stMarkdown span, .stMarkdown div {
+    color: #FFFFFF !important;
+    background-color: transparent !important;
+    background: none !important;
+}
+
+[data-testid="stMarkdownContainer"] h1 {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+[data-testid="stMarkdownContainer"] h2 {
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+}
+
+[data-testid="stMarkdownContainer"] p {
+    margin-bottom: 1em;
+}
+
+[data-testid="stMarkdownContainer"] h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+[data-testid="stMarkdownContainer"] ul {
+    margin-bottom: 1em;
+}
+
+[data-testid="stMarkdownContainer"] li {
+    margin-bottom: 0.5em;
+}
+
+.stTextInput, .stTextInput>div>div>input::placeholder {
+    color: #FFFFFF !important;
+}
+
+.stDateInput>div>div>input {
+    background-color: #262730 !important;
+    color: #FFFFFF !important;
+}
+
+[data-testid="stText"] {
+    color: #FFFFFF !important;
+}
+
+.element-container, .stDataFrame {
+    background-color: #262730 !important;
+    color: #FFFFFF !important;
+}
+
+.dataframe th, .dataframe td {
+    background-color: #262730 !important;
+    color: #FFFFFF !important;
+}
+
+[data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
+    color: #FFFFFF !important;
+}
+
+.streamlit-expanderHeader {
+    background-color: #262730 !important;
+    color: #FFFFFF !important;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.streamlit-expanderContent {
+    background-color: #1E1E1E !important;
+    color: #FFFFFF !important;
+    overflow: visible !important;
+}
+
+.main .block-container {
+    background-color: #0E1117 !important;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
