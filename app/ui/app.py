@@ -30,16 +30,22 @@ logger = logging.getLogger(__name__)
 def is_streamlit_cloud() -> bool:
     try:
         return st.secrets.get("IS_STREAMLIT_CLOUD", False)
-    except Exception:
+    except:
         return False
 
 # Function to retrieve API keys
 def get_api_key(key_name: str) -> str:
-    try:
-        # Try to get from Streamlit secrets first
-        return st.secrets["api_keys"][key_name]
-    except Exception:
-        # Fallback to environment variables
+    if is_streamlit_cloud():
+        try:
+            api_key = st.secrets["api_keys"].get(key_name)
+            if api_key:
+                logger.info(f"{key_name} found in Streamlit secrets.")
+                return api_key
+            else:
+                logger.error(f"{key_name} not found in Streamlit secrets.")
+        except Exception as e:
+            logger.error(f"Error accessing Streamlit secrets: {str(e)}")
+    else:
         api_key = os.getenv(key_name)
         if api_key:
             logger.info(f"{key_name} found in environment variables.")
