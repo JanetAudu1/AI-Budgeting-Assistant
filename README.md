@@ -8,6 +8,21 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
 - **Financial Insights**: Receive personalized advice based on financial data and proposed budgets
 - **Goal Setting**: Set and track financial objectives over time
 
+## How to Use
+
+1. Navigate to the "Budget Analysis" section.
+2. Upload your bank statement (CSV format).
+  Sample Statement:
+   | #  | Date       | Description    | Debit | Credit | Category  | Balance |
+   |----|------------|----------------|-------|--------|-----------|---------|
+   | 0  | 9/1/2024   | Paycheck       |       | 3500   | Income    | 3500    |
+   | 1  | 9/5/2024   | Rent Payment   | 1000  |        | Rent      | 2500    |
+   | 2  | 9/10/2024  | Groceries      | 300   |        | Groceries | 2200    |
+   | 3  | 9/15/2024  | Utilities      | 200   |        | Utilities | 2000    |
+   | 4  | 9/16/2024  | Coffee         | 100   |        | Personal  | 1900    |
+3. Fill in your financial information and goals.
+4. Click "Generate Analysis" to receive AI-powered budgetting advice.
+   
 
 ## Setup and Installation
 
@@ -99,13 +114,6 @@ Open two different tabs on your terminal and in each one, run the following comm
    ```
 
 3. Open your web browser and go to http://localhost:8501
-
-## How to Use
-
-1. Navigate to the "Budget Analysis" section.
-2. Upload your bank statement (CSV format).
-3. Fill in your financial information and goals.
-4. Click "Generate Analysis" to receive AI-powered budgetting advice.
 
 
 ## Technology Stack
