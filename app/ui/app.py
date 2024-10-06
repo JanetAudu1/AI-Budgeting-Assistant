@@ -43,10 +43,10 @@ light_theme = """
 
 dark_theme = """
 <style>
-    .stApp {background-color: #0E1117; color: #FAFAFA;}
+    .stApp {background-color: #0E1117; color: #FFFFFF;}
     .stButton>button {background-color: #3D9970; color: white;}
-    .stTextArea>div>div>textarea {background-color: #262730; color: #FAFAFA;}
-    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FAFAFA;}
+    .stTextArea>div>div>textarea {background-color: #262730; color: #FFFFFF;}
+    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FFFFFF;}
     .streamlit-expanderContent {overflow: visible !important;}
 </style>
 """
