@@ -114,6 +114,9 @@ def apply_theme(theme):
             .sidebar .sidebar-content {
                 background-color: #2e3141;
             }
+            body {
+                background-color: #121212;
+            }
             </style>
         """
         st.markdown(base_styles + light_styles, unsafe_allow_html=True)
