@@ -83,24 +83,44 @@ def load_css():
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 def apply_theme(theme):
+    # Base styles for dark theme (default)
+    base_styles = """
+        <style>
+        .main .block-container {
+            background-color: #0e1117;
+            color: white;
+            padding: 3rem;
+            border-radius: 10px;
+        }
+        .sidebar .sidebar-content {
+            background-color: #262730;
+        }
+        h1, h2, h3 {
+            color: #ffffff;
+        }
+        .stButton>button {
+            color: #4e4e4e;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+        </style>
+    """
+    
     if theme == 'light':
-        st.markdown("""
+        light_styles = """
             <style>
-            .stApp {
-                background-color: white;
-                color: black;
+            .main .block-container {
+                background-color: #f0f2f6;
+                color: #262730;
+            }
+            h1, h2, h3 {
+                color: #262730;
             }
             </style>
-        """, unsafe_allow_html=True)
+        """
+        st.markdown(base_styles + light_styles, unsafe_allow_html=True)
     else:
-        st.markdown("""
-            <style>
-            .stApp {
-                background-color: #0e1117;
-                color: white;
-            }
-            </style>
-        """, unsafe_allow_html=True)
+        st.markdown(base_styles, unsafe_allow_html=True)
 
 # Main function to run the Streamlit app
 def main():
