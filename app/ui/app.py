@@ -77,45 +77,14 @@ if huggingface_token:
 else:
     logger.error("Hugging Face token is not set.")
 
-def load_css(theme):
+def load_css():
     css_file = Path(__file__).parent.parent / "static" / "style.css"
     with open(css_file) as f:
-        css = f.read()
-    return f'<style>{css}</style><style>{get_theme_specific_css(theme)}</style>'
-
-def get_theme_specific_css(theme):
-    if theme == 'light':
-        return """
-        .stApp {background-color: #FFFFFF; color: #000000;}
-        [data-testid="stSidebar"] {background-color: #F0F2F6; color: #000000;}
-        .stTextArea>div>div>textarea, .stTextInput>div>div>input, .stNumberInput>div>div>input {
-            background-color: #FFFFFF !important; color: #000000 !important;
-        }
-        """
-    else:
-        return """
-        .stApp {background-color: #0E1117; color: #FFFFFF;}
-        [data-testid="stSidebar"] {background-color: #1E1E1E; color: #FFFFFF;}
-        .stTextArea>div>div>textarea, .stTextInput>div>div>input, .stNumberInput>div>div>input {
-            background-color: #262730 !important; color: #FFFFFF !important;
-        }
-        """
-
-def apply_theme(theme):
-    st.markdown(load_css(theme), unsafe_allow_html=True)
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 # Main function to run the Streamlit app
 def main():
-    if 'theme' not in st.session_state:
-        st.session_state.theme = 'dark'
-    
-    # Theme toggle in sidebar
-    if st.sidebar.checkbox("Use Light Theme", key='use_light_theme'):
-        st.session_state.theme = 'light'
-    else:
-        st.session_state.theme = 'dark'
-    
-    apply_theme(st.session_state.theme)
+    load_css()
     
     # Main options in the sidebar
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
