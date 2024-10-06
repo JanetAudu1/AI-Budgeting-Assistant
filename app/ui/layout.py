@@ -19,7 +19,7 @@ def display_sample_bank_statement():
     }
     df = pd.DataFrame(sample_data)
     
-    with st.expander("📊 View Sample Bank Statement Format", expanded=True):
+    with st.expander("📊 View Sample Bank Statement Format", expanded=False):
         st.write("Your uploaded bank statement should be in CSV format and look similar to this:")
         st.dataframe(df)
         st.write("Ensure your CSV file has similar columns and formatting for accurate analysis.")
