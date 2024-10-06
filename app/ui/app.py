@@ -95,10 +95,14 @@ st.markdown("""
 
 # Main function to run the Streamlit app
 def main():
-
     # Main options in the sidebar
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
 
+    # Theme toggle in sidebar
+    if st.sidebar.checkbox("Use Light Theme"):
+        # This will override the dark theme set in config.toml
+        st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide", initial_sidebar_state="expanded", theme="light")
+    
     if options == "Home":
         display_home_page()
     elif options == "Budget Analysis":
@@ -115,15 +119,10 @@ def main():
         else:
             st.info("Please fill in your financial information to generate a budget analysis.")
 
-        # Add this near the top of your main() function or wherever you want the toggle to appear
-        if st.sidebar.checkbox("Use Light Mode"):
-            st.set_theme("light")
-        else:
-            st.set_theme("dark")
-
 # Entry point for the Streamlit app
 if __name__ == "__main__":
     main()
+
 
 # Set environment variable to resolve tokenizer warnings
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
