@@ -6,7 +6,23 @@ from app.ui.charts import (
     generate_savings_projection
 )
 from app.api.models import UserDataInput
-from app.ui.advice import escape_dollar_signs  
+from app.ui.advice import escape_dollar_signs
+
+def display_sample_bank_statement():
+    sample_data = {
+        'Date': ['9/1/2024', '9/5/2024', '9/10/2024', '9/15/2024', '9/16/2024'],
+        'Description': ['Paycheck', 'Rent Payment', 'Groceries', 'Utilities', 'Coffee'],
+        'Debit': ['', 1000, 300, 200, 100],
+        'Credit': [3500, '', '', '', ''],
+        'Category': ['Income', 'Rent', 'Groceries', 'Utilities', 'Personal'],
+        'Balance': [3500, 2500, 2200, 2000, 1900]
+    }
+    df = pd.DataFrame(sample_data)
+    
+    with st.expander("📊 View Sample Bank Statement Format", expanded=True):
+        st.write("Your uploaded bank statement should be in CSV format and look similar to this:")
+        st.dataframe(df)
+        st.write("Ensure your CSV file has similar columns and formatting for accurate analysis.")
 
 def display_home_page():
     st.title("💰 Personalized Budgeting Assistant")
@@ -25,6 +41,11 @@ def display_home_page():
 
 def display_analysis_page(inputs: UserDataInput):
     st.header("Financial Analysis")
+    
+    with st.expander("📊 View Sample Bank Statement Format", expanded=True):
+        st.write("Your uploaded bank statement should be in CSV format and look similar to this:")
+        st.dataframe(display_sample_bank_statement())
+        st.write("Ensure your CSV file has similar columns and formatting for accurate analysis.")
     
     try:
         if inputs.bank_statement:

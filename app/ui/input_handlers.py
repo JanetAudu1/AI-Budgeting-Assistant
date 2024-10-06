@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 from pydantic import ValidationError
 from datetime import date
+from app.ui.layout import display_sample_bank_statement
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
@@ -24,6 +25,8 @@ def handle_inputs():
     st.subheader("📝 Enter Your Financial Information")
     
     uploaded_file = st.file_uploader("Upload your bank statement (CSV format)", type="csv")
+    
+    display_sample_bank_statement()
     
     if uploaded_file is None:
         st.warning("Please upload your bank statement.")
