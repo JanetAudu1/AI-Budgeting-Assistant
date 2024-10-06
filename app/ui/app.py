@@ -46,15 +46,42 @@ dark_theme = """
     /* Main app background */
     .stApp {background-color: #0E1117; color: #FFFFFF;}
     
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #1E1E1E;
+        color: #FFFFFF;
+    }
+    
+    /* Sidebar title */
+    .sidebar .sidebar-content .block-container h1 {
+        color: #FFFFFF;
+    }
+    
+    /* Sidebar content */
+    .sidebar .sidebar-content {
+        background-color: #1E1E1E;
+    }
+    
     /* Buttons */
     .stButton>button {background-color: #3D9970; color: white;}
     
-    /* Text areas and input fields */
+    /* Text areas, input fields, and their labels */
     .stTextArea>div>div>textarea,
     .stTextInput>div>div>input,
-    .stNumberInput>div>div>input {
-        background-color: #262730;
-        color: #FFFFFF;
+    .stNumberInput>div>div>input,
+    .stSelectbox>div>div>div {
+        background-color: #262730 !important;
+        color: #FFFFFF !important;
+    }
+    
+    /* Labels for all form inputs */
+    .stTextArea label,
+    .stTextInput label,
+    .stNumberInput label,
+    .stSelectbox label,
+    .stFileUploader label,
+    .stDateInput label {
+        color: #FFFFFF !important;
     }
     
     /* Expander headers */
@@ -66,14 +93,6 @@ dark_theme = """
     
     /* Expander content */
     .streamlit-expanderContent {overflow: visible !important;}
-    
-    /* Labels for form inputs */
-    .stSelectbox label,
-    .stTextInput label,
-    .stNumberInput label,
-    .stFileUploader label {
-        color: #FFFFFF !important;
-    }
     
     /* Dropdown menus */
     .stSelectbox>div>div>div {
@@ -89,6 +108,17 @@ dark_theme = """
     
     /* Headers and subheaders */
     .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6 {
+        color: #FFFFFF !important;
+    }
+    
+    /* Ensure all text inputs and their labels are white */
+    .stTextInput, .stTextInput>div>div>input::placeholder {
+        color: #FFFFFF !important;
+    }
+    
+    /* Date input fields */
+    .stDateInput>div>div>input {
+        background-color: #262730 !important;
         color: #FFFFFF !important;
     }
 </style>
