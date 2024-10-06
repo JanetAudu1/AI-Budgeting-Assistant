@@ -44,7 +44,10 @@ light_theme = """
 dark_theme = """
 <style>
     /* Main app background */
-    .stApp {background-color: #0E1117; color: #FFFFFF;}
+    .stApp {
+        background-color: #0E1117;
+        color: #FFFFFF;
+    }
     
     /* Header */
     .stApp > header {
@@ -68,7 +71,10 @@ dark_theme = """
     }
     
     /* Buttons */
-    .stButton>button {background-color: #3D9970; color: white;}
+    .stButton>button {
+        background-color: #3D9970;
+        color: white;
+    }
     
     /* Text areas, input fields, and their labels */
     .stTextArea>div>div>textarea,
@@ -99,9 +105,6 @@ dark_theme = """
     .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6,
     .stMarkdown p, .stMarkdown span, .stMarkdown div {
         color: #FFFFFF !important;
-        background-color: transparent !important;
-        background: none !important;
-        text-shadow: none !important;
     }
     
     /* Ensure all text inputs and their labels are white */
@@ -118,9 +121,6 @@ dark_theme = """
     /* Specific text elements */
     [data-testid="stText"] {
         color: #FFFFFF !important;
-        background-color: transparent !important;
-        background: none !important;
-        text-shadow: none !important;
     }
     
     /* Financial analysis results */
@@ -138,9 +138,6 @@ dark_theme = """
     /* Metric elements */
     [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
         color: #FFFFFF !important;
-        background-color: transparent !important;
-        background: none !important;
-        text-shadow: none !important;
     }
     
     /* Expander elements */
@@ -162,24 +159,6 @@ dark_theme = """
     [data-testid="stFileUploader"] label,
     .stMarkdown a {
         color: #FFFFFF !important;
-        background-color: transparent !important;
-        background: none !important;
-        text-shadow: none !important;
-    }
-    
-    /* Remove any potential overlays */
-    .stApp::before, .stApp::after,
-    .stMarkdown::before, .stMarkdown::after,
-    [data-testid="stMarkdownContainer"]::before, [data-testid="stMarkdownContainer"]::after,
-    .element-container::before, .element-container::after {
-        content: none !important;
-        background: none !important;
-        display: none !important;
-    }
-    
-    /* Force transparent background on all elements */
-    * {
-        background-color: transparent !important;
     }
     
     /* Ensure main content area has the correct background */
