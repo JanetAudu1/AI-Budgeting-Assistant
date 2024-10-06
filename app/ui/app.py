@@ -19,7 +19,11 @@ from app.ui.advice import generate_advice_ui
 from app.api.models import UserDataInput
 from app.services.recommender import generate_advice_stream
 
-# Set page config as the first Streamlit command
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# At the very beginning of your app
 st.set_page_config(
     page_title="AI Budgeting Assistant",
     page_icon="💰",
@@ -27,9 +31,25 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+# Define light and dark theme CSS
+light_theme = """
+<style>
+    .stApp {background-color: #FFFFFF; color: #000000;}
+    .stButton>button {background-color: #3D9970; color: white;}
+    .stTextArea>div>div>textarea {background-color: #F0F2F6; color: #000000;}
+    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #000000;}
+</style>
+"""
+
+dark_theme = """
+<style>
+    .stApp {background-color: #0E1117; color: #FAFAFA;}
+    .stButton>button {background-color: #3D9970; color: white;}
+    .stTextArea>div>div>textarea {background-color: #262730; color: #FAFAFA;}
+    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FAFAFA;}
+    .streamlit-expanderContent {overflow: visible !important;}
+</style>
+"""
 
 # Function to check if running on Streamlit Cloud by checking the runtime environment
 def is_streamlit_cloud() -> bool:
@@ -82,27 +102,26 @@ if huggingface_token:
 else:
     logger.error("Hugging Face token is not set.")
 
-# Custom CSS (updated for dark mode)
-st.markdown("""
-    <style>
-    .stApp {background-color: #0E1117; color: #FAFAFA;}
-    .stButton>button {background-color: #3D9970; color: white;}
-    .stTextArea>div>div>textarea {background-color: #262730; color: #FAFAFA;}
-    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FAFAFA;}
-    .streamlit-expanderContent {overflow: visible !important;}
-    </style>
-    """, unsafe_allow_html=True)
-
 # Main function to run the Streamlit app
 def main():
+    # Theme toggle in sidebar
+    if 'theme' not in st.session_state:
+        st.session_state.theme = 'dark'
+    
+    if st.sidebar.checkbox("Use Light Theme", key='use_light_theme'):
+        st.session_state.theme = 'light'
+    else:
+        st.session_state.theme = 'dark'
+    
+    # Apply the selected theme
+    if st.session_state.theme == 'light':
+        st.markdown(light_theme, unsafe_allow_html=True)
+    else:
+        st.markdown(dark_theme, unsafe_allow_html=True)
+
     # Main options in the sidebar
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
 
-    # Theme toggle in sidebar
-    if st.sidebar.checkbox("Use Light Theme"):
-        # This will override the dark theme set in config.toml
-        st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide", initial_sidebar_state="expanded", theme="light")
-    
     if options == "Home":
         display_home_page()
     elif options == "Budget Analysis":
