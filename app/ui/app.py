@@ -56,7 +56,7 @@ dark_theme = """
     [data-testid="stSidebar"] .stMarkdown,
     [data-testid="stSidebar"] .stCheckbox,
     [data-testid="stSidebar"] .stRadio,
-    [data-testid="stSidebar"] .stSelectbox,
+    [data-testid="stSelectbox"],
     [data-testid="stSidebar"] .stSlider {
         color: #FFFFFF !important;
     }
@@ -86,11 +86,12 @@ dark_theme = """
     /* File uploader */
     .stFileUploader {
         background-color: #262730;
-        color: #FFFFFF;
+        color: #FFFFFF !important;
     }
     
-    /* Headers and subheaders */
-    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6 {
+    /* Headers, subheaders, and all text elements */
+    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6,
+    .stMarkdown p, .stMarkdown span, .stMarkdown div {
         color: #FFFFFF !important;
     }
     
@@ -102,6 +103,39 @@ dark_theme = """
     /* Date input fields */
     .stDateInput>div>div>input {
         background-color: #262730 !important;
+        color: #FFFFFF !important;
+    }
+    
+    /* Specific text elements */
+    [data-testid="stText"] {
+        color: #FFFFFF !important;
+    }
+    
+    /* Financial analysis results */
+    .element-container, .stDataFrame {
+        background-color: #262730 !important;
+        color: #FFFFFF !important;
+    }
+    
+    /* Table headers and cells */
+    .dataframe th, .dataframe td {
+        background-color: #262730 !important;
+        color: #FFFFFF !important;
+    }
+    
+    /* Metric elements */
+    [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
+        color: #FFFFFF !important;
+    }
+    
+    /* Expander elements */
+    .streamlit-expanderHeader {
+        background-color: #262730 !important;
+        color: #FFFFFF !important;
+    }
+    
+    .streamlit-expanderContent {
+        background-color: #1E1E1E !important;
         color: #FFFFFF !important;
     }
 </style>
