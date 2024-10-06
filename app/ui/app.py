@@ -26,28 +26,38 @@ st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Function to check if running on Streamlit Cloud (via secrets)
+# Function to check if running on Streamlit Cloud by checking the runtime environment
 def is_streamlit_cloud() -> bool:
     """
-    Detect if the app is running on Streamlit Cloud by checking the IS_STREAMLIT_CLOUD secret.
+    Detect if the app is running on Streamlit Cloud by checking the STREAMLIT_RUNTIME_ENV environment variable.
     """
-    return st.secrets.get("IS_STREAMLIT_CLOUD", "false").lower() == "true"
+    return os.getenv("STREAMLIT_RUNTIME_ENV") == "cloud"
 
-# Function to retrieve API keys from Streamlit secrets
+# Function to retrieve API keys from environment variables or Streamlit secrets
 def get_api_key(key_name: str) -> str:
     """
-    Retrieve the API key from Streamlit secrets.
+    Retrieve the API key from Streamlit secrets (for cloud) or environment variables (for local development).
     """
-    try:
-        api_key = st.secrets["api_keys"].get(key_name)
+    if is_streamlit_cloud():
+        # Running on Streamlit Cloud, use secrets
+        try:
+            api_key = st.secrets["api_keys"].get(key_name)
+            if api_key:
+                logger.info(f"{key_name} found in Streamlit secrets.")
+                return api_key
+            else:
+                logger.error(f"{key_name} not found in Streamlit secrets.")
+        except Exception as e:
+            logger.error(f"Error accessing Streamlit secrets: {str(e)}")
+    else:
+        # Running locally, use environment variables
+        api_key = os.getenv(key_name)
         if api_key:
-            logger.info(f"{key_name} found in Streamlit secrets.")
+            logger.info(f"{key_name} found in environment variables.")
             return api_key
         else:
-            logger.error(f"{key_name} not found in Streamlit secrets.")
-    except Exception as e:
-        logger.error(f"Error accessing Streamlit secrets: {str(e)}")
-    
+            logger.error(f"{key_name} not found in environment variables.")
+
     return None
 
 # Set API keys
