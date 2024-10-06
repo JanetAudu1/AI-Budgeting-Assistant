@@ -83,7 +83,6 @@ def load_css():
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 def apply_theme(theme):
-    # Base styles for dark theme (default)
     base_styles = """
         <style>
         .main .block-container {
@@ -110,11 +109,10 @@ def apply_theme(theme):
         light_styles = """
             <style>
             .main .block-container {
-                background-color: #f0f2f6;
-                color: #262730;
+                background-color: #1e2129;
             }
-            h1, h2, h3 {
-                color: #262730;
+            .sidebar .sidebar-content {
+                background-color: #2e3141;
             }
             </style>
         """
