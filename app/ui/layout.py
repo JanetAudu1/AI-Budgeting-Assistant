@@ -8,18 +8,18 @@ from app.ui.charts import (
 from app.api.models import UserDataInput
 from app.ui.advice import escape_dollar_signs
 
-def display_sample_bank_statement():
+def display_sample_bank_statement(key_suffix=""):
     sample_data = {
         'Date': ['9/1/2024', '9/5/2024', '9/10/2024', '9/15/2024', '9/16/2024'],
         'Description': ['Paycheck', 'Rent Payment', 'Groceries', 'Utilities', 'Coffee'],
-        'Debit': ['', 1000, 300, 200, 100],
-        'Credit': [3500, '', '', '', ''],
+        'Debit': ['', '1000', '300', '200', '100'],  
+        'Credit': ['3500', '', '', '', ''],  
         'Category': ['Income', 'Rent', 'Groceries', 'Utilities', 'Personal'],
-        'Balance': [3500, 2500, 2200, 2000, 1900]
+        'Balance': ['3500', '2500', '2200', '2000', '1900'] 
     }
     df = pd.DataFrame(sample_data)
     
-    with st.expander("📊 View Sample Bank Statement Format", expanded=False):
+    if st.checkbox("📊 View Sample Bank Statement Format", False, key=f"sample_bank_statement_toggle_{key_suffix}"):
         st.write("Your uploaded bank statement should be in CSV format and look similar to this:")
         st.dataframe(df)
         st.write("Ensure your CSV file has similar columns and formatting for accurate analysis.")
@@ -42,10 +42,7 @@ def display_home_page():
 def display_analysis_page(inputs: UserDataInput):
     st.header("Financial Analysis")
     
-    with st.expander("📊 View Sample Bank Statement Format", expanded=True):
-        st.write("Your uploaded bank statement should be in CSV format and look similar to this:")
-        st.dataframe(display_sample_bank_statement())
-        st.write("Ensure your CSV file has similar columns and formatting for accurate analysis.")
+    display_sample_bank_statement("analysis_page")
     
     try:
         if inputs.bank_statement:
