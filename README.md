@@ -150,6 +150,9 @@ AI-Budgeting-Assistant/
 │ ├── init.py
 │ ├── recommender.py
 │ └── model_handlers.py
+│ ├── styles/
+| ├── css/
+| |  └── themes.css
 ├── tests/
 │ ├── init.py
 │ ├── test_ui.py
