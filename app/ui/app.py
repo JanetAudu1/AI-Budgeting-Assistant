@@ -1,24 +1,29 @@
-import os
 import sys
-import logging
 from pathlib import Path
-
-# Add the project root directory to Python path
-project_root = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(project_root))
-
+import os
+import logging
 import streamlit as st
 import openai
+from dotenv import load_dotenv
 
-# Now import your app's UI and logic modules
-from ui.layout import display_home_page, display_analysis_page
-from ui.input_handlers import handle_inputs
-from ui.advice import generate_advice_ui
-from api.models import UserDataInput
-from services.recommender import generate_advice_stream
+# Add the project root to the Python path
+project_root = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+# Load environment variables (this won't have an effect on Streamlit Cloud)
+load_dotenv()
+
+from app.ui.layout import display_home_page, display_analysis_page
+from app.ui.input_handlers import handle_inputs
+from app.ui.advice import generate_advice_ui
+from app.api.models import UserDataInput
+from app.services.recommender import generate_advice_stream
+
+# Set page config as the first Streamlit command
+st.set_page_config(page_title="AI Budgeting Assistant", page_icon="💰", layout="wide")
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # Function to check if running on Streamlit Cloud (via secrets)
@@ -61,6 +66,17 @@ if huggingface_token:
     logger.info("Hugging Face token is set successfully.")
 else:
     logger.error("Hugging Face token is not set.")
+
+# Custom CSS (updated for dark mode)
+st.markdown("""
+    <style>
+    .stApp {background-color: #0E1117; color: #FAFAFA;}
+    .stButton>button {background-color: #3D9970; color: white;}
+    .stTextArea>div>div>textarea {background-color: #262730; color: #FAFAFA;}
+    .streamlit-expanderHeader {font-size: 16px; font-weight: bold; color: #FAFAFA;}
+    .streamlit-expanderContent {overflow: visible !important;}
+    </style>
+    """, unsafe_allow_html=True)
 
 # Main function to run the Streamlit app
 def main():
