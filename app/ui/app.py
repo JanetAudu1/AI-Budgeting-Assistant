@@ -100,6 +100,8 @@ dark_theme = """
     .stMarkdown p, .stMarkdown span, .stMarkdown div {
         color: #FFFFFF !important;
         background-color: transparent !important;
+        background: none !important;
+        text-shadow: none !important;
     }
     
     /* Ensure all text inputs and their labels are white */
@@ -117,6 +119,8 @@ dark_theme = """
     [data-testid="stText"] {
         color: #FFFFFF !important;
         background-color: transparent !important;
+        background: none !important;
+        text-shadow: none !important;
     }
     
     /* Financial analysis results */
@@ -135,6 +139,8 @@ dark_theme = """
     [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
         color: #FFFFFF !important;
         background-color: transparent !important;
+        background: none !important;
+        text-shadow: none !important;
     }
     
     /* Expander elements */
@@ -157,15 +163,28 @@ dark_theme = """
     .stMarkdown a {
         color: #FFFFFF !important;
         background-color: transparent !important;
+        background: none !important;
         text-shadow: none !important;
     }
     
     /* Remove any potential overlays */
     .stApp::before, .stApp::after,
     .stMarkdown::before, .stMarkdown::after,
-    [data-testid="stMarkdownContainer"]::before, [data-testid="stMarkdownContainer"]::after {
+    [data-testid="stMarkdownContainer"]::before, [data-testid="stMarkdownContainer"]::after,
+    .element-container::before, .element-container::after {
         content: none !important;
         background: none !important;
+        display: none !important;
+    }
+    
+    /* Force transparent background on all elements */
+    * {
+        background-color: transparent !important;
+    }
+    
+    /* Ensure main content area has the correct background */
+    .main .block-container {
+        background-color: #0E1117 !important;
     }
 </style>
 """
