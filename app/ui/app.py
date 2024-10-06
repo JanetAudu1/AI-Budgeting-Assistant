@@ -84,7 +84,6 @@ def load_css():
 
 def apply_theme(theme):
     base_styles = """
-        <style>
         .main .block-container {
             background-color: #0e1117;
             color: white;
@@ -102,12 +101,10 @@ def apply_theme(theme):
             background-color: #ffffff;
             border-radius: 5px;
         }
-        </style>
     """
     
     if theme == 'light':
         light_styles = """
-            <style>
             .main .block-container {
                 background-color: #1e2129;
             }
@@ -117,11 +114,12 @@ def apply_theme(theme):
             body {
                 background-color: #121212;
             }
-            </style>
         """
-        st.markdown(base_styles + light_styles, unsafe_allow_html=True)
+        all_styles = base_styles + light_styles
     else:
-        st.markdown(base_styles, unsafe_allow_html=True)
+        all_styles = base_styles
+
+    st.markdown(f"<style>{all_styles}</style>", unsafe_allow_html=True)
 
 def main():
     if 'theme' not in st.session_state:
