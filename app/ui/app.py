@@ -78,8 +78,14 @@ else:
     logger.error("Hugging Face token is not set.")
 
 def load_css():
-    with open("app/static/style.css") as f:
+    css_file = Path(__file__).parent.parent / "static" / "style.css"
+    with open(css_file) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+def load_theme(theme):
+    css_file = Path(__file__).parent.parent / "static" / f"{theme}_theme.css"
+    with open(css_file) as f:
+        return f'<style>{f.read()}</style>'
 
 # Main function to run the Streamlit app
 def main():
@@ -95,10 +101,8 @@ def main():
         st.session_state.theme = 'dark'
     
     # Apply the selected theme
-    if st.session_state.theme == 'light':
-        st.markdown(light_theme, unsafe_allow_html=True)
-    else:
-        st.markdown(dark_theme, unsafe_allow_html=True)
+    theme = 'light' if st.session_state.theme == 'light' else 'dark'
+    st.markdown(load_theme(theme), unsafe_allow_html=True)
 
     # Main options in the sidebar
     options = st.sidebar.radio("Select a Section:", ["Home", "Budget Analysis"])
