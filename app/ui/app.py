@@ -37,7 +37,11 @@ logger = logging.getLogger(__name__)
 
 # Function to check if running on Streamlit Cloud
 def is_streamlit_cloud() -> bool:
-    return os.getenv("IS_STREAMLIT_CLOUD", "false").lower() == "true"
+    return (
+        os.getenv("IS_STREAMLIT_CLOUD", "false").lower() == "true" or
+        st.runtime.exists() or
+        os.getenv("STREAMLIT_RUNTIME_ENV") == "cloud"
+    )
 
 # Function to retrieve API keys
 def get_api_key(key_name: str) -> str:
@@ -64,6 +68,7 @@ def get_api_key(key_name: str) -> str:
 # Debug: Print environment information
 logger.info(f"Is Streamlit Cloud: {is_streamlit_cloud()}")
 logger.info(f"IS_STREAMLIT_CLOUD: {os.getenv('IS_STREAMLIT_CLOUD')}")
+logger.info(f"STREAMLIT_RUNTIME_ENV: {os.getenv('STREAMLIT_RUNTIME_ENV')}")
 
 # Set API keys
 openai_api_key = get_api_key("OPENAI_API_KEY")
