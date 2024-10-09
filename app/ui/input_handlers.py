@@ -51,19 +51,21 @@ def handle_inputs():
     st.subheader("Bank Statement Preview")
     st.write(df.head())
 
-    name = st.text_input("Name", max_chars=100)
-    age = st.number_input("Age", min_value=18, max_value=120, step=1)
-    address = st.text_input("Address (State)", help="Please enter your state of residence")
-    current_income = st.number_input("Current Net Monthly Income ($)", min_value=0.0, step=100.0, format="%.2f")
-    current_savings = st.number_input("Current Savings ($)", min_value=0.0, step=1000.0, format="%.2f")
-    goals = st.text_area("Financial Goals (comma-separated)", max_chars=500)
-    timeline_months = st.number_input("Timeline (months)", min_value=1, max_value=600, step=1)
+    name = st.text_input("Name", max_chars=100, placeholder="e.g., Janet")
+    age = st.number_input("Age", min_value=18, max_value=120, step=1, value=23, help="Enter your current age")
+    address = st.text_input("Address (State)", help="Please enter your state of residence", placeholder="e.g., New York")
+    current_income = st.number_input("Current Net Monthly Income ($)", min_value=0.0, step=100.0, format="%.2f", value=3000.0, help="Enter your monthly income after taxes")
+    current_savings = st.number_input("Current Savings ($)", min_value=0.0, step=1000.0, format="%.2f", value=10000.0, help="Enter your total current savings")
+    goals = st.text_area("Financial Goals (comma-separated)", max_chars=500, placeholder="e.g., Buy a house, Save for retirement, Pay off student loans")
+    timeline_months = st.number_input("Timeline (months)", min_value=1, max_value=600, step=1, value=60, help="Enter the number of months for your financial plan")
 
-    constraints = st.text_area("Budgeting Constraints (One per line, optional)", help="Enter any specific constraints you want to be considered in your budget analysis.")
+    constraints = st.text_area("Budgeting Constraints (One per line, optional)", 
+                               help="Enter any specific constraints you want to be considered in your budget analysis.",
+                               placeholder="e.g.,\nI do not want roommates\nMinimum savings: 20% of income")
     constraints_list = [constraint.strip() for constraint in constraints.split('\n') if constraint.strip()]
 
     llm_options = ["GPT-4 (Default)", "distilgpt2", "gpt2"]
-    selected_llm = st.selectbox("Select LLM Model", llm_options)
+    selected_llm = st.selectbox("Select LLM Model", llm_options, help="Choose the AI model for generating your financial advice")
 
     if st.button("Generate Analysis"):
         try:
