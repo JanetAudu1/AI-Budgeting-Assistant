@@ -34,31 +34,21 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
    - For macOS/Linux: [Get Docker](https://docs.docker.com/get-docker/)
    - Note: sign up to docker hub with your github account or directly.
    
-2. Clone the repository in your terminal(skip): 
-   ```
-   git clone https://github.com/JanetAudu1/AI-Budgeting-Assistant.git
-   cd AI-Budgeting-Assistant
-   ```
-    If you dont have git, you need to fix install git on your system:
-    - For Windows: download and install Git from git-scm, then verify using git --version in PowerShell.
-    - For Linux:  install using your package manager (e.g., sudo apt-get install git for Ubuntu), then verify with git --version.
-    - For macOS:  use Homebrew (brew install git) or download from git-scm, then verify with git --version.
-
-3. Get OpenAI API key from https://platform.openai.com/docs/quickstart
+2. Get OpenAI API key from https://platform.openai.com/docs/quickstart
    Note that if you are running this in the workshop, I will provide you a key, so you can skip this part.
 
-4. Check that you are in AI-Budgeting-Assistant folder/dir. Then create a `.env` file in the project root and add your OpenAI API key. 
+3. Check that you are in AI-Budgeting-Assistant folder/dir. Then create a `.env` file in the project root and add your OpenAI API key. 
    ```
    echo OPENAI_API_KEY=your-api-key-here > .env
    ```
    
-5. Build the Docker image:
+4. Pull the Docker image:
    ```
    docker pull janetaudu1/ai-budgeting-assistant:vGHC
 
    ```
 
-6. Run the Docker container:
+5. Run the Docker container:
    - For Windows (PowerShell):
      ```
      docker run -d -p 8000:8000 -p 8501:8501 --env-file .\.env janetaudu1/ai-budgeting-assistant:vGHC
@@ -69,20 +59,24 @@ This AI-Powered Budgeting Assistant is a web application that provides personali
      docker run -d -p 8000:8000 -p 8501:8501 --env-file .env janetaudu1/ai-budgeting-assistant:vGHC
      ```
 
-7. Access the application:
+6. Access the application:
    - Streamlit UI: http://localhost:8501
-   - FastAPI backend: http://localhost:8000
 
 Note for Windows users: Ensure Docker Desktop is running before executing these commands.
 
 
-### Option 2: Local Installation
+### Option 2: Local Installation (Recommended for Building the App)
 
 1. Clone the repository:
    ```
    git clone https://github.com/JanetAudu1/AI-Budgeting-Assistant.git
    cd AI-Budgeting-Assistant
    ```
+   
+    If you dont have git, you need to fix install git on your system:
+    - For Windows: download and install Git from git-scm, then verify using git --version in PowerShell.
+    - For Linux:  install using your package manager (e.g., sudo apt-get install git for Ubuntu), then verify with git --version.
+    - For macOS:  use Homebrew (brew install git) or download from git-scm, then verify with git --version.
 
 2. Install the required packages:
    ```
@@ -196,6 +190,7 @@ data_validation.py: Defines data models to ensure incoming data is valid and wel
 Services (app/services/):
 
 recommender.py: Core logic for interfacing with OpenAI's GPT-4 to produce personalized advice.
+model_handlers.py: Contains functions to process user prompts using different language models, including Hugging Face models and GPT-4.
 
 
 Tests (tests/):
