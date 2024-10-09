@@ -37,11 +37,7 @@ logger = logging.getLogger(__name__)
 
 # Function to check if running on Streamlit Cloud
 def is_streamlit_cloud() -> bool:
-    return (
-        os.getenv("IS_STREAMLIT_CLOUD", "false").lower() == "true" or
-        st.runtime.exists() or
-        os.getenv("STREAMLIT_RUNTIME_ENV") == "cloud"
-    )
+    return os.getenv("IS_STREAMLIT_CLOUD", "false").lower() == "true"
 
 # Function to retrieve API keys
 def get_api_key(key_name: str) -> str:
@@ -55,20 +51,20 @@ def get_api_key(key_name: str) -> str:
                 logger.error(f"{key_name} not found in Streamlit secrets.")
         except Exception as e:
             logger.error(f"Error accessing Streamlit secrets: {str(e)}")
+    
+    # Check environment variables
+    api_key = os.getenv(key_name)
+    if api_key:
+        logger.info(f"{key_name} found in environment variables.")
+        return api_key
     else:
-        api_key = os.getenv(key_name)
-        if api_key:
-            logger.info(f"{key_name} found in environment variables.")
-            return api_key
-        else:
-            logger.error(f"{key_name} not found in environment variables.")
+        logger.error(f"{key_name} not found in environment variables.")
     
     return None
 
 # Debug: Print environment information
 logger.info(f"Is Streamlit Cloud: {is_streamlit_cloud()}")
 logger.info(f"IS_STREAMLIT_CLOUD: {os.getenv('IS_STREAMLIT_CLOUD')}")
-logger.info(f"STREAMLIT_RUNTIME_ENV: {os.getenv('STREAMLIT_RUNTIME_ENV')}")
 
 # Set API keys
 openai_api_key = get_api_key("OPENAI_API_KEY")
