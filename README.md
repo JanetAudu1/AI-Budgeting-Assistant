@@ -224,12 +224,13 @@ requirements.txt: Lists all Python dependencies required for the project.
 We welcome contributions! To get started:
 
 1. Fork the repository on GitHub.
-2. Create a new branch for your feature or bug fix:
+2. Explore our existing open issues here (feel free to open a new one): https://github.com/JanetAudu1/AI-Budgeting-Assistant/issues
+3. Create a new branch for your feature or bug fix:
    ```
       git checkout -b feature-name
    ```
-3. Commit your changes and push them to your fork.
-4. Create a Pull Request on GitHub.
+4. Commit your changes and push them to your fork.
+5. Create a Pull Request on GitHub.
 
 ## License
 
