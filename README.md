@@ -14,7 +14,7 @@
 
 
 ## Overview
-This AI-Powered Budgeting Assistant is a web application that provides personalized financial advice using OpenAI's GPT model. It analyzes user-provided financial data to generate tailored budgeting and savings recommendations.
+This app is a part of our Grace Hopper Conference (ghc24) workshop, "Make AI your Personal Budgeting Assistant". The aim of the workshop was to empower technologists be more conscious of their finances and to learn how to levarage technology to build personal finance tools. This repo, AI-Powered Budgeting Assistant, is a web application that provides personalized financial advice using OpenAI's GPT model, with the option of using a Hugging Face LLM models. It analyzes user-provided financial data to generate tailored budgeting and savings recommendations.
 
 ## Features
 - **Expense Tracking**: Visualize spending habits with intuitive charts
