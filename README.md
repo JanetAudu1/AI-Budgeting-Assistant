@@ -2,13 +2,13 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/release/python-390/)
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app-url.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](http://budgetwise.streamlit.app/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-API-green.svg)](https://openai.com/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/yourusername/AI-Budgeting-Assistant/issues)
-![GitHub stars](https://img.shields.io/github/stars/yourusername/AI-Budgeting-Assistant.svg?style=social&label=Star)
-![GitHub forks](https://img.shields.io/github/forks/yourusername/AI-Budgeting-Assistant.svg?style=social&label=Fork)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/JanetAudu1/AI-Budgeting-Assistant/issues)
+![GitHub stars](https://github.com/JanetAudu1/AI-Budgeting-Assistant/stargazers)
+![GitHub forks](https://github.com/JanetAudu1/AI-Budgeting-Assistant/forks) 
 [![Discord](https://img.shields.io/badge/Discord-Join%20Chat-7289DA?logo=discord&logoColor=white)](https://discord.gg/DUv6Nwns)
 
 ## Overview
