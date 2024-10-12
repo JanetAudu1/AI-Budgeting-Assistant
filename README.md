@@ -7,8 +7,8 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/JanetAudu1/AI-Budgeting-Assistant/issues)
-![GitHub stars](https://github.com/JanetAudu1/AI-Budgeting-Assistant/stargazers)
-![GitHub forks](https://github.com/JanetAudu1/AI-Budgeting-Assistant/forks) 
+![GitHub stars](https://img.shields.io/github/stars/JanetAudu1/AI-Budgeting-Assistant.svg?style=social&label=Star)
+![GitHub forks](https://img.shields.io/github/forks/JanetAudu1/AI-Budgeting-Assistant.svg?style=social&label=Fork)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Chat-7289DA?logo=discord&logoColor=white)](https://discord.gg/DUv6Nwns)
 
 ## Overview
