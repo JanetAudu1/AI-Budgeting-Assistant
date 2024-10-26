@@ -10,7 +10,7 @@
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/JanetAudu1/AI-Budgeting-Assistant/issues)
 ![GitHub stars](https://img.shields.io/github/stars/JanetAudu1/AI-Budgeting-Assistant.svg?style=social&label=Star)
 ![GitHub forks](https://img.shields.io/github/forks/JanetAudu1/AI-Budgeting-Assistant.svg?style=social&label=Fork)
-[![Discord](https://img.shields.io/badge/Discord-Join%20Chat-7289DA?logo=discord&logoColor=white)](https://discord.gg/DUv6Nwns)
+[![Discord](https://img.shields.io/badge/Discord-Join%20Chat-7289DA?logo=discord&logoColor=white)](https://discord.gg/sUmxxHP9)
 
 
 ## Overview
@@ -50,7 +50,7 @@ This app is a part of our Grace Hopper Conference (ghc24) workshop, "Make AI you
 2. Get OpenAI API key from https://platform.openai.com/docs/quickstart
    Note that if you are running this in the workshop, I will provide you a key, so you can skip this part.
 
-3. Check that you are in AI-Budgeting-Assistant folder/dir. Then create a `.env` file in the project root and add your OpenAI API key. 
+3. Check that you are in the right dir/folder where you want to run this application. Then create a `.env` file in the project root and add your OpenAI API key. 
    ```
    echo OPENAI_API_KEY=your-api-key-here > .env
    ```
