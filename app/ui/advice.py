@@ -268,30 +268,30 @@ def generate_advice_ui(inputs: UserDataInput):
         
         display_conclusion(complete_advice)
 
-        # Follow-up question input
-        st.subheader("Have a follow-up question or comment?")
-        follow_up_question = st.text_area("Enter your question or comment here:", 
-                                          value=st.session_state.follow_up_question,
-                                          height=100,
-                                          max_chars=500)
+        # # Follow-up question input
+        # st.subheader("Have a follow-up question or comment?")
+        # follow_up_question = st.text_area("Enter your question or comment here:", 
+        #                                   value=st.session_state.follow_up_question,
+        #                                   height=100,
+        #                                   max_chars=500)
         
-        # Save the follow-up question in session state
-        st.session_state.follow_up_question = follow_up_question
+        # # Save the follow-up question in session state
+        # st.session_state.follow_up_question = follow_up_question
 
-        # Regenerate button
-        if not st.session_state.regenerated_once:
-            if st.button("Regenerate Analysis"):
-                st.session_state.regenerate = True
-                st.session_state.regenerated_once = True
-                st.session_state.analysis_generated = False
-                st.experimental_rerun()
-        else:
-            st.warning("You've already regenerated the analysis once. To get a new analysis, please start over with new inputs.")
-            if st.button("Start Over"):
-                # Clear all session state variables
-                for key in list(st.session_state.keys()):
-                    del st.session_state[key]
-                st.experimental_rerun()
+        # # Regenerate button
+        # if not st.session_state.regenerated_once:
+        #     if st.button("Regenerate Analysis"):
+        #         st.session_state.regenerate = True
+        #         st.session_state.regenerated_once = True
+        #         st.session_state.analysis_generated = False
+        #         st.experimental_rerun()
+        # else:
+        #     st.warning("You've already regenerated the analysis once. To get a new analysis, please start over with new inputs.")
+        #     if st.button("Start Over"):
+        #         # Clear all session state variables
+        #         for key in list(st.session_state.keys()):
+        #             del st.session_state[key]
+        #         st.experimental_rerun()
 
     except Exception as e:
         st.error(f"An unexpected error occurred: {str(e)}")
